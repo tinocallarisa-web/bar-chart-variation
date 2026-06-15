@@ -1,0 +1,263 @@
+{
+  "dataRoles": [
+    {
+      "displayName": "Axis",
+      "name": "category",
+      "kind": "Grouping"
+    },
+    {
+      "displayName": "Small Multiple",
+      "name": "series",
+      "kind": "Grouping"
+    },
+    {
+      "displayName": "Values",
+      "name": "measure",
+      "kind": "Measure"
+    }
+  ],
+  "objects": {
+    "barSettings": {
+      "displayName": "BarSettings",
+      "properties": {
+        "barColor": {
+          "displayName": "DefaultBarColor",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "negativeColor": {
+          "displayName": "NegativeBarColor",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "barOpacity": {
+          "displayName": "Opacity",
+          "type": {
+            "numeric": true
+          }
+        },
+        "axisTextColor": {
+          "displayName": "AxisTextColor",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "gridLineColor": {
+          "displayName": "LinesColor",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "connectorColor": {
+          "displayName": "ConnectorColor",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "variationLabels": {
+      "displayName": "VariationLabels",
+      "properties": {
+        "show": {
+          "displayName": "Show",
+          "type": {
+            "bool": true
+          }
+        },
+        "fontSize": {
+          "displayName": "FontSize",
+          "type": {
+            "formatting": {
+              "fontSize": true
+            }
+          }
+        },
+        "positiveColor": {
+          "displayName": "PositiveColor",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "negativeColor": {
+          "displayName": "NegativeBarColor",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "decimalPlaces": {
+          "displayName": "DecimalPlaces",
+          "type": {
+            "numeric": true
+          }
+        },
+        "showArrows": {
+          "displayName": "ShowArrows",
+          "type": {
+            "bool": true
+          }
+        },
+        "showConnectors": {
+          "displayName": "ShowConnectors",
+          "type": {
+            "bool": true
+          }
+        }
+      }
+    },
+    "valueLabels": {
+      "displayName": "DataLabels",
+      "properties": {
+        "show": {
+          "displayName": "Show",
+          "type": {
+            "bool": true
+          }
+        },
+        "color": {
+          "displayName": "AxisTextColor",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "fontSize": {
+          "displayName": "FontSize",
+          "type": {
+            "formatting": {
+              "fontSize": true
+            }
+          }
+        },
+        "displayUnits": {
+          "displayName": "DisplayUnits",
+          "type": {
+            "numeric": true
+          }
+        },
+        "valueDecimalPlaces": {
+          "displayName": "DecimalPlaces",
+          "type": {
+            "numeric": true
+          }
+        }
+      }
+    },
+    "colorSelector": {
+      "displayName": "SeriesColors",
+      "properties": {
+        "fill": {
+          "displayName": "DefaultBarColor",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "panelTitle": {
+      "displayName": "PanelTitle",
+      "properties": {
+        "fontSize": {
+          "displayName": "FontSize",
+          "type": {
+            "formatting": {
+              "fontSize": true
+            }
+          }
+        },
+        "useSeriesColor": {
+          "displayName": "UseSeriesColor",
+          "type": {
+            "bool": true
+          }
+        },
+        "customColor": {
+          "displayName": "Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "dataViewMappings": [
+    {
+      "categorical": {
+        "categories": {
+          "for": {
+            "in": "category"
+          },
+          "dataReductionAlgorithm": {
+            "top": {
+              "count": 1000
+            }
+          }
+        },
+        "values": {
+          "group": {
+            "by": "series",
+            "select": [
+              {
+                "bind": {
+                  "to": "measure"
+                }
+              }
+            ],
+            "dataReductionAlgorithm": {
+              "top": {
+                "count": 100
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "privileges": [],
+  "supportsHighlight": true,
+  "supportsSynchronizingFilterState": true,
+  "supportsLandingPage": true,
+  "supportsKeyboardFocus": true,
+  "supportsMultiVisualSelection": true
+}

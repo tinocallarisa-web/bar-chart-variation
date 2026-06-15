@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Support — Bar Chart with Variation % | TCViz</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f7f8fa; color: #1a1a2e; line-height: 1.7; }
+    header { background: #378ADD; padding: 20px 40px; }
+    header .brand { color: #fff; font-size: 20px; font-weight: 700; }
+    header .brand span { opacity: 0.7; font-weight: 400; font-size: 15px; margin-left: 8px; }
+    .container { max-width: 760px; margin: 48px auto; padding: 0 24px; }
+    .card { background: #fff; border-radius: 12px; padding: 48px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); margin-bottom: 24px; }
+    h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+    .subtitle { color: #6b7280; font-size: 14px; margin-bottom: 36px; }
+    h2 { font-size: 16px; font-weight: 600; margin: 32px 0 10px; color: #378ADD; }
+    h2:first-of-type { margin-top: 0; }
+    p { font-size: 15px; color: #374151; margin-bottom: 12px; }
+    .badge { display: inline-block; background: #EBF5FF; color: #378ADD; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px; margin-bottom: 32px; }
+    .contact-box { background: #EBF5FF; border-radius: 10px; padding: 24px 28px; margin-top: 8px; }
+    .contact-box a { color: #378ADD; font-weight: 600; font-size: 16px; text-decoration: none; }
+    .contact-box p { margin: 0; color: #374151; font-size: 14px; margin-top: 4px; }
+    .faq-item { margin-bottom: 24px; }
+    .faq-item .q { font-weight: 600; font-size: 15px; color: #1a1a2e; margin-bottom: 6px; }
+    .faq-item .a { font-size: 15px; color: #374151; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
+    th { background: #f3f4f6; padding: 10px 14px; text-align: left; font-weight: 600; color: #374151; }
+    td { padding: 10px 14px; border-top: 1px solid #e5e7eb; color: #374151; }
+    code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+    a { color: #378ADD; }
+    footer { text-align: center; padding: 32px; color: #9ca3af; font-size: 13px; }
+  </style>
+</head>
+<body>
+<header><div class="brand">TCViz <span>Power BI Custom Visuals</span></div></header>
+<div class="container">
+  <div class="card">
+    <div class="badge">Bar Chart with Variation %</div>
+    <h1>Support</h1>
+    <p class="subtitle">We're here to help. Typical response time: 1–2 business days.</p>
+
+    <h2>Contact Us</h2>
+    <div class="contact-box">
+      <a href="mailto:support@tcviz.com">support@tcviz.com</a>
+      <p>For bug reports, feature requests, and license issues.</p>
+    </div>
+
+    <h2>How to Set Up the Visual</h2>
+    <p>After importing the visual into your Power BI report, drag the following fields into the data roles:</p>
+    <table>
+      <tr><th>Data Role</th><th>Description</th><th>Required</th></tr>
+      <tr><td><strong>Axis</strong></td><td>Category values on the X axis (e.g. months, products, countries)</td><td>Yes</td></tr>
+      <tr><td><strong>Legend</strong></td><td>Series grouping — each value becomes a group of bars</td><td>No</td></tr>
+      <tr><td><strong>Values</strong></td><td>The numeric measure to display</td><td>Yes</td></tr>
+    </table>
+
+    <h2>Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+      <div class="q">Why am I only seeing 3 categories?</div>
+      <div class="a">The Free tier is limited to 3 categories. Upgrade to Pro via Microsoft AppSource to unlock unlimited categories.</div>
+    </div>
+    <div class="faq-item">
+      <div class="q">How does the variation % calculation work?</div>
+      <div class="a">The visual calculates the percentage variation between consecutive series within each category using: <code>((B − A) / |A|) × 100</code>. For single-series charts, it compares consecutive categories left to right.</div>
+    </div>
+    <div class="faq-item">
+      <div class="q">How do I change bar colors per series?</div>
+      <div class="a">In the Format pane, open <strong>Series Colors</strong>. Each series has its own color picker. You can also set a global default and negative bar color under <strong>Bar Settings</strong>.</div>
+    </div>
+    <div class="faq-item">
+      <div class="q">How do I activate my Pro license?</div>
+      <div class="a">Purchase the Pro license on Microsoft AppSource. Once your subscription is active, the visual detects it automatically the next time you open or refresh your report — no additional steps required.</div>
+    </div>
+    <div class="faq-item">
+      <div class="q">The visual is not rendering. What should I check?</div>
+      <div class="a">Make sure at least the <strong>Axis</strong> and <strong>Values</strong> fields are populated. If the issue persists, try re-importing the <code>.pbiviz</code> file or contact us at support@tcviz.com.</div>
+    </div>
+  </div>
+</div>
+<footer>&copy; 2026 TCViz &middot; <a href="mailto:support@tcviz.com">support@tcviz.com</a></footer>
+</body>
+</html>

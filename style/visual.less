@@ -1,0 +1,54 @@
+.bar-variation-chart {
+    font-family: "Segoe UI", wf_segoe-ui_normal, helvetica, arial, sans-serif;
+    user-select: none;
+
+    .category {
+        .domain {
+            display: none;
+        }
+    }
+
+    .tick {
+        text {
+            font-size: 11px;
+        }
+    }
+
+    .legend-group {
+        text {
+            cursor: default;
+        }
+    }
+
+    rect.bar {
+        transition: opacity 0.2s;
+        &:hover {
+            opacity: 0.8 !important;
+        }
+    }
+
+    text {
+        pointer-events: none;
+    }
+
+    line {
+        pointer-events: none;
+    }
+}
+
+/* High Contrast Support */
+@media screen and (-ms-high-contrast: active), (forced-colors: active) {
+    .bar-variation-chart {
+        rect.bar {
+            stroke: ButtonText;
+            stroke-width: 1px;
+            fill: ButtonFace;
+        }
+        text {
+            fill: ButtonText;
+        }
+        line {
+            stroke: ButtonText;
+        }
+    }
+}
