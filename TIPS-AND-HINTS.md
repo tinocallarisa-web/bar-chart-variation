@@ -19,7 +19,7 @@
 
 ## Small Multiples
 
-- **Sort Order** (Pro): sort panels alphabetically or by value — useful when your axis is a text category like product names.
+- **Sort Order**: sort the axis categories ascending or descending by label — useful when your axis is a text category like product names.
 - **Min Panel Width**: set a minimum width in pixels. If panels don't fit, the visual scrolls horizontally automatically.
 - **Panel Title → Position**: move the title to the bottom to save vertical space when panels are narrow.
 - **Panel Background**: add a subtle background color to each panel to visually separate them in dense dashboards.

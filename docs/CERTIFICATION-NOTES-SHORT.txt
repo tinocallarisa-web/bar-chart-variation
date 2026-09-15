@@ -1,38 +1,38 @@
-Bar Chart with Variation % 1.9.1.0 - GUID barChartVariation98877665544332211
+Bar Chart with Variation % 1.9.2.0 - GUID barChartVariation98877665544332211
 Full notes: docs/CERTIFICATION-NOTES.md, branch "certification" of
 github.com/tinocallarisa-web/bar-chart-variation
 
 WHAT CHANGED
 1.9.0.0 is published. Licensing fixed: spIdentifier matched as full Service ID or Plan ID
 "bar-chart-variation-pro-tcviz"; Warning accepted; unsupported environments honoured.
-Licence requested once, deferred, out of update(). Pro settings no longer switch off
-silently: notifyFeatureBlocked names what was used. The chart's own "Pro: +N more panels"
-text is now a neutral "Showing 3 of N panels". Sort order no longer works on Free. Pro
-settings labelled "(Pro)". New: legend text colour, vertical scroll (min panel height).
+Licence requested once, deferred, out of update(). Purchase path: notifyFeatureBlocked
+(localized en/es, <500 chars) plus notifyLicenseRequired(General). Our own "Pro: +N more
+panels" text removed. Pro settings labelled "(Pro)". Sort order stays free, as in 1.9.0.0.
+Landing page implemented (supportsLandingPage was declared). npm audit: 0; eslint: 0.
 
-LICENCE
-IVisualLicenseManager only. No licence server, no external auth, no payment in the visual,
-no watermark. On failure: Free, and no purchase prompt.
+PRO PREVIEW (watermark, per the publishing guidelines)
+Free user in edit mode, licence resolved, supported environment: Pro settings render with
+a "Pro preview" watermark on paid features only. In reading view, before the licence
+resolves, or where it cannot be read (Publish to Web, export): free result, no watermark.
 
 PRIVACY
 No network calls, no telemetry, no storage. Only the dataView. privileges is [].
 
 FREE VS PRO
-Free: bars, variation %, 3 panels, tooltips, cross-filtering, highlighting, titles,
-backgrounds, legend, scroll, high contrast.
-Pro: up to 100 panels, analytical lines and band, value labels, sort order, per-bar colours.
+Free: bars, variation %, 3 panels, sort order, tooltips, cross-filtering, highlighting,
+titles, backgrounds, legend, scroll, high contrast. No watermark on free features.
+Pro: up to 100 panels, analytical lines and band, value labels, per-bar colours.
 
 TEST - FREE (no plan)
-1. Axis = date, Values = measure: variation % appears.
-2. Small Multiple with 4+ values: 3 panels, grey note, Power BI licence notification.
-3. Turn on Analytical Lines (Pro) > Show Average or Data Labels (Pro) > Show: the setting
-   stays on, chart unchanged, notification. Turn off: it clears.
-4. Click a bar: other visuals cross-filter.
+1. No fields: landing page. Axis = date, Values = measure: variation % appears.
+2. Edit mode, Small Multiple with 4+ values: all panels, "Pro preview" watermark, licence
+   banner. Reading view: 3 panels, neutral note, no watermark.
+3. Analytical Lines (Pro) > Show Average: line with watermark, banner. Turn off: clears.
+4. Sort Order Ascending: bars reorder, no watermark.
+5. Click a bar: other visuals cross-filter.
 
 TEST - PRO (active plan)
-1. All panels render. 2. Average line in every panel. 3. Value labels on bars.
-4. Sort Order Ascending reorders bars. 5. Many panels + higher Min Panel Height: vertical
-scroll bar.
+All panels, lines, labels and colours render with no watermark and no notification.
 
 Rendering events on every path of update(). Known warning: Format Pane (classic API).
 

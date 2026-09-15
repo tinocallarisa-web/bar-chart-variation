@@ -24,7 +24,7 @@ VARIATION %
 
 SMALL MULTIPLES
 ---------------
-. Sort Order [PRO]: sort panels alphabetically or by value
+. Sort Order: sort the axis categories ascending or descending by label
     Auto ......... Power BI default order
     Ascending .... A to Z, smallest to largest
     Descending ... Z to A, largest to smallest

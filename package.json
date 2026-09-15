@@ -1,7 +1,7 @@
 {
   "name": "bar-chart-variation",
   "description": "A bar chart that automatically calculates and displays the percentage variation between consecutive bars or series.",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/tinocallarisa-web/bar-chart-variation"
@@ -11,7 +11,8 @@
     "pbiviz": "pbiviz",
     "start": "pbiviz start",
     "package": "pbiviz package",
-    "lint": "npx eslint ."
+    "lint": "npx eslint .",
+    "eslint": "npx eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
     "@types/d3": "7.4.3",
@@ -27,5 +28,9 @@
     "powerbi-visuals-tools": "^7.0.3",
     "powerbi-visuals-utils-formattingutils": "^6.1.2",
     "typescript": "5.5.4"
+  },
+  "overrides": {
+    "qs": "^6.16.0",
+    "uuid": "^11.1.1"
   }
 }

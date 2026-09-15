@@ -44,6 +44,25 @@ if (!forceFree) {
     patchedTs = originalTs.replace(LICENSE_BLOCK, LICENSE_PATCH);
 }
 
+// --debug: rotulo rojo con lo que manda Power BI en cada update. Solo en la build de test;
+// el fuente no lleva instrumentacion.
+if (process.argv.includes("--debug")) {
+    const DEBUG_ANCHOR = "this.renderWatermark(svgWidth, svgHeight, preview && this.attemptedPro.length > 0);";
+    if (!patchedTs.includes(DEBUG_ANCHOR)) {
+        console.error("\nERROR: No se encuentra el ancla de --debug. Actualiza DEBUG_ANCHOR en build-test.js.\n");
+        process.exit(1);
+    }
+    const DEBUG_CODE = DEBUG_ANCHOR + `
+        { const o: any = options; this.messageGroup.selectAll(".dbg").remove();
+          this.messageGroup.append("text").classed("dbg", true).attr("x", 4).attr("y", 12)
+            .style("font-size", "10px").style("fill", "#C00000")
+            .text("DBG viewMode=" + o.viewMode + " editMode=" + o.editMode + " formatMode=" + o.formatMode +
+                  " isInFocus=" + o.isInFocus + " type=" + o.type + " lic=" + this.licenseResolved +
+                  " unsup=" + this.licenseEnvUnsupported + " pro=" + this.isPro + " preview=" + preview); }`;
+    patchedTs = patchedTs.replace(DEBUG_ANCHOR, DEBUG_CODE);
+    console.log("Debug:      rotulo DBG activado");
+}
+
 // 3. Patch pbiviz.json — sufijo propio por modo, para que convivan en Desktop
 const realGuid      = pbivizObj.visual.guid;
 const testGuid      = realGuid + (forceFree ? "_testfree" : "_test");

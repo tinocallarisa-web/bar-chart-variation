@@ -257,7 +257,7 @@
       "displayName": "Axis",
       "properties": {
         "sortOrder": {
-          "displayName": "Sort Order (Pro)",
+          "displayName": "Sort Order",
           "type": {
             "enumeration": [
               { "displayName": "Auto (Power BI)", "value": "auto" },

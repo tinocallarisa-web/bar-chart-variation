@@ -4,6 +4,30 @@ All notable changes to this visual are documented here.
 
 ---
 
+## [1.9.2.0] — 2026-09-15
+
+1.9.1.0 was never submitted; 1.9.2.0 includes it.
+
+### Added
+- **Pro preview while editing.** Without a licence, in edit mode, Pro settings render working under a
+  "Pro preview" watermark, as Microsoft's publishing guidelines allow for paid features. In reading
+  view, before the licence resolves, or where Power BI cannot check licences (Publish to Web, embedding, export), the free result is shown with no
+  watermark.
+- **Landing page** with the data roles and the Pro plan features (`supportsLandingPage` was declared
+  but not implemented).
+- Persistent edit-mode licence icon (`notifyLicenseRequired`), alongside the feature banner.
+
+### Changed
+- **Sort order is free**, as it was in 1.9.0.0. Microsoft's guidelines require keeping the free
+  functionality a visual already had.
+- Licence notification text localized (English / Spanish).
+
+### Certification
+- `npm audit`: 0 vulnerabilities (`overrides` for `qs` and `uuid` in the build toolchain).
+- `eslint` script added to `package.json`; ESLint returns no errors.
+
+---
+
 ## [1.9.1.0] — 2026-09-15
 
 ### Fixed

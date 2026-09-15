@@ -30,7 +30,7 @@ FEATURES
 FREE VS PRO
 -----------
 Free: up to 3 Small Multiple panels, variation %, tooltips, axis options
-Pro: up to 100 panels, analytical lines, per-bar colours, value labels, sort order
+Pro: up to 100 panels, analytical lines, per-bar colours, value labels (try them first as a watermarked preview)
 
 📥 Get it on Microsoft AppSource — search "Bar Chart Variation TCViz"
 🌐 https://tcviz.com

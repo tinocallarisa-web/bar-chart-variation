@@ -124,6 +124,14 @@ interface SeriesData {
 
 // Plan ID tal como aparece en Partner Center (verificado 2026-09-15).
 const PLAN_ID = "bar-chart-variation-pro-tcviz";
+// La API de licencias exige localizar el texto del aviso (maximo 500 caracteres).
+const ES_LABELS: Record<string, string> = {
+    "more than 3 panels": "más de 3 paneles",
+    "analytical lines": "las líneas analíticas",
+    "the reference band": "la banda de referencia",
+    "value labels": "las etiquetas de valor",
+    "per-bar colours": "los colores por barra"
+};
 // ServicePlanState es un const enum: en runtime hacen falta los numeros.
 const STATE_ACTIVE = 1;
 const STATE_WARNING = 2;
@@ -283,6 +291,7 @@ export class Visual implements IVisual {
                 !this.dataView.categorical.categories ||
                 !this.dataView.categorical.values) {
                 this.clear();
+                this.renderLanding(options.viewport.width, options.viewport.height);
                 this.events.renderingFinished(options);
                 return;
             }
@@ -320,6 +329,8 @@ export class Visual implements IVisual {
                         this.applyLicense(plans.some(p =>
                             matchesPlan(p.spIdentifier, PLAN_ID) &&
                             (p.state === STATE_ACTIVE || p.state === STATE_WARNING)));
+                        // Free confirmado: repinta para pasar a la vista previa Pro si toca.
+                        if (!this.isPro) this.repaint();
                         this.syncLicenseNotification();
                     },
                     () => { this.licenseEnvUnsupported = true; this.licenseResolved = true; });
@@ -334,13 +345,18 @@ export class Visual implements IVisual {
     private applyLicense(isPro: boolean): void {
         if (!isPro || this.isPro) return;
         this.isPro = true;
+        this.repaint();
+    }
+
+    /** Repinta con las ultimas options fuera de update(): no emite rendering events. */
+    private repaint(): void {
         const o = this.lastOptions;
         const dv = this.dataView;
         if (!o || !dv?.categorical?.categories || !dv.categorical.values) return;
         try {
             this.updateSettings(dv);
             this.render(o);
-        } catch (_) { /* el grafico gratuito ya pintado se queda */ }
+        } catch (_) { /* lo ya pintado se queda */ }
     }
 
     /**
@@ -367,10 +383,16 @@ export class Visual implements IVisual {
             this.lastBlockedSig = sig;
             this.noticeShown = true;
             const n = this.attemptedPro.length;
-            const list = n === 1 ? this.attemptedPro[0]
-                : this.attemptedPro.slice(0, -1).join(", ") + " and " + this.attemptedPro[n - 1];
-            lm.notifyFeatureBlocked?.(
-                `Bar Chart with Variation %: ${list} ${n === 1 ? "is" : "are"} part of the Pro plan.`);
+            const es = (this.host.locale || "").toLowerCase().startsWith("es");
+            const items = es ? this.attemptedPro.map(a => ES_LABELS[a] || a) : this.attemptedPro;
+            const list = n === 1 ? items[0]
+                : items.slice(0, -1).join(", ") + (es ? " y " : " and ") + items[n - 1];
+            const msg = es
+                ? `Bar Chart with Variation %: ${list} ${n === 1 ? "forma" : "forman"} parte del plan Pro y se muestran como vista previa con marca de agua.`
+                : `Bar Chart with Variation %: ${list} ${n === 1 ? "is" : "are"} part of the Pro plan, shown as a watermarked preview.`;
+            // Banner de 10 s con la accion concreta, y el icono persistente de modo edicion.
+            lm.notifyFeatureBlocked?.(msg.slice(0, 500));
+            lm.notifyLicenseRequired?.(0 /* LicenseNotificationType.General */);
         } catch (_) { /* la notificacion nunca rompe el render */ }
     }
 
@@ -482,8 +504,9 @@ export class Visual implements IVisual {
         let catValues           = categories.values.map(v => v?.toString() || "");
 
         // ── Sort order ─────────────────────────────────────────────────────
-        // Pro: el gating de mas abajo llegaba tarde, el orden ya estaba aplicado.
-        const sortOrder = this.isPro ? this.settings.axisSettings.sortOrder : "auto";
+        // El orden es gratuito: ya funcionaba sin licencia en la 1.9.0.0 publicada, y
+        // las directrices de Microsoft no permiten recortar funcionalidad gratuita.
+        const sortOrder = this.settings.axisSettings.sortOrder;
         // sortIndexMap[newIndex] = originalIndex — keeps data aligned with labels
         let sortIndexMap: number[] = catValues.map((_, i) => i);
         if (sortOrder !== "auto") {
@@ -599,23 +622,33 @@ export class Visual implements IVisual {
 
         // ── Free / Pro gates ───────────────────────────────────────────────
         const maxPanels = 3;
-        const isLimited = !this.isPro && seriesList.length > maxPanels;
+        // Vista previa Pro: Free con la licencia ya resuelta y en un entorno que puede
+        // leerla. Las funciones Pro se pintan funcionando, con marca de agua, que las
+        // directrices de Microsoft permiten para funciones de pago. Antes de resolver, o
+        // donde la licencia no se puede leer (Publish to Web, exportacion), se pinta el
+        // resultado gratuito sin marca: ahi un cliente que paga se lee como Free.
+        // Solo en modo edicion (ViewMode: View=0, Edit=1, InFocusEdit=2): el autor ve lo que
+        // obtendria pagando, pero un informe en lectura o publicado no usa Pro sin licencia.
+        // Sin viewMode se trata como lectura.
+        const viewMode  = (options as any).viewMode;
+        const editing   = typeof viewMode === "number" && viewMode !== 0;
+        const preview   = !this.isPro && editing && this.licenseResolved && !this.licenseEnvUnsupported;
+        const isLimited = !this.isPro && !preview && seriesList.length > maxPanels;
         const visible   = isLimited ? seriesList.slice(0, maxPanels) : seriesList;
 
         // Lo que el usuario ha pedido y el tier gratuito no da. Se calcula antes de
         // apagarlo, para que Power BI muestre su aviso de compra.
         const lines = this.settings.analyticalLines;
         const attempted: string[] = [];
-        if (isLimited) attempted.push(`more than ${maxPanels} panels`);
+        if (seriesList.length > maxPanels) attempted.push(`more than ${maxPanels} panels`);
         if (lines.showAverage || lines.showMax || lines.showMin || lines.showMedian || lines.showRef) attempted.push("analytical lines");
         if (lines.showBand) attempted.push("the reference band");
         if (this.settings.valueLabels.show) attempted.push("value labels");
-        if (this.settings.axisSettings.sortOrder !== "auto") attempted.push("sort order");
         if (seriesList.some(s => s.cfColors.some(c => c != null))) attempted.push("per-bar colours");
         this.attemptedPro = this.isPro ? [] : attempted;
 
-        // Pro-only features: enforce when not licensed
-        if (!this.isPro) {
+        // Pro-only features: enforce when not licensed and not in Pro preview
+        if (!this.isPro && !preview) {
             // 1. Analytical lines — disabled
             this.settings.analyticalLines.showAverage = false;
             this.settings.analyticalLines.showMax     = false;
@@ -625,8 +658,6 @@ export class Visual implements IVisual {
             this.settings.analyticalLines.showBand    = false;
             // 2. Value labels — disabled
             this.settings.valueLabels.show = false;
-            // 3. Sort order — forced to auto
-            this.settings.axisSettings.sortOrder = "auto";
         }
 
         // ── Shared Y scale ─────────────────────────────────────────────────
@@ -844,7 +875,7 @@ export class Visual implements IVisual {
                 const pv     = ci > 0 ? series.values[ci - 1] : null;
                 const isNeg  = v < 0 || (pv !== null && v < pv);
                 // Color priority: CF rule (per-bar) > negative color > series color
-                const cfColor = this.isPro ? series.cfColors[ci] : null;
+                const cfColor = (this.isPro || preview) ? series.cfColors[ci] : null;
                 const fill    = cfColor
                     ? cfColor
                     : (isNeg ? negFill : series.color);
@@ -1081,7 +1112,7 @@ export class Visual implements IVisual {
         }
 
         // ── Watermark & freemium message ───────────────────────────────────
-        this.renderWatermark(svgWidth, svgHeight);
+        this.renderWatermark(svgWidth, svgHeight, preview && this.attemptedPro.length > 0);
         // Nota neutra, sin llamada a comprar: la ruta de compra es la notificacion de Power BI.
         const msgData = isLimited ? [`Showing ${maxPanels} of ${seriesList.length} panels`] : [];
         this.messageGroup.selectAll(".freemium-msg").data(msgData)
@@ -1099,8 +1130,49 @@ export class Visual implements IVisual {
         );
     }
 
-    private renderWatermark(_width: number, _height: number) {
+    /** Marca de agua solo sobre funciones de pago usadas sin licencia (vista previa Pro). */
+    private renderWatermark(width: number, height: number, show: boolean) {
         this.watermarkGroup.selectAll("*").remove();
+        if (!show) return;
+        const cx = width / 2;
+        const cy = height / 2;
+        const fs = Math.max(14, Math.min(width, height) / 9);
+        this.watermarkGroup.append("text")
+            .attr("x", cx).attr("y", cy)
+            .attr("text-anchor", "middle").attr("dominant-baseline", "middle")
+            .attr("transform", `rotate(-20 ${cx} ${cy})`)
+            .attr("aria-hidden", "true").attr("pointer-events", "none")
+            .style("font-size", `${fs}px`).style("font-weight", "700")
+            .style("fill", "#83827D").style("opacity", 0.22)
+            .text("Pro preview");
+    }
+
+    /**
+     * Pagina de bienvenida (supportsLandingPage estaba declarado sin implementar):
+     * como empezar y que añade Pro. Solo SVG con textContent, sin innerHTML.
+     */
+    private renderLanding(width: number, height: number): void {
+        this.svg.attr("width", width).attr("height", height);
+        this.target.style.overflowX = "hidden";
+        this.target.style.overflowY = "hidden";
+        this.renderWatermark(width, height, false);
+        this.messageGroup.selectAll("*").remove();
+        const g = this.chartGroup.append("g").classed("landing", true).attr("transform", "translate(16,8)");
+        const lines: [string, number, string, string, number][] = [
+            ["Bar Chart with Variation %", 16, "700", "#3D3929", 16],
+            ["1. Drag a date or category field to Axis.", 12, "400", "#535146", 26],
+            ["2. Drag a numeric measure to Values: variation % appears between bars.", 12, "400", "#535146", 20],
+            ["3. Optional: Small Multiple splits the chart into panels; Tooltips adds fields.", 12, "400", "#535146", 20],
+            ["Pro plan on Microsoft AppSource: up to 100 panels, analytical lines,", 12, "600", "#83827D", 30],
+            ["reference band, value labels and per-bar colours.", 12, "600", "#83827D", 18]
+        ];
+        let y = 0;
+        for (const [text, size, weight, color, dy] of lines) {
+            y += dy;
+            g.append("text").attr("x", 0).attr("y", y)
+                .style("font-size", `${size}px`).style("font-weight", weight).style("fill", color)
+                .text(text);
+        }
     }
 
     private clear() {
