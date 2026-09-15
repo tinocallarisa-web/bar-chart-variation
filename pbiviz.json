@@ -1,30 +1,31 @@
 {
-    "visual": {
-        "name": "barChartVariation",
-        "displayName": "Bar Chart with Variation %",
-        "guid": "barChartVariation98877665544332211",
-        "visualClassName": "Visual",
-        "version": "1.0.0.0",
-        "description": "A bar chart that automatically calculates and displays the percentage variation between consecutive bars or series.",
-        "supportUrl": "https://tinocallarisa-web.github.io/bar-chart-variation/support.html",
-        "gitHubUrl": ""
-    },
-    "author": {
-        "name": "Tino Callarisa",
-        "email": "support@tcviz.com"
-    },
-    "privacyTerms": {
-        "link": "https://tinocallarisa-web.github.io/bar-chart-variation/privacy.html"
-    },
-    "assets": {
-        "icon": "assets/icon.png"
-    },
-    "apiVersion": "5.11.0",
-    "style": "style/visual.less",
-    "capabilities": "capabilities.json",
-    "dependencies": null,
-    "stringResources": [
-        "stringResources/en-US/resources.resjson",
-        "stringResources/es-ES/resources.resjson"
-    ]
+  "visual": {
+    "name": "barChartVariation",
+    "displayName": "Bar Chart with Variation %",
+    "guid": "barChartVariation98877665544332211",
+    "visualClassName": "Visual",
+    "version": "1.9.0.0",
+    "description": "A bar chart that automatically calculates and displays the percentage variation between consecutive bars or series.",
+    "supportUrl": "https://tinocallarisa-web.github.io/bar-chart-variation/support.html",
+    "privacyTermsLink": "https://tinocallarisa-web.github.io/bar-chart-variation/privacy.html",
+    "gitHubUrl": "https://github.com/tinocallarisa-web/bar-chart-variation"
+  },
+  "author": {
+    "name": "TCViz",
+    "email": "support@tcviz.com"
+  },
+  "privacyTerms": {
+    "link": "https://tinocallarisa-web.github.io/bar-chart-variation/privacy.html"
+  },
+  "assets": {
+    "icon": "assets/icon.png"
+  },
+  "apiVersion": "5.11.0",
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json",
+  "dependencies": null,
+  "stringResources": [
+    "stringResources/en-US/resources.resjson",
+    "stringResources/es-ES/resources.resjson"
+  ]
 }

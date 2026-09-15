@@ -14,6 +14,11 @@
       "displayName": "Values",
       "name": "measure",
       "kind": "Measure"
+    },
+    {
+      "displayName": "Tooltips",
+      "name": "tooltips",
+      "kind": "Measure"
     }
   ],
   "objects": {
@@ -191,9 +196,37 @@
         }
       }
     },
+    "dataColors": {
+      "displayName": "Bar Colors",
+      "properties": {
+        "fill": {
+          "displayName": "Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        }
+      }
+    },
     "panelTitle": {
       "displayName": "PanelTitle",
       "properties": {
+        "show": {
+          "displayName": "Show",
+          "type": { "bool": true }
+        },
+        "position": {
+          "displayName": "Position",
+          "type": {
+            "enumeration": [
+              { "displayName": "Top",    "value": "top"    },
+              { "displayName": "Bottom", "value": "bottom" }
+            ]
+          }
+        },
         "fontSize": {
           "displayName": "FontSize",
           "type": {
@@ -219,6 +252,124 @@
           }
         }
       }
+    },
+    "axisSettings": {
+      "displayName": "Axis",
+      "properties": {
+        "sortOrder": {
+          "displayName": "Sort Order",
+          "type": {
+            "enumeration": [
+              { "displayName": "Auto (Power BI)", "value": "auto" },
+              { "displayName": "Ascending",       "value": "asc"  },
+              { "displayName": "Descending",      "value": "desc" }
+            ]
+          }
+        },
+        "showXLabels":  { "displayName": "Show X Labels",  "type": { "bool": true } },
+        "showYLabels":  { "displayName": "Show Y Labels",  "type": { "bool": true } },
+        "xFontSize":    { "displayName": "X Label Size",   "type": { "formatting": { "fontSize": true } } },
+        "yFontSize":    { "displayName": "Y Label Size",   "type": { "formatting": { "fontSize": true } } }
+      }
+    },
+    "panelStyle": {
+      "displayName": "Panel Background",
+      "properties": {
+        "showBackground": { "displayName": "Show Background", "type": { "bool": true } },
+        "bgColor": {
+          "displayName": "Color",
+          "type": { "fill": { "solid": { "color": true } } }
+        },
+        "bgOpacity": { "displayName": "Opacity (%)", "type": { "numeric": true } }
+      }
+    },
+    "panelLayout": {
+      "displayName": "Panel Layout",
+      "properties": {
+        "minPanelWidth": {
+          "displayName": "Min Panel Width (px)",
+          "type": { "numeric": true }
+        },
+        "enableScroll": {
+          "displayName": "Enable Scroll",
+          "type": { "bool": true }
+        },
+        "barBorderRadius": {
+          "displayName": "Bar Corner Radius",
+          "type": { "numeric": true }
+        }
+      }
+    },
+    "analyticalLines": {
+      "displayName": "Analytical Lines",
+      "properties": {
+        "showAverage": { "displayName": "Show Average", "type": { "bool": true } },
+        "showMax":     { "displayName": "Show Max",     "type": { "bool": true } },
+        "showMin":     { "displayName": "Show Min",     "type": { "bool": true } },
+        "showMedian":  { "displayName": "Show Median",  "type": { "bool": true } },
+        "refValue": {
+          "displayName": "Reference Value",
+          "type": { "numeric": true }
+        },
+        "showRef": { "displayName": "Show Reference Line", "type": { "bool": true } },
+        "lineColor": {
+          "displayName": "Line Color",
+          "type": { "fill": { "solid": { "color": true } } }
+        },
+        "lineStyle": {
+          "displayName": "Line Style",
+          "type": {
+            "enumeration": [
+              { "displayName": "Solid",  "value": "solid" },
+              { "displayName": "Dashed", "value": "dashed" },
+              { "displayName": "Dotted", "value": "dotted" }
+            ]
+          }
+        },
+        "showLabel":  { "displayName": "Show Label",   "type": { "bool": true } },
+        "labelSize":  { "displayName": "Label Size",   "type": { "numeric": true } },
+        "showBand":   { "displayName": "Show Band",    "type": { "bool": true } },
+        "bandMin": {
+          "displayName": "Band Min",
+          "type": { "numeric": true }
+        },
+        "bandMax": {
+          "displayName": "Band Max",
+          "type": { "numeric": true }
+        },
+        "bandColor": {
+          "displayName": "Band Color",
+          "type": { "fill": { "solid": { "color": true } } }
+        },
+        "bandOpacity": { "displayName": "Band Opacity (%)", "type": { "numeric": true } }
+      }
+    },
+    "legend": {
+      "displayName": "Legend",
+      "properties": {
+        "show": {
+          "displayName": "Show",
+          "type": { "bool": true }
+        },
+        "position": {
+          "displayName": "Position",
+          "type": {
+            "enumeration": [
+              { "displayName": "Top", "value": "top" },
+              { "displayName": "Bottom", "value": "bottom" }
+            ]
+          }
+        }
+      }
+    },
+    "accessibility": {
+      "displayName": "Accessibility",
+      "properties": {
+        "highContrastMode": {
+          "displayName": "High contrast (pattern for negatives)",
+          "type": { "bool": true }
+        }
+      }
     }
   },
   "dataViewMappings": [
@@ -242,6 +393,11 @@
                 "bind": {
                   "to": "measure"
                 }
+              },
+              {
+                "bind": {
+                  "to": "tooltips"
+                }
               }
             ],
             "dataReductionAlgorithm": {
@@ -255,6 +411,13 @@
     }
   ],
   "privileges": [],
+  "tooltips": {
+    "supportedTypes": {
+      "default": true,
+      "canvas": true
+    },
+    "roles": ["tooltips"]
+  },
   "supportsHighlight": true,
   "supportsSynchronizingFilterState": true,
   "supportsLandingPage": true,

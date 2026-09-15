@@ -1,0 +1,28 @@
+YOUTUBE TAGS (main block — keep under 500 characters)
+======================================================
+
+Power BI custom visual,bar chart variation,variation percentage Power BI,Power BI small multiples,TCViz,Power BI AppSource,bar chart Power BI,conditional formatting Power BI,analytical lines Power BI,Power BI percent change,no DAX Power BI,pbiviz,business intelligence
+
+CHARACTER COUNT: ~243
+
+
+EXTENDED TAGS (add if space allows)
+=====================================
+
+Power BI tutorial,Power BI data labels,Power BI waterfall alternative,period over period Power BI,Power BI drill down,Power BI custom visual tutorial,tcviz visuals,Power BI dashboard,Power BI 2025,Microsoft AppSource visual
+
+
+FOCUS VARIANTS
+==============
+
+Focus: No-DAX angle
+--------------------
+Power BI no DAX,automatic percent change Power BI,Power BI formula free,Power BI calculated variation,bar chart without DAX
+
+Focus: Small Multiples angle
+-----------------------------
+Power BI small multiples,Power BI panel chart,Power BI trellis chart,small multiples bar chart,Power BI facet chart
+
+Focus: AppSource discovery
+---------------------------
+Power BI AppSource,best Power BI visuals 2025,TCViz AppSource,custom visual Power BI free,Power BI marketplace visual

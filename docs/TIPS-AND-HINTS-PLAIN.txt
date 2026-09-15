@@ -1,0 +1,113 @@
+BAR CHART WITH VARIATION % — TIPS & HINTS
+==========================================
+
+
+GETTING STARTED
+---------------
+Minimum setup: drag one field to Axis and one measure to Values.
+The variation % between consecutive bars appears automatically. No DAX required.
+
+Add Small Multiples: drag a category field to the Small Multiple bucket to split
+the chart into one panel per category, all sharing the same Y scale.
+
+
+VARIATION %
+-----------
+. The % is calculated as (current - previous) / |previous| x 100
+. The first bar never shows a variation arrow (no previous value to compare)
+. Use Variation Labels > Decimal Places to control precision
+    0 = whole numbers   |   1 = one decimal   |   2 = two decimals
+. Toggle arrows on/off with Show Arrows
+. Toggle dashed connector lines with Show Connectors
+. Set positive/negative colors independently
+
+
+SMALL MULTIPLES
+---------------
+. Sort Order [PRO]: sort panels alphabetically or by value
+    Auto ......... Power BI default order
+    Ascending .... A to Z, smallest to largest
+    Descending ... Z to A, largest to smallest
+. Min Panel Width: set a minimum px width; the visual scrolls horizontally if needed
+. Panel Title > Position: Top or Bottom — use Bottom to save vertical space
+. Panel Background: add a subtle fill color to each panel to aid separation
+
+
+ANALYTICAL LINES [PRO]
+----------------------
+. Average line .... most useful starting point, shows bars above/below the mean
+. Max / Min ....... highlights the range of your data
+. Median .......... robust central tendency, less sensitive to outliers
+. Reference line .. enter any fixed target (budget, KPI, threshold)
+. Band ............ define a min/max corridor — bars inside the band are on track
+. Lines and bands draw across all panels simultaneously
+
+
+CONDITIONAL FORMATTING [PRO]
+-----------------------------
+. Format pane > Bar Colors — each category shows a color picker + fx button
+. Click fx to set rules based on any measure field
+    Example: red if Sales < Budget, green if Margin > 20%
+. CF colors override the default bar color but respect the negative color logic
+
+
+TOOLTIPS
+--------
+. Default tooltip shows: value, previous, absolute change, and variation %
+. Drag extra fields to the Tooltips bucket to add custom rows
+    Examples: units sold, region, budget amount
+. Tooltip fields inherit the format defined on the measure
+
+
+INTERACTIVITY
+-------------
+. Click a bar .............. cross-filter other visuals on the page
+. Ctrl+click (Cmd on Mac) .. multi-select bars across panels
+. Right-click a bar ........ Power BI context menu (drill, keep/exclude, etc.)
+. Drill-down ............... supported when Axis has a hierarchy
+    Use the arrow buttons that appear in the top-left of the first panel
+
+
+PERFORMANCE TIPS
+----------------
+. Keep Axis values under 50 per panel for best readability
+. For large reports, enable Synchronize Slicers in Power BI options
+. The visual handles up to 1000 categories and 100 series natively
+
+
+ACCESSIBILITY
+-------------
+. Enable High Contrast Mode in Format pane > Accessibility
+    Negative bars render with a diagonal stripe pattern instead of color alone
+    Useful for color-blind users or printed reports
+
+
+FREE VS PRO
+-----------
+
+Feature                  Free        Pro
+-----------------------------------------
+Small Multiple panels    Max 3       Unlimited
+Analytical lines         No          Yes (Avg, Max, Min, Median, Reference)
+Reference band           No          Yes
+Conditional formatting   No          Yes (fx button per bar)
+Value labels             No          Yes
+Sort order               Auto only   Ascending / Descending
+
+
+COMMON QUESTIONS
+----------------
+Q: Why is the first bar missing a variation arrow?
+A: There is no previous value to compare against. This is by design.
+
+Q: Can I show variation against a fixed base instead of the previous bar?
+A: Use a Reference Line set to your base value.
+
+Q: The panels look too small. What can I do?
+A: Increase Min Panel Width in Panel Layout. The visual will scroll horizontally.
+
+Q: Why are my conditional formatting colors not showing?
+A: Conditional Formatting requires a Pro license.
+
+Q: Can I use this visual in Power BI Service / Embedded?
+A: Yes — it works in all Power BI environments that support custom visuals.

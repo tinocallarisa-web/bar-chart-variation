@@ -1,0 +1,55 @@
+YOUTUBE DESCRIPTION (long)
+==========================
+
+Bar Chart with Variation % by TCViz — automatically calculates and displays
+percentage changes between consecutive bars in Power BI. No DAX required.
+
+CHAPTERS
+--------
+0:00 Introduction
+0:20 Core feature — automatic variation %
+0:50 Small Multiples with shared Y scale
+1:20 Data Labels & Axis options
+1:40 Analytical Lines (Pro)
+2:00 Tooltips & Interactivity
+2:20 Conditional Formatting (Pro)
+2:40 Outro
+
+FEATURES
+--------
+✅ Automatic variation % with arrows and connectors
+✅ Small Multiples with shared Y scale
+✅ Conditional formatting per bar (fx button) [Pro]
+✅ Analytical lines: Average, Max, Min, Median, Reference [Pro]
+✅ Custom tooltips — drag any field into the Tooltips bucket
+✅ Sort order: Auto, Ascending, Descending [Pro]
+✅ Panel background, title position, data labels [Pro]
+✅ Cross-filtering and drill-down support
+✅ Accessibility: high contrast mode
+
+FREE VS PRO
+-----------
+Free: up to 3 Small Multiple panels, variation %, tooltips, axis options
+Pro: unlimited panels, analytical lines, conditional formatting, value labels, sort order
+
+📥 Get it on Microsoft AppSource — search "Bar Chart Variation TCViz"
+🌐 https://tcviz.com
+📧 support@tcviz.com
+
+---
+
+SHORT VERSION (Shorts / LinkedIn)
+----------------------------------
+Bar Chart with Variation % by TCViz — automatic % changes between bars in Power BI.
+No DAX. Small Multiples, conditional formatting, analytical lines & more.
+Available on Microsoft AppSource 👇
+
+---
+
+5 ALTERNATIVE TITLES
+---------------------
+1. Bar Chart with Automatic Variation % for Power BI — No DAX Required
+2. Power BI Bar Chart that Calculates % Change Automatically | TCViz
+3. Small Multiples Bar Chart with Variation % | Power BI Custom Visual
+4. Stop Writing DAX for % Change — This Power BI Visual Does It For You
+5. Power BI Bar Chart with Period-over-Period Variation | TCViz AppSource
