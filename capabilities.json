@@ -141,7 +141,7 @@
       }
     },
     "valueLabels": {
-      "displayName": "DataLabels",
+      "displayName": "Data Labels (Pro)",
       "properties": {
         "show": {
           "displayName": "Show",
@@ -197,7 +197,7 @@
       }
     },
     "dataColors": {
-      "displayName": "Bar Colors",
+      "displayName": "Bar Colors (Pro)",
       "properties": {
         "fill": {
           "displayName": "Color",
@@ -257,7 +257,7 @@
       "displayName": "Axis",
       "properties": {
         "sortOrder": {
-          "displayName": "Sort Order",
+          "displayName": "Sort Order (Pro)",
           "type": {
             "enumeration": [
               { "displayName": "Auto (Power BI)", "value": "auto" },
@@ -290,6 +290,10 @@
           "displayName": "Min Panel Width (px)",
           "type": { "numeric": true }
         },
+        "minPanelHeight": {
+          "displayName": "Min Panel Height (px)",
+          "type": { "numeric": true }
+        },
         "enableScroll": {
           "displayName": "Enable Scroll",
           "type": { "bool": true }
@@ -301,7 +305,7 @@
       }
     },
     "analyticalLines": {
-      "displayName": "Analytical Lines",
+      "displayName": "Analytical Lines (Pro)",
       "properties": {
         "showAverage": { "displayName": "Show Average", "type": { "bool": true } },
         "showMax":     { "displayName": "Show Max",     "type": { "bool": true } },
@@ -359,6 +363,10 @@
               { "displayName": "Bottom", "value": "bottom" }
             ]
           }
+        },
+        "textColor": {
+          "displayName": "Text Color",
+          "type": { "fill": { "solid": { "color": true } } }
         }
       }
     },

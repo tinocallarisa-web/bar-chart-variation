@@ -43,12 +43,11 @@ ANALYTICAL LINES [PRO]
 . Lines and bands draw across all panels simultaneously
 
 
-CONDITIONAL FORMATTING [PRO]
+PER-BAR COLOURS [PRO]
 -----------------------------
-. Format pane > Bar Colors — each category shows a color picker + fx button
-. Click fx to set rules based on any measure field
+. Format pane > Bar Colors (Pro) — one colour picker per category
     Example: red if Sales < Budget, green if Margin > 20%
-. CF colors override the default bar color but respect the negative color logic
+. Per-bar colours override the default bar color but respect the negative color logic
 
 
 TOOLTIPS
@@ -87,10 +86,10 @@ FREE VS PRO
 
 Feature                  Free        Pro
 -----------------------------------------
-Small Multiple panels    Max 3       Unlimited
+Small Multiple panels    Max 3       Up to 100
 Analytical lines         No          Yes (Avg, Max, Min, Median, Reference)
 Reference band           No          Yes
-Conditional formatting   No          Yes (fx button per bar)
+Per-bar colours          No          Yes (picker per category)
 Value labels             No          Yes
 Sort order               Auto only   Ascending / Descending
 
@@ -106,8 +105,8 @@ A: Use a Reference Line set to your base value.
 Q: The panels look too small. What can I do?
 A: Increase Min Panel Width in Panel Layout. The visual will scroll horizontally.
 
-Q: Why are my conditional formatting colors not showing?
-A: Conditional Formatting requires a Pro license.
+Q: Why are my per-bar colours not showing?
+A: Per-bar colours require a Pro licence.
 
 Q: Can I use this visual in Power BI Service / Embedded?
 A: Yes — it works in all Power BI environments that support custom visuals.

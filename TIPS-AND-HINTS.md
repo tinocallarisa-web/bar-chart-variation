@@ -35,11 +35,10 @@
 
 ---
 
-## Conditional Formatting (Pro)
+## Per-bar colours (Pro)
 
-- Go to **Format pane → Bar Colors** — each category appears with a color picker and an **fx** button.
-- Click **fx** to set rules based on any measure: e.g. red if Sales < Budget, green if margin > 20%.
-- CF colors override the default bar color but respect the negative color logic.
+- Go to **Format pane → Bar Colors (Pro)** — each category has its own colour picker.
+- Per-bar colours override the default bar color but respect the negative color logic.
 
 ---
 
@@ -85,5 +84,5 @@ Not directly — use a Reference Line set to your base value instead.
 **The panels look too small. What can I do?**
 Increase **Min Panel Width** in Panel Layout, or reduce the number of Small Multiple categories. The visual will scroll horizontally if needed.
 
-**Why are my CF colors not showing?**
-Conditional Formatting requires a Pro license. Upgrade to unlock the fx button per bar.
+**Why are my per-bar colours not showing?**
+Per-bar colours are part of the Pro plan. Without a licence the setting is kept and Power BI shows how to get one.

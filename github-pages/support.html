@@ -26,7 +26,7 @@
     .faq-item .a { font-size: 15px; color: #374151; }
     table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
     th { background: #f3f4f6; padding: 10px 14px; text-align: left; font-weight: 600; color: #374151; }
-    td { padding: 10px 14px; border-top: 1px solid #e5e7eb; color: #374151; }
+    td { padding: 10px 14px; border-top: 1px solid #e5e7eb; color: #374151; vertical-align: top; }
     code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
     a { color: #378ADD; }
     footer { text-align: center; padding: 32px; color: #9ca3af; font-size: 13px; }
@@ -38,7 +38,7 @@
   <div class="card">
     <div class="badge">Bar Chart with Variation %</div>
     <h1>Support</h1>
-    <p class="subtitle">We're here to help. Typical response time: 1–2 business days.</p>
+    <p class="subtitle">Version 1.9.1.0 &middot; Last updated: September 15, 2026 &middot; Typical response time: 1–2 business days.</p>
 
     <h2>Contact Us</h2>
     <div class="contact-box">
@@ -46,39 +46,62 @@
       <p>For bug reports, feature requests, and license issues.</p>
     </div>
 
+    <h2>Video</h2>
+    <p><a href="https://www.youtube.com/watch?v=hALaKTXPsMA">Watch the walkthrough on YouTube</a></p>
+
     <h2>How to Set Up the Visual</h2>
-    <p>After importing the visual into your Power BI report, drag the following fields into the data roles:</p>
+    <p>After adding the visual to a report page, drag fields into these data roles:</p>
     <table>
       <tr><th>Data Role</th><th>Description</th><th>Required</th></tr>
-      <tr><td><strong>Axis</strong></td><td>Category values on the X axis (e.g. months, products, countries)</td><td>Yes</td></tr>
-      <tr><td><strong>Legend</strong></td><td>Series grouping — each value becomes a group of bars</td><td>No</td></tr>
-      <tr><td><strong>Values</strong></td><td>The numeric measure to display</td><td>Yes</td></tr>
+      <tr><td><strong>Axis</strong></td><td>Category values on the X axis (e.g. months, products, countries). Up to 1,000 categories.</td><td>Yes</td></tr>
+      <tr><td><strong>Values</strong></td><td>The numeric measure. Variation % between consecutive bars is calculated automatically.</td><td>Yes</td></tr>
+      <tr><td><strong>Small Multiple</strong></td><td>Splits the chart into one panel per value, all on a shared Y scale. Up to 100 panels.</td><td>No</td></tr>
+      <tr><td><strong>Tooltips</strong></td><td>Extra measures shown when hovering a bar.</td><td>No</td></tr>
     </table>
+
+    <h2>Free and Pro</h2>
+    <table>
+      <tr><th>Feature</th><th>Free</th><th>Pro</th></tr>
+      <tr><td>Bars, variation % labels, arrows and connectors</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>Small Multiple panels</td><td>Up to 3</td><td>Up to 100</td></tr>
+      <tr><td>Tooltips, cross-filtering, context menu, highlighting</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>Panel titles, backgrounds, axis labels, legend, high contrast pattern</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>Horizontal and vertical scroll (minimum panel width and height)</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>Analytical lines (average, min, max, median, reference) and reference band</td><td>&mdash;</td><td>Yes</td></tr>
+      <tr><td>Value labels on bars</td><td>&mdash;</td><td>Yes</td></tr>
+      <tr><td>Sort order (ascending / descending)</td><td>&mdash;</td><td>Yes</td></tr>
+      <tr><td>Per-bar colours (Bar Colors: one colour picker per category)</td><td>&mdash;</td><td>Yes</td></tr>
+    </table>
+    <p>Settings marked <strong>(Pro)</strong> in the Format pane stay as you set them without a licence; the chart keeps the free result and Power BI shows how to get one.</p>
 
     <h2>Frequently Asked Questions</h2>
 
     <div class="faq-item">
-      <div class="q">Why am I only seeing 3 categories?</div>
-      <div class="a">The Free tier is limited to 3 categories. Upgrade to Pro via Microsoft AppSource to unlock unlimited categories.</div>
+      <div class="q">Why do I only see 3 panels?</div>
+      <div class="a">Without a Pro licence the visual shows the first 3 Small Multiple panels and a note saying how many there are. A Pro licence shows up to 100.</div>
     </div>
     <div class="faq-item">
       <div class="q">How does the variation % calculation work?</div>
-      <div class="a">The visual calculates the percentage variation between consecutive series within each category using: <code>((B − A) / |A|) × 100</code>. For single-series charts, it compares consecutive categories left to right.</div>
+      <div class="a">Between each pair of consecutive bars: <code>((B − A) / |A|) × 100</code>.</div>
     </div>
     <div class="faq-item">
-      <div class="q">How do I change bar colors per series?</div>
-      <div class="a">In the Format pane, open <strong>Series Colors</strong>. Each series has its own color picker. You can also set a global default and negative bar color under <strong>Bar Settings</strong>.</div>
+      <div class="q">The panels are too small and there is no scroll bar.</div>
+      <div class="a">In <strong>Panel Layout</strong>, keep <strong>Enable Scroll</strong> on and raise <strong>Min Panel Width</strong> or <strong>Min Panel Height</strong>. When the panels no longer fit, the visual scrolls horizontally, vertically, or both.</div>
+    </div>
+    <div class="faq-item">
+      <div class="q">How do I change colours?</div>
+      <div class="a"><strong>Series Colors</strong> sets one colour per Small Multiple panel. <strong>Bar Colors (Pro)</strong> sets one colour per category. The default and negative bar colours are under <strong>Bar Settings</strong>, and the legend text colour under <strong>Legend</strong>.</div>
     </div>
     <div class="faq-item">
       <div class="q">How do I activate my Pro license?</div>
-      <div class="a">Purchase the Pro license on Microsoft AppSource. Once your subscription is active, the visual detects it automatically the next time you open or refresh your report — no additional steps required.</div>
+      <div class="a">Purchase the Pro plan on Microsoft AppSource. Once your subscription is active, the visual detects it automatically the next time you open or refresh your report — no additional steps required. In Publish to Web and exports Power BI cannot check licences, so the free experience is shown there.</div>
     </div>
     <div class="faq-item">
       <div class="q">The visual is not rendering. What should I check?</div>
-      <div class="a">Make sure at least the <strong>Axis</strong> and <strong>Values</strong> fields are populated. If the issue persists, try re-importing the <code>.pbiviz</code> file or contact us at support@tcviz.com.</div>
+      <div class="a">Make sure at least the <strong>Axis</strong> and <strong>Values</strong> fields are populated. If the issue persists, contact us at support@tcviz.com.</div>
     </div>
   </div>
 </div>
-<footer>&copy; 2026 TCViz &middot; <a href="mailto:support@tcviz.com">support@tcviz.com</a></footer>
+<footer>&copy; 2026 TCViz &middot; <a href="mailto:support@tcviz.com">support@tcviz.com</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="terms.html">Terms</a></footer>
 </body>
 </html>

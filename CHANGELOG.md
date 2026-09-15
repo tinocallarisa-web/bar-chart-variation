@@ -4,6 +4,38 @@ All notable changes to this visual are documented here.
 
 ---
 
+## [1.9.1.0] — 2026-09-15
+
+### Fixed
+- **A paying customer could stay on Free.** `spIdentifier` was compared with strict equality, while
+  the Licensing API returns the full Service ID (`publisher.offer.plan`). It now accepts the Service
+  ID or the Plan ID `bar-chart-variation-pro-tcviz`, and the Warning (payment grace period) state.
+- **No purchase path.** Pro settings switched off silently and Power BI's licence notifications were
+  never called. `notifyFeatureBlocked` now names what the user tried to use, only once the licence
+  has resolved and never where licences cannot be checked (Publish to Web, exports).
+- **Licensing UI of our own removed.** The pink "Pro: +N more panels" text is now a neutral note,
+  "Showing 3 of N panels".
+- **Sort order worked on Free.** It was applied before the Pro gate.
+- **Pro toggles snapped back off in the Format pane.** The pane read the gated values; it now reads
+  the user's own settings.
+- **Licence off the render path.** `update()` no longer awaits the licence on every update.
+
+### Added
+- Legend → Text Color.
+- Vertical scroll: Panel Layout → Min Panel Height (px). Previously only horizontal scroll existed and
+  panels were squashed when there were many rows.
+
+### Changed
+- "(Pro)" on Data Labels, Analytical Lines, Sort Order and Bar Colors.
+- Unused "Upgrade to Pro" string resource removed.
+
+### Documentation
+- Bar Colors is a colour picker per category, not conditional formatting through the fx button.
+- Pro shows up to 100 panels, not unlimited.
+- Drill-down is no longer claimed: `capabilities.json` declares no `drilldown` object.
+
+---
+
 ## [1.9.0.0] — 2026-08-07
 
 ### Added

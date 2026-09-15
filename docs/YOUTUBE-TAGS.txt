@@ -1,7 +1,7 @@
 YOUTUBE TAGS (main block — keep under 500 characters)
 ======================================================
 
-Power BI custom visual,bar chart variation,variation percentage Power BI,Power BI small multiples,TCViz,Power BI AppSource,bar chart Power BI,conditional formatting Power BI,analytical lines Power BI,Power BI percent change,no DAX Power BI,pbiviz,business intelligence
+Power BI custom visual,bar chart variation,variation percentage Power BI,Power BI small multiples,TCViz,Power BI AppSource,bar chart Power BI,analytical lines Power BI,Power BI percent change,no DAX Power BI,pbiviz,business intelligence
 
 CHARACTER COUNT: ~243
 

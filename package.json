@@ -1,7 +1,7 @@
 {
   "name": "bar-chart-variation",
   "description": "A bar chart that automatically calculates and displays the percentage variation between consecutive bars or series.",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/tinocallarisa-web/bar-chart-variation"

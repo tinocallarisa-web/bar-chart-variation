@@ -12,14 +12,14 @@ CHAPTERS
 1:20 Data Labels & Axis options
 1:40 Analytical Lines (Pro)
 2:00 Tooltips & Interactivity
-2:20 Conditional Formatting (Pro)
+2:20 Per-bar Colours (Pro)
 2:40 Outro
 
 FEATURES
 --------
 ✅ Automatic variation % with arrows and connectors
 ✅ Small Multiples with shared Y scale
-✅ Conditional formatting per bar (fx button) [Pro]
+✅ Per-bar colours (colour picker per category) [Pro]
 ✅ Analytical lines: Average, Max, Min, Median, Reference [Pro]
 ✅ Custom tooltips — drag any field into the Tooltips bucket
 ✅ Sort order: Auto, Ascending, Descending [Pro]
@@ -30,7 +30,7 @@ FEATURES
 FREE VS PRO
 -----------
 Free: up to 3 Small Multiple panels, variation %, tooltips, axis options
-Pro: unlimited panels, analytical lines, conditional formatting, value labels, sort order
+Pro: up to 100 panels, analytical lines, per-bar colours, value labels, sort order
 
 📥 Get it on Microsoft AppSource — search "Bar Chart Variation TCViz"
 🌐 https://tcviz.com
@@ -41,7 +41,7 @@ Pro: unlimited panels, analytical lines, conditional formatting, value labels, s
 SHORT VERSION (Shorts / LinkedIn)
 ----------------------------------
 Bar Chart with Variation % by TCViz — automatic % changes between bars in Power BI.
-No DAX. Small Multiples, conditional formatting, analytical lines & more.
+No DAX. Small Multiples, analytical lines, value labels & more.
 Available on Microsoft AppSource 👇
 
 ---

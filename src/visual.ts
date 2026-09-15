@@ -74,6 +74,7 @@ interface VisualSettings {
     };
     panelLayout: {
         minPanelWidth: number;
+        minPanelHeight: number;
         enableScroll: boolean;
         barBorderRadius: number;
     };
@@ -97,6 +98,7 @@ interface VisualSettings {
     legend: {
         show: boolean;
         position: string;
+        textColor: string;
     };
     accessibility: {
         highContrastMode: boolean;
@@ -120,6 +122,18 @@ interface SeriesData {
     tooltipFields: TooltipField[];
 }
 
+// Plan ID tal como aparece en Partner Center (verificado 2026-09-15).
+const PLAN_ID = "bar-chart-variation-pro-tcviz";
+// ServicePlanState es un const enum: en runtime hacen falta los numeros.
+const STATE_ACTIVE = 1;
+const STATE_WARNING = 2;
+
+// spIdentifier = Service ID completo (editor.oferta.plan); se acepta también el Plan ID solo
+function matchesPlan(spIdentifier: unknown, planId: string): boolean {
+    const sp = String(spIdentifier ?? "");
+    return sp === planId || sp.endsWith("." + planId);
+}
+
 export class Visual implements IVisual {
     private target: HTMLElement;
     private host: IVisualHost;
@@ -133,6 +147,14 @@ export class Visual implements IVisual {
     private selectionManager: ISelectionManager;
     private tooltipServiceWrapper: ITooltipServiceWrapper;
     private isPro: boolean = false;
+    private licenseRequested = false;
+    private licenseResolved = false;
+    private licenseEnvUnsupported = false;
+    private noticeShown = false;
+    private lastBlockedSig = "";
+    private attemptedPro: string[] = [];
+    private lastOptions: VisualUpdateOptions;
+    private rawSettings: VisualSettings;
     private dataView: DataView;
 
     private settings: VisualSettings = {
@@ -181,6 +203,7 @@ export class Visual implements IVisual {
         },
         panelLayout: {
             minPanelWidth: 120,
+            minPanelHeight: 120,
             enableScroll:  true,
             barBorderRadius: 2
         },
@@ -203,7 +226,8 @@ export class Visual implements IVisual {
         },
         legend: {
             show: false,
-            position: "bottom"
+            position: "bottom",
+            textColor: "#444444"
         },
         accessibility: {
             highContrastMode: false
@@ -244,20 +268,16 @@ export class Visual implements IVisual {
         });
     }
 
-    public async update(options: VisualUpdateOptions) {
+    /**
+     * update() es sincrona. Antes hacia await de getAvailableServicePlans() en cada
+     * update, entre renderingStarted y el dibujado: la licencia estaba en el camino
+     * critico del render. Ahora se pide una vez, en diferido, y repinta solo si pasa
+     * de Free a Pro.
+     */
+    public update(options: VisualUpdateOptions) {
         this.events.renderingStarted(options);
+        this.lastOptions = options;
         try {
-            // Production license check via Microsoft AppSource
-            try {
-                const licenseResult = await this.licenseManager.getAvailableServicePlans();
-                this.isPro = licenseResult.plans?.some(
-                    plan => plan.spIdentifier === "bar-chart-variation-pro-tcviz" &&
-                            plan.state === ServicePlanState.Active
-                ) ?? false;
-            } catch (_) {
-                this.isPro = false;
-            }
-
             this.dataView = options.dataViews[0];
             if (!this.dataView || !this.dataView.categorical ||
                 !this.dataView.categorical.categories ||
@@ -273,6 +293,85 @@ export class Visual implements IVisual {
             this.events.renderingFailed(options, String(e));
             console.error(e);
         }
+        // Fuera del try: un fallo de licencia nunca convierte un render correcto en renderingFailed.
+        this.requestLicenseDeferred();
+        this.syncLicenseNotification();
+    }
+
+    /** Pide la licencia una vez, fuera del camino critico. Si no resuelve, se queda en Free. */
+    private requestLicenseDeferred(): void {
+        if (this.licenseRequested || this.isPro) return;
+        this.licenseRequested = true;
+        setTimeout(() => {
+            try {
+                const lm = this.licenseManager as any;
+                if (!lm) { this.licenseEnvUnsupported = true; this.licenseResolved = true; return; }
+                // getAvailableServicePlans devuelve IPromise2: se consume con then(ok, err).
+                lm.getAvailableServicePlans().then(
+                    (result: any) => {
+                        // Publish to Web, embedding, exportacion: un cliente Pro se lee como
+                        // Free, asi que ahi no se le pide comprar lo que puede tener ya.
+                        if (result?.isLicenseUnsupportedEnv === true || result?.isLicenseInfoAvailable === false) {
+                            this.licenseEnvUnsupported = true;
+                        }
+                        this.licenseResolved = true;
+                        const plans: any[] = result?.plans ?? [];
+                        // Warning es periodo de gracia por un problema de pago: sigue siendo usable.
+                        this.applyLicense(plans.some(p =>
+                            matchesPlan(p.spIdentifier, PLAN_ID) &&
+                            (p.state === STATE_ACTIVE || p.state === STATE_WARNING)));
+                        this.syncLicenseNotification();
+                    },
+                    () => { this.licenseEnvUnsupported = true; this.licenseResolved = true; });
+            } catch (_) {
+                this.licenseEnvUnsupported = true;
+                this.licenseResolved = true;
+            }
+        }, 0);
+    }
+
+    /** Solo actua de Free a Pro: repinta con las ultimas options. */
+    private applyLicense(isPro: boolean): void {
+        if (!isPro || this.isPro) return;
+        this.isPro = true;
+        const o = this.lastOptions;
+        const dv = this.dataView;
+        if (!o || !dv?.categorical?.categories || !dv.categorical.values) return;
+        try {
+            this.updateSettings(dv);
+            this.render(o);
+        } catch (_) { /* el grafico gratuito ya pintado se queda */ }
+    }
+
+    /**
+     * La ruta de compra la pone Power BI, nunca el visual. Antes el grafico escribia
+     * "Pro: +N more panels" y los ajustes Pro se apagaban en silencio: no habia
+     * ningun sitio donde comprar.
+     */
+    private syncLicenseNotification(): void {
+        const lm = this.licenseManager as any;
+        if (!lm) return;
+        try {
+            if (this.isPro || this.attemptedPro.length === 0) {
+                if (this.noticeShown) {
+                    this.noticeShown = false;
+                    this.lastBlockedSig = "";
+                    lm.clearLicenseNotification?.();
+                }
+                return;
+            }
+            // Hasta que la licencia responde no se sabe si el usuario paga.
+            if (!this.licenseResolved || this.licenseEnvUnsupported) return;
+            const sig = this.attemptedPro.join("|");
+            if (sig === this.lastBlockedSig) return;
+            this.lastBlockedSig = sig;
+            this.noticeShown = true;
+            const n = this.attemptedPro.length;
+            const list = n === 1 ? this.attemptedPro[0]
+                : this.attemptedPro.slice(0, -1).join(", ") + " and " + this.attemptedPro[n - 1];
+            lm.notifyFeatureBlocked?.(
+                `Bar Chart with Variation %: ${list} ${n === 1 ? "is" : "are"} part of the Pro plan.`);
+        } catch (_) { /* la notificacion nunca rompe el render */ }
     }
 
     private updateSettings(dataView: DataView) {
@@ -331,6 +430,7 @@ export class Visual implements IVisual {
         const pl = objects?.panelLayout;
         this.settings.panelLayout.minPanelWidth  = getValue(pl, "minPanelWidth",  120);
         this.settings.panelLayout.enableScroll   = getValue(pl, "enableScroll",   true);
+        this.settings.panelLayout.minPanelHeight = getValue(pl, "minPanelHeight", 120);
         this.settings.panelLayout.barBorderRadius = getValue(pl, "barBorderRadius", 2);
 
         const al = objects?.analyticalLines;
@@ -353,9 +453,14 @@ export class Visual implements IVisual {
         const leg = objects?.legend;
         this.settings.legend.show     = getValue(leg, "show",     false);
         this.settings.legend.position = getValue(leg, "position", "bottom");
+        this.settings.legend.textColor = getValue(leg, "textColor", "#444444");
 
         const acc = objects?.accessibility;
         this.settings.accessibility.highContrastMode = getValue(acc, "highContrastMode", false);
+
+        // Copia de lo que eligio el usuario, antes del gating del tier gratuito: es lo
+        // que ve el panel de formato.
+        this.rawSettings = JSON.parse(JSON.stringify(this.settings));
     }
 
     private render(options: VisualUpdateOptions) {
@@ -377,7 +482,8 @@ export class Visual implements IVisual {
         let catValues           = categories.values.map(v => v?.toString() || "");
 
         // ── Sort order ─────────────────────────────────────────────────────
-        const sortOrder = this.settings.axisSettings.sortOrder;
+        // Pro: el gating de mas abajo llegaba tarde, el orden ya estaba aplicado.
+        const sortOrder = this.isPro ? this.settings.axisSettings.sortOrder : "auto";
         // sortIndexMap[newIndex] = originalIndex — keeps data aligned with labels
         let sortIndexMap: number[] = catValues.map((_, i) => i);
         if (sortOrder !== "auto") {
@@ -496,6 +602,18 @@ export class Visual implements IVisual {
         const isLimited = !this.isPro && seriesList.length > maxPanels;
         const visible   = isLimited ? seriesList.slice(0, maxPanels) : seriesList;
 
+        // Lo que el usuario ha pedido y el tier gratuito no da. Se calcula antes de
+        // apagarlo, para que Power BI muestre su aviso de compra.
+        const lines = this.settings.analyticalLines;
+        const attempted: string[] = [];
+        if (isLimited) attempted.push(`more than ${maxPanels} panels`);
+        if (lines.showAverage || lines.showMax || lines.showMin || lines.showMedian || lines.showRef) attempted.push("analytical lines");
+        if (lines.showBand) attempted.push("the reference band");
+        if (this.settings.valueLabels.show) attempted.push("value labels");
+        if (this.settings.axisSettings.sortOrder !== "auto") attempted.push("sort order");
+        if (seriesList.some(s => s.cfColors.some(c => c != null))) attempted.push("per-bar colours");
+        this.attemptedPro = this.isPro ? [] : attempted;
+
         // Pro-only features: enforce when not licensed
         if (!this.isPro) {
             // 1. Analytical lines — disabled
@@ -539,20 +657,26 @@ export class Visual implements IVisual {
         const oMR  = 8;
         const oMB  = 20 + (legendPos === "bottom" ? legendH : 0);
 
-        // ── Scroll: expand SVG if panels would be narrower than minPanelWidth ──
-        const minPW  = this.settings.panelLayout.minPanelWidth;
+        // ── Scroll: expand SVG if panels would be narrower or shorter than the minimum ──
+        // Antes solo habia scroll horizontal: con muchas filas los paneles se
+        // aplastaban hasta 40px y se cortaban por abajo, sin barra vertical.
+        const minPW  = Math.max(this.settings.panelLayout.minPanelWidth || 0, 40);
+        const minPH  = Math.max(this.settings.panelLayout.minPanelHeight || 0, 40);
         const scroll = this.settings.panelLayout.enableScroll;
-        const naturalCellW = (width - oML - oMR) / ncols;
-        const needsScroll  = scroll && naturalCellW < minPW;
-        const svgWidth     = needsScroll ? oML + oMR + ncols * minPW : width;
+        const naturalCellW = (width  - oML - oMR) / ncols;
+        const naturalCellH = (height - oMT - oMB) / nrows;
+        const needsScrollX = scroll && naturalCellW < minPW;
+        const needsScrollY = scroll && naturalCellH < minPH;
+        const svgWidth     = needsScrollX ? oML + oMR + ncols * minPW : width;
+        const svgHeight    = needsScrollY ? oMT + oMB + nrows * minPH : height;
 
-        // Apply scroll style to host container and update SVG width
-        this.target.style.overflowX = needsScroll ? "auto" : "hidden";
-        this.target.style.overflowY = "hidden";
-        this.svg.attr("width", svgWidth);
+        // Apply scroll style to host container and update SVG size
+        this.target.style.overflowX = needsScrollX ? "auto" : "hidden";
+        this.target.style.overflowY = needsScrollY ? "auto" : "hidden";
+        this.svg.attr("width", svgWidth).attr("height", svgHeight);
 
         const gridW  = svgWidth - oML - oMR;
-        const gridH  = height - oMT - oMB;
+        const gridH  = svgHeight - oMT - oMB;
         const cellW  = Math.max(gridW  / ncols, 40);
         const cellH  = Math.max(gridH  / nrows, 40);
 
@@ -919,7 +1043,7 @@ export class Visual implements IVisual {
         if (this.settings.legend.show) {
             const ly = legendPos === "top"
                 ? 4
-                : height - legendH + 4;
+                : svgHeight - legendH + 4;
             const posColor = this.settings.variationLabels.positiveColor;
             const negColorLeg = this.settings.variationLabels.negativeColor;
             const swatchSize  = 10;
@@ -935,7 +1059,7 @@ export class Visual implements IVisual {
                 .attr("rx", 2).attr("fill", posColor);
             this.legendGroup.append("text")
                 .attr("x", startX + swatchSize + 4).attr("y", ly + swatchSize)
-                .style("font-size", "10px").style("fill", "#444")
+                .style("font-size", "10px").style("fill", this.settings.legend.textColor)
                 .text("Positive");
 
             // Negative item
@@ -952,18 +1076,19 @@ export class Visual implements IVisual {
             }
             this.legendGroup.append("text")
                 .attr("x", startX + itemSpacing + swatchSize + 4).attr("y", ly + swatchSize)
-                .style("font-size", "10px").style("fill", "#444")
+                .style("font-size", "10px").style("fill", this.settings.legend.textColor)
                 .text("Negative");
         }
 
         // ── Watermark & freemium message ───────────────────────────────────
-        this.renderWatermark(svgWidth, height);
-        const msgData = isLimited ? [`Pro: +${seriesList.length - maxPanels} more panels`] : [];
+        this.renderWatermark(svgWidth, svgHeight);
+        // Nota neutra, sin llamada a comprar: la ruta de compra es la notificacion de Power BI.
+        const msgData = isLimited ? [`Showing ${maxPanels} of ${seriesList.length} panels`] : [];
         this.messageGroup.selectAll(".freemium-msg").data(msgData)
             .join("text").classed("freemium-msg", true)
-            .attr("x", svgWidth / 2).attr("y", height - 6)
+            .attr("x", svgWidth / 2).attr("y", svgHeight - 6)
             .attr("text-anchor", "middle")
-            .style("font-size", "11px").style("font-weight", "bold").style("fill", "#FF4081")
+            .style("font-size", "11px").style("font-weight", "normal").style("fill", "#83827D")
             .text(d => d);
 
         // ── Tooltips via wrapper (handles all mouse events) ─────────────────
@@ -984,6 +1109,18 @@ export class Visual implements IVisual {
     }
 
     public enumerateObjectInstances(options: powerbi.EnumerateVisualObjectInstancesOptions): powerbi.VisualObjectInstanceEnumeration {
+        // El panel muestra lo que eligio el usuario, no lo que pinta el tier gratuito:
+        // si no, un ajuste Pro se apagaba solo al activarlo.
+        const effective = this.settings;
+        if (this.rawSettings) this.settings = this.rawSettings;
+        try {
+            return this.enumerateInstances(options);
+        } finally {
+            this.settings = effective;
+        }
+    }
+
+    private enumerateInstances(options: powerbi.EnumerateVisualObjectInstancesOptions): powerbi.VisualObjectInstance[] {
         const objectName = options.objectName;
         const instances: powerbi.VisualObjectInstance[] = [];
         switch (objectName) {
@@ -1045,6 +1182,7 @@ export class Visual implements IVisual {
             case "panelLayout":
                 instances.push({ objectName, selector: null, properties: {
                     minPanelWidth:   this.settings.panelLayout.minPanelWidth,
+                    minPanelHeight:  this.settings.panelLayout.minPanelHeight,
                     enableScroll:    this.settings.panelLayout.enableScroll,
                     barBorderRadius: this.settings.panelLayout.barBorderRadius
                 }});
@@ -1070,8 +1208,9 @@ export class Visual implements IVisual {
                 break;
             case "legend":
                 instances.push({ objectName, selector: null, properties: {
-                    show:     this.settings.legend.show,
-                    position: this.settings.legend.position
+                    show:      this.settings.legend.show,
+                    position:  this.settings.legend.position,
+                    textColor: { solid: { color: this.settings.legend.textColor } }
                 }});
                 break;
             case "accessibility":

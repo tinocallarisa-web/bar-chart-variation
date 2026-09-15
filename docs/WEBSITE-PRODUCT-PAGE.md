@@ -30,13 +30,13 @@ Bar Chart with Variation % eliminates that work entirely. Drop your measure in, 
 - **No DAX required** — variation is computed inside the visual
 - **Small Multiples with shared Y scale** — all panels use the same axis for honest comparison
 - **Analytical lines** — average, min, max, median, and reference lines across all panels simultaneously
-- **Conditional formatting per bar** — set rules via the native Power BI fx button
+- **Per-bar colours** — one colour picker per category in Format pane → Bar Colors (Pro)
 - **Custom tooltips** — drag any field into the Tooltips bucket
 
 ### At a Glance
 | | |
 |---|---|
-| Version | 1.9.0.0 |
+| Version | 1.9.1.0 |
 | Availability | Microsoft AppSource |
 | License | Free / Pro |
 | API | Power BI Visuals API 5.11 |
@@ -91,8 +91,8 @@ Draw reference lines across all panels simultaneously:
 **Reference Band** ⭐ Pro
 Define a min/max corridor (e.g., acceptable variation range). Bars inside the band are on track. Configurable color and opacity.
 
-**Conditional Formatting** ⭐ Pro
-Per-bar color rules via the native Power BI fx button in the format pane. Set rules based on any measure — red if below target, green if above, etc.
+**Per-bar Colours** ⭐ Pro
+One colour picker per category in Format pane → Bar Colors.
 
 **Value Labels** ⭐ Pro
 Display the numeric value on each bar. Configurable color, font size, display units (none, thousands, millions, billions), and decimal places.
@@ -100,7 +100,7 @@ Display the numeric value on each bar. Configurable color, font size, display un
 **Sort Order** ⭐ Pro
 Sort the X axis categories: Auto (Power BI order), Ascending, or Descending. Sorting reorders both the labels and the underlying data values correctly.
 
-**Unlimited Panels** ⭐ Pro
+**Up to 100 Panels** ⭐ Pro
 Remove the 3-panel limit of the Free tier. Display as many Small Multiple panels as your data requires.
 
 ---
@@ -111,7 +111,7 @@ Remove the 3-panel limit of the Free tier. Display as many Small Multiple panels
 |---|---|---|
 | Variation % (automatic) | ✅ | ✅ |
 | Bar chart | ✅ | ✅ |
-| Small Multiples | Max 3 panels | Unlimited |
+| Small Multiples | Max 3 panels | Up to 100 |
 | Tooltips | ✅ | ✅ |
 | Cross-filtering | ✅ | ✅ |
 | Drill-down | ✅ | ✅ |
@@ -120,7 +120,7 @@ Remove the 3-panel limit of the Free tier. Display as many Small Multiple panels
 | High contrast mode | ✅ | ✅ |
 | Analytical lines | ❌ | ✅ |
 | Reference band | ❌ | ✅ |
-| Conditional formatting | ❌ | ✅ |
+| Per-bar colours | ❌ | ✅ |
 | Value labels | ❌ | ✅ |
 | Sort order (Asc/Desc) | ❌ | ✅ |
 
@@ -172,7 +172,7 @@ Licensed via Microsoft AppSource. Validation uses the official `IVisualLicenseMa
 ### v1.9.0.0
 **Added**
 - Tooltips bucket — drag any field to add custom rows to the tooltip
-- Conditional formatting per bar via native fx button (Bar Colors in format pane)
+- Per-bar colours in Bar Colors (earlier documents called this conditional formatting via the fx button; it is a colour picker per category)
 - Panel title show/hide and position (top/bottom)
 - Axis sort order: Ascending / Descending (Pro)
 - Value labels: show/hide, color, font size, display units, decimal places (Pro)

@@ -1,7 +1,9 @@
 /**
  * build-test.js
- * Genera un .pbiviz con isPro=true y guid_test para pruebas en Power BI Desktop.
- * USO: node build-test.js
+ * Genera un .pbiviz de prueba para Power BI Desktop.
+ * USO: node build-test.js [--free]
+ *   (sin flag) isPro forzado a true, guid + "_test"
+ *   --free     isPro sin forzar (tier gratuito real), guid + "_testfree"
  *
  * Reglas del skill pbiviz-appsource:
  * - Parchea -> empaqueta -> RESTAURA. El fuente siempre queda en estado produccion.
@@ -14,6 +16,7 @@ const { execSync } = require("child_process");
 const ROOT        = __dirname;
 const VISUAL_TS   = path.join(ROOT, "src", "visual.ts");
 const PBIVIZ_JSON = path.join(ROOT, "pbiviz.json");
+const forceFree   = process.argv.includes("--free");
 
 // 1. Leer originales
 const originalTs     = fs.readFileSync(VISUAL_TS,   "utf8");
@@ -22,32 +25,28 @@ const pbivizObj      = JSON.parse(originalPbiviz);
 
 console.log("\nBuild TEST — " + pbivizObj.visual.displayName + " v" + pbivizObj.visual.version);
 console.log("GUID real:  " + pbivizObj.visual.guid);
+console.log("Tier:       " + (forceFree ? "Free (licencia real)" : "Pro (forzado)"));
 
 // 2. Patch visual.ts — forzar isPro = true
-const LICENSE_BLOCK = `            // Production license check via Microsoft AppSource
-            try {
-                const licenseResult = await this.licenseManager.getAvailableServicePlans();
-                this.isPro = licenseResult.plans?.some(
-                    plan => plan.spIdentifier === "bar-chart-variation-pro-tcviz" &&
-                            plan.state === ServicePlanState.Active
-                ) ?? false;
-            } catch (_) {
-                this.isPro = false;
-            }`;
+//
+// En 1.9.1.0 la licencia salio de update() a requestLicenseDeferred(). Se parchea el
+// inicializador del campo: es estable, y requestLicenseDeferred() retorna de inmediato
+// si isPro ya es true.
+const LICENSE_BLOCK = `    private isPro: boolean = false;`;
+const LICENSE_PATCH = `    private isPro: boolean = true; // TEST BUILD — isPro forzado`;
 
-const LICENSE_PATCH = `            // TEST BUILD — isPro forzado a true
-            this.isPro = true;`;
-
-if (!originalTs.includes(LICENSE_BLOCK)) {
-    console.error("\nERROR: El bloque de licencia no coincide. Actualiza LICENSE_BLOCK en build-test.js.\n");
-    process.exit(1);
+let patchedTs = originalTs;
+if (!forceFree) {
+    if (!originalTs.includes(LICENSE_BLOCK)) {
+        console.error("\nERROR: El bloque de licencia no coincide. Actualiza LICENSE_BLOCK en build-test.js.\n");
+        process.exit(1);
+    }
+    patchedTs = originalTs.replace(LICENSE_BLOCK, LICENSE_PATCH);
 }
 
-const patchedTs = originalTs.replace(LICENSE_BLOCK, LICENSE_PATCH);
-
-// 3. Patch pbiviz.json — anadir _test al guid
-const realGuid    = pbivizObj.visual.guid;
-const testGuid    = realGuid + "_test";
+// 3. Patch pbiviz.json — sufijo propio por modo, para que convivan en Desktop
+const realGuid      = pbivizObj.visual.guid;
+const testGuid      = realGuid + (forceFree ? "_testfree" : "_test");
 const patchedPbiviz = originalPbiviz.replace('"' + realGuid + '"', '"' + testGuid + '"');
 
 console.log("GUID test:  " + testGuid);
@@ -72,8 +71,8 @@ try {
 }
 
 if (buildOk) {
-    const distFiles = require("fs").readdirSync(path.join(ROOT, "dist")).filter(f => f.endsWith(".pbiviz"));
-    console.log("\nBuild TEST listo en dist/" + (distFiles[0] || "*.pbiviz"));
+    const name = testGuid + "." + pbivizObj.visual.version + ".pbiviz";
+    console.log("\nBuild TEST listo en dist/" + name);
     console.log("Importa el .pbiviz en Power BI Desktop y prueba.\n");
 } else {
     process.exit(1);
