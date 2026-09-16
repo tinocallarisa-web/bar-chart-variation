@@ -159,7 +159,10 @@ export class Visual implements IVisual {
     private licenseResolved = false;
     private licenseEnvUnsupported = false;
     private noticeShown = false;
-    private lastBlockedSig = "";
+    /** Funciones Pro de las que ya se ha avisado en esta sesión de edición */
+    private notifiedPro: string[] = [];
+    /** Temporizador que deja la barra de Upgrade cuando termina el banner */
+    private licenseIconTimer: number | null = null;
     private attemptedPro: string[] = [];
     private lastOptions: VisualUpdateOptions;
     private rawSettings: VisualSettings;
@@ -364,35 +367,60 @@ export class Visual implements IVisual {
      * "Pro: +N more panels" y los ajustes Pro se apagaban en silencio: no habia
      * ningun sitio donde comprar.
      */
+    private cancelLicenseIcon(): void {
+        if (this.licenseIconTimer !== null) {
+            window.clearTimeout(this.licenseIconTimer);
+            this.licenseIconTimer = null;
+        }
+    }
+
     private syncLicenseNotification(): void {
         const lm = this.licenseManager as any;
         if (!lm) return;
         try {
             if (this.isPro || this.attemptedPro.length === 0) {
+                this.cancelLicenseIcon();
                 if (this.noticeShown) {
                     this.noticeShown = false;
-                    this.lastBlockedSig = "";
+                    this.notifiedPro = [];
                     lm.clearLicenseNotification?.();
                 }
                 return;
             }
             // Hasta que la licencia responde no se sabe si el usuario paga.
             if (!this.licenseResolved || this.licenseEnvUnsupported) return;
-            const sig = this.attemptedPro.join("|");
-            if (sig === this.lastBlockedSig) return;
-            this.lastBlockedSig = sig;
+            // Solo las funciones recién activadas merecen un banner; quitar una no vuelve a avisar.
+            const added = this.attemptedPro.filter(a => this.notifiedPro.indexOf(a) === -1);
+            this.notifiedPro = this.attemptedPro.slice();
+            if (added.length === 0) return;
             this.noticeShown = true;
-            const n = this.attemptedPro.length;
+            const n = added.length;
             const es = (this.host.locale || "").toLowerCase().startsWith("es");
-            const items = es ? this.attemptedPro.map(a => ES_LABELS[a] || a) : this.attemptedPro;
+            const items = es ? added.map(a => ES_LABELS[a] || a) : added;
             const list = n === 1 ? items[0]
                 : items.slice(0, -1).join(", ") + (es ? " y " : " and ") + items[n - 1];
             const msg = es
-                ? `Bar Chart with Variation %: ${list} ${n === 1 ? "forma" : "forman"} parte del plan Pro y se muestran como vista previa con marca de agua.`
+                ? `Bar Chart with Variation %: ${list} ${n === 1 ? "forma" : "forman"} parte del plan Pro y se ${n === 1 ? "muestra" : "muestran"} como vista previa con marca de agua.`
                 : `Bar Chart with Variation %: ${list} ${n === 1 ? "is" : "are"} part of the Pro plan, shown as a watermarked preview.`;
-            // Banner de 10 s con la accion concreta, y el icono persistente de modo edicion.
-            lm.notifyFeatureBlocked?.(msg.slice(0, 500));
-            lm.notifyLicenseRequired?.(0 /* LicenseNotificationType.General */);
+            // Power BI muestra una notificación a la vez: se retira la anterior, se lanza el banner
+            // con la función concreta (unos 10 s) y, al terminar, la barra de Upgrade persistente.
+            const show = () => {
+                try {
+                    lm.notifyFeatureBlocked?.(msg.slice(0, 500));
+                    this.cancelLicenseIcon();
+                    this.licenseIconTimer = window.setTimeout(() => {
+                        this.licenseIconTimer = null;
+                        if (this.isPro || this.attemptedPro.length === 0) return;
+                        try { lm.notifyLicenseRequired?.(0 /* LicenseNotificationType.General */); } catch (_) { /* nunca rompe */ }
+                    }, 10500);
+                } catch (_) { /* nunca rompe el render */ }
+            };
+            const cleared = lm.clearLicenseNotification?.();
+            if (cleared && typeof cleared.then === "function") {
+                cleared.then(show, show);
+            } else {
+                show();
+            }
         } catch (_) { /* la notificacion nunca rompe el render */ }
     }
 
