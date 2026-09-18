@@ -4,6 +4,19 @@ All notable changes to this visual are documented here.
 
 ---
 
+## [1.9.3.0] — 2026-09-18
+
+### Fixed
+- **Only one purchase notice was reaching the user.** `notifyFeatureBlocked` and
+  `notifyLicenseRequired` were called back to back, and Power BI shows a single notification at a
+  time, so the second replaced the first: the banner naming the actual Pro feature was never seen.
+  The previous notice is now cleared first, the banner names only the newly activated features, and
+  the persistent Upgrade bar follows once the banner ends (~10.5 s). Pattern verified in Risk Matrix
+  Pro in the Power BI service.
+- Turning a Pro feature off no longer re-triggers a banner; only newly used features notify.
+
+---
+
 ## [1.9.2.0] — 2026-09-15
 
 1.9.1.0 was never submitted; 1.9.2.0 includes it.
