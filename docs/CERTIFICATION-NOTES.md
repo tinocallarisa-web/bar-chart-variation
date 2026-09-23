@@ -21,7 +21,7 @@ characters without warning.
 - **Support page:** https://tinocallarisa-web.github.io/bar-chart-variation/support.html
 - **Privacy policy:** https://tinocallarisa-web.github.io/bar-chart-variation/privacy.html
 - **Terms of service:** https://tinocallarisa-web.github.io/bar-chart-variation/terms.html
-- **Demo video:** https://www.youtube.com/watch?v=hALaKTXPsMA
+- **Demo video:** https://www.youtube.com/watch?v=vIszaUlC6G0
 
 ---
 

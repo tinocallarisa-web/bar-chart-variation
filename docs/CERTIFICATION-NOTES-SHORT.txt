@@ -38,5 +38,5 @@ TEST - FREE (no plan)
 TEST - PRO: the same, no watermark, no notification.
 
 Rendering events on every path of update(). Known gap: Format Pane (classic API).
-Video https://www.youtube.com/watch?v=hALaKTXPsMA
+Video https://www.youtube.com/watch?v=vIszaUlC6G0
 Support: tinocallarisa-web.github.io/bar-chart-variation/

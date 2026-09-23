@@ -127,5 +127,6 @@ docs/APPSOURCE-LISTING.md, docs/CERTIFICATION-NOTES.md,
 docs/CERTIFICATION-NOTES-SHORT.txt, la infografía Y EN PARTNER CENTER.
 El único que Microsoft revisa es el último.
 
-El id que llevan los documentos ahora es hALaKTXPsMA, el de la versión
-anterior. Si grabas uno nuevo, hay que sustituirlo en los cuatro sitios.
+El id de la 1.10.0.0 es vIszaUlC6G0, grabado el 23-09-2026, y ya está puesto
+en los siete ficheros del repo. Falta pegarlo en Partner Center, que es el
+único que Microsoft revisa.

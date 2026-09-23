@@ -107,12 +107,13 @@ Three reference measures — Previous Year, Plan / Budget and Forecast — each 
 | Privacy policy | https://tinocallarisa-web.github.io/bar-chart-variation/privacy.html |
 | Terms / licence | https://tinocallarisa-web.github.io/bar-chart-variation/terms.html |
 | GitHub repo | https://github.com/tinocallarisa-web/bar-chart-variation |
-| Video | https://www.youtube.com/watch?v=hALaKTXPsMA |
+| Video | https://www.youtube.com/watch?v=vIszaUlC6G0 |
 
 Canonical YouTube URL only (policy 100.3.3.3). `youtu.be`, `/shorts/` and `/embed/` are
-rejected automatically. The id above is the 1.9 video; if a new one is recorded it has to be
-changed here, in both certification notes, in the infographic **and in Partner Center** — and
-the console is the only one Microsoft reviews.
+rejected automatically. The id above is the 1.10.0.0 video, recorded on 2026-09-23. If it is
+ever replaced it has to be changed here, in both certification notes, in the infographic, in
+`support.html` on both copies **and in Partner Center** — and the console is the only one
+Microsoft reviews.
 
 ## Search keywords (max 3)
 
