@@ -1,32 +1,50 @@
 {
   "dataRoles": [
     {
-      "displayName": "Axis",
+      "displayName": "Axis", "displayNameKey": "Visual_Axis",
       "name": "category",
       "kind": "Grouping"
     },
     {
-      "displayName": "Small Multiple",
+      "displayName": "Small Multiple", "displayNameKey": "Visual_SmallMultiple",
       "name": "series",
       "kind": "Grouping"
     },
     {
-      "displayName": "Values",
+      "displayName": "Values", "displayNameKey": "Visual_Values",
       "name": "measure",
       "kind": "Measure"
     },
     {
-      "displayName": "Tooltips",
+      "displayName": "Previous Year (Pro)", "displayNameKey": "Visual_Role_PreviousYear",
+      "name": "previousYear",
+      "kind": "Measure",
+      "description": "Reference measure: the same figure for the prior year or prior period.", "descriptionKey": "Visual_Desc_PreviousYear"
+    },
+    {
+      "displayName": "Plan / Budget (Pro)", "displayNameKey": "Visual_Role_Plan",
+      "name": "plan",
+      "kind": "Measure",
+      "description": "Reference measure: the planned or budgeted figure.", "descriptionKey": "Visual_Desc_Plan"
+    },
+    {
+      "displayName": "Forecast (Pro)", "displayNameKey": "Visual_Role_Forecast",
+      "name": "forecast",
+      "kind": "Measure",
+      "description": "Reference measure: the forecast figure.", "descriptionKey": "Visual_Desc_Forecast"
+    },
+    {
+      "displayName": "Tooltips", "displayNameKey": "Visual_Tooltips",
       "name": "tooltips",
       "kind": "Measure"
     }
   ],
   "objects": {
     "barSettings": {
-      "displayName": "BarSettings",
+      "displayName": "Bar settings", "displayNameKey": "Visual_BarSettings",
       "properties": {
         "barColor": {
-          "displayName": "DefaultBarColor",
+          "displayName": "Default bar color", "displayNameKey": "Visual_DefaultBarColor",
           "type": {
             "fill": {
               "solid": {
@@ -36,7 +54,7 @@
           }
         },
         "negativeColor": {
-          "displayName": "NegativeBarColor",
+          "displayName": "Negative bar color", "displayNameKey": "Visual_NegativeBarColor",
           "type": {
             "fill": {
               "solid": {
@@ -46,13 +64,13 @@
           }
         },
         "barOpacity": {
-          "displayName": "Opacity",
+          "displayName": "Opacity (%)", "displayNameKey": "Visual_Opacity",
           "type": {
             "numeric": true
           }
         },
         "axisTextColor": {
-          "displayName": "AxisTextColor",
+          "displayName": "Axis text color", "displayNameKey": "Visual_AxisTextColor",
           "type": {
             "fill": {
               "solid": {
@@ -61,18 +79,25 @@
             }
           }
         },
-        "gridLineColor": {
-          "displayName": "LinesColor",
+        "borderColor": {
+          "displayName": "Bar border color", "displayNameKey": "Visual_BarBorderColor",
           "type": {
             "fill": {
               "solid": {
                 "color": true
               }
             }
+          }
+        },
+        "borderWidth": {
+          "displayName": "Bar border width", "displayNameKey": "Visual_BarBorderWidth",
+          "description": "0 turns the border off. It is drawn inside the bar, so it never changes its size.", "descriptionKey": "Visual_Desc_BorderWidth",
+          "type": {
+            "numeric": true
           }
         },
         "connectorColor": {
-          "displayName": "ConnectorColor",
+          "displayName": "Connector color", "displayNameKey": "Visual_ConnectorColor",
           "type": {
             "fill": {
               "solid": {
@@ -83,17 +108,51 @@
         }
       }
     },
+    "comparison": {
+      "displayName": "Comparison", "displayNameKey": "Visual_Comparison",
+      "properties": {
+        "compareTo": {
+          "displayName": "Compare to", "displayNameKey": "Visual_CompareTo",
+          "type": {
+            "enumeration": [
+              { "value": "previous", "displayName": "Previous bar", "displayNameKey": "Visual_Enum_PreviousBar" },
+              { "value": "previousYear", "displayName": "Previous Year", "displayNameKey": "Visual_Enum_PreviousYear" },
+              { "value": "plan", "displayName": "Plan / Budget", "displayNameKey": "Visual_Enum_Plan" },
+              { "value": "forecast", "displayName": "Forecast", "displayNameKey": "Visual_Enum_Forecast" }
+            ]
+          }
+        },
+        "varianceMode": {
+          "displayName": "Variance (Pro)", "displayNameKey": "Visual_Variance",
+          "type": {
+            "enumeration": [
+              { "value": "relative", "displayName": "Relative (%)", "displayNameKey": "Visual_Enum_Relative" },
+              { "value": "absolute", "displayName": "Absolute", "displayNameKey": "Visual_Enum_Absolute" },
+              { "value": "both", "displayName": "Both", "displayNameKey": "Visual_Enum_Both" }
+            ]
+          }
+        },
+        "showMarker": {
+          "displayName": "Reference marker", "displayNameKey": "Visual_ReferenceMarker",
+          "type": { "bool": true }
+        },
+        "markerColor": {
+          "displayName": "Marker color", "displayNameKey": "Visual_MarkerColor",
+          "type": { "fill": { "solid": { "color": true } } }
+        }
+      }
+    },
     "variationLabels": {
-      "displayName": "VariationLabels",
+      "displayName": "Variation labels", "displayNameKey": "Visual_VariationLabels",
       "properties": {
         "show": {
-          "displayName": "Show",
+          "displayName": "Show", "displayNameKey": "Visual_Show",
           "type": {
             "bool": true
           }
         },
         "fontSize": {
-          "displayName": "FontSize",
+          "displayName": "Font size", "displayNameKey": "Visual_FontSize",
           "type": {
             "formatting": {
               "fontSize": true
@@ -101,7 +160,7 @@
           }
         },
         "positiveColor": {
-          "displayName": "PositiveColor",
+          "displayName": "Positive color", "displayNameKey": "Visual_PositiveColor",
           "type": {
             "fill": {
               "solid": {
@@ -111,7 +170,7 @@
           }
         },
         "negativeColor": {
-          "displayName": "NegativeBarColor",
+          "displayName": "Negative color", "displayNameKey": "Visual_NegativeColor",
           "type": {
             "fill": {
               "solid": {
@@ -121,19 +180,19 @@
           }
         },
         "decimalPlaces": {
-          "displayName": "DecimalPlaces",
+          "displayName": "Decimal places", "displayNameKey": "Visual_DecimalPlaces",
           "type": {
             "numeric": true
           }
         },
         "showArrows": {
-          "displayName": "ShowArrows",
+          "displayName": "Show arrows", "displayNameKey": "Visual_ShowArrows",
           "type": {
             "bool": true
           }
         },
         "showConnectors": {
-          "displayName": "ShowConnectors",
+          "displayName": "Show connectors", "displayNameKey": "Visual_ShowConnectors",
           "type": {
             "bool": true
           }
@@ -141,16 +200,16 @@
       }
     },
     "valueLabels": {
-      "displayName": "Data Labels (Pro)",
+      "displayName": "Data labels (Pro)", "displayNameKey": "Visual_DataLabels",
       "properties": {
         "show": {
-          "displayName": "Show",
+          "displayName": "Show", "displayNameKey": "Visual_Show",
           "type": {
             "bool": true
           }
         },
         "color": {
-          "displayName": "AxisTextColor",
+          "displayName": "Color", "displayNameKey": "Visual_Color",
           "type": {
             "fill": {
               "solid": {
@@ -160,7 +219,7 @@
           }
         },
         "fontSize": {
-          "displayName": "FontSize",
+          "displayName": "Font size", "displayNameKey": "Visual_FontSize",
           "type": {
             "formatting": {
               "fontSize": true
@@ -168,13 +227,13 @@
           }
         },
         "displayUnits": {
-          "displayName": "DisplayUnits",
+          "displayName": "Display units", "displayNameKey": "Visual_DisplayUnits",
           "type": {
             "numeric": true
           }
         },
         "valueDecimalPlaces": {
-          "displayName": "DecimalPlaces",
+          "displayName": "Decimal places", "displayNameKey": "Visual_DecimalPlaces",
           "type": {
             "numeric": true
           }
@@ -182,10 +241,10 @@
       }
     },
     "colorSelector": {
-      "displayName": "SeriesColors",
+      "displayName": "Series colors", "displayNameKey": "Visual_SeriesColors",
       "properties": {
         "fill": {
-          "displayName": "DefaultBarColor",
+          "displayName": "Color", "displayNameKey": "Visual_Color",
           "type": {
             "fill": {
               "solid": {
@@ -197,10 +256,10 @@
       }
     },
     "dataColors": {
-      "displayName": "Bar Colors (Pro)",
+      "displayName": "Bar colors (Pro)", "displayNameKey": "Visual_BarColors",
       "properties": {
         "fill": {
-          "displayName": "Color",
+          "displayName": "Color", "displayNameKey": "Visual_Color",
           "type": {
             "fill": {
               "solid": {
@@ -212,37 +271,56 @@
       }
     },
     "panelTitle": {
-      "displayName": "PanelTitle",
+      "displayName": "Panel title", "displayNameKey": "Visual_PanelTitle",
       "properties": {
         "show": {
-          "displayName": "Show",
+          "displayName": "Show", "displayNameKey": "Visual_Show",
           "type": { "bool": true }
         },
         "position": {
-          "displayName": "Position",
+          "displayName": "Position", "displayNameKey": "Visual_Position",
           "type": {
             "enumeration": [
-              { "displayName": "Top",    "value": "top"    },
-              { "displayName": "Bottom", "value": "bottom" }
+              { "displayName": "Top", "displayNameKey": "Visual_Enum_Top",    "value": "top"    },
+              { "displayName": "Bottom", "displayNameKey": "Visual_Enum_Bottom", "value": "bottom" }
             ]
           }
         },
         "fontSize": {
-          "displayName": "FontSize",
+          "displayName": "Font size", "displayNameKey": "Visual_FontSize",
           "type": {
             "formatting": {
               "fontSize": true
             }
           }
         },
+        "titleStyle": {
+          "displayName": "Style", "displayNameKey": "Visual_TitleStyle",
+          "type": {
+            "enumeration": [
+              { "displayName": "Separator line", "displayNameKey": "Visual_Enum_Line", "value": "line" },
+              { "displayName": "Filled header", "displayNameKey": "Visual_Enum_Filled", "value": "background" }
+            ]
+          }
+        },
+        "backgroundColor": {
+          "displayName": "Header fill", "displayNameKey": "Visual_HeaderFill",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
         "useSeriesColor": {
-          "displayName": "UseSeriesColor",
+          "displayName": "Use series color", "displayNameKey": "Visual_UseSeriesColor",
           "type": {
             "bool": true
           }
         },
         "customColor": {
-          "displayName": "Color",
+          "displayName": "Color", "displayNameKey": "Visual_Color",
           "type": {
             "fill": {
               "solid": {
@@ -254,127 +332,133 @@
       }
     },
     "axisSettings": {
-      "displayName": "Axis",
+      "displayName": "Axis", "displayNameKey": "Visual_Axis",
       "properties": {
         "sortOrder": {
-          "displayName": "Sort Order",
+          "displayName": "Sort order", "displayNameKey": "Visual_SortOrder",
           "type": {
             "enumeration": [
-              { "displayName": "Auto (Power BI)", "value": "auto" },
-              { "displayName": "Ascending",       "value": "asc"  },
-              { "displayName": "Descending",      "value": "desc" }
+              { "displayName": "Auto (Power BI)", "displayNameKey": "Visual_Enum_Auto", "value": "auto" },
+              { "displayName": "Ascending", "displayNameKey": "Visual_Enum_Ascending",       "value": "asc"  },
+              { "displayName": "Descending", "displayNameKey": "Visual_Enum_Descending",      "value": "desc" }
             ]
           }
         },
-        "showXLabels":  { "displayName": "Show X Labels",  "type": { "bool": true } },
-        "showYLabels":  { "displayName": "Show Y Labels",  "type": { "bool": true } },
-        "xFontSize":    { "displayName": "X Label Size",   "type": { "formatting": { "fontSize": true } } },
-        "yFontSize":    { "displayName": "Y Label Size",   "type": { "formatting": { "fontSize": true } } }
+        "showXLabels":  { "displayName": "Show X labels", "displayNameKey": "Visual_ShowXLabels",  "type": { "bool": true } },
+        "showYLabels":  { "displayName": "Show Y labels", "displayNameKey": "Visual_ShowYLabels",  "type": { "bool": true } },
+        "xFontSize":    { "displayName": "X label size", "displayNameKey": "Visual_XLabelSize",   "type": { "formatting": { "fontSize": true } } },
+        "yFontSize":    { "displayName": "Y label size", "displayNameKey": "Visual_YLabelSize",   "type": { "formatting": { "fontSize": true } } }
       }
     },
     "panelStyle": {
-      "displayName": "Panel Background",
+      "displayName": "Panel background", "displayNameKey": "Visual_PanelBackground",
       "properties": {
-        "showBackground": { "displayName": "Show Background", "type": { "bool": true } },
+        "showBackground": { "displayName": "Show background", "displayNameKey": "Visual_ShowBackground", "type": { "bool": true } },
         "bgColor": {
-          "displayName": "Color",
+          "displayName": "Color", "displayNameKey": "Visual_Color",
           "type": { "fill": { "solid": { "color": true } } }
         },
-        "bgOpacity": { "displayName": "Opacity (%)", "type": { "numeric": true } }
+        "bgOpacity": { "displayName": "Opacity (%)", "displayNameKey": "Visual_Opacity", "type": { "numeric": true } }
       }
     },
     "panelLayout": {
-      "displayName": "Panel Layout",
+      "displayName": "Panel layout", "displayNameKey": "Visual_PanelLayout",
       "properties": {
+        "columns": {
+          "displayName": "Columns (0 = auto)", "displayNameKey": "Visual_Columns",
+          "description": "Number of panel columns. 0 lays them out automatically.",
+          "descriptionKey": "Visual_Desc_Columns",
+          "type": { "numeric": true }
+        },
         "minPanelWidth": {
-          "displayName": "Min Panel Width (px)",
+          "displayName": "Min panel width (px)", "displayNameKey": "Visual_MinPanelWidth",
           "type": { "numeric": true }
         },
         "minPanelHeight": {
-          "displayName": "Min Panel Height (px)",
+          "displayName": "Min panel height (px)", "displayNameKey": "Visual_MinPanelHeight",
           "type": { "numeric": true }
         },
         "enableScroll": {
-          "displayName": "Enable Scroll",
+          "displayName": "Enable scroll", "displayNameKey": "Visual_EnableScroll",
           "type": { "bool": true }
         },
         "barBorderRadius": {
-          "displayName": "Bar Corner Radius",
+          "displayName": "Bar corner radius", "displayNameKey": "Visual_BarCornerRadius",
           "type": { "numeric": true }
         }
       }
     },
     "analyticalLines": {
-      "displayName": "Analytical Lines (Pro)",
+      "displayName": "Analytical lines (Pro)", "displayNameKey": "Visual_AnalyticalLines",
       "properties": {
-        "showAverage": { "displayName": "Show Average", "type": { "bool": true } },
-        "showMax":     { "displayName": "Show Max",     "type": { "bool": true } },
-        "showMin":     { "displayName": "Show Min",     "type": { "bool": true } },
-        "showMedian":  { "displayName": "Show Median",  "type": { "bool": true } },
+        "showAverage": { "displayName": "Show average", "displayNameKey": "Visual_ShowAverage", "type": { "bool": true } },
+        "showMax":     { "displayName": "Show max", "displayNameKey": "Visual_ShowMax",     "type": { "bool": true } },
+        "showMin":     { "displayName": "Show min", "displayNameKey": "Visual_ShowMin",     "type": { "bool": true } },
+        "showMedian":  { "displayName": "Show median", "displayNameKey": "Visual_ShowMedian",  "type": { "bool": true } },
         "refValue": {
-          "displayName": "Reference Value",
+          "displayName": "Reference value", "displayNameKey": "Visual_ReferenceValue",
           "type": { "numeric": true }
         },
-        "showRef": { "displayName": "Show Reference Line", "type": { "bool": true } },
+        "showRef": { "displayName": "Show reference line", "displayNameKey": "Visual_ShowReferenceLine", "type": { "bool": true } },
         "lineColor": {
-          "displayName": "Line Color",
+          "displayName": "Line color", "displayNameKey": "Visual_LineColor",
           "type": { "fill": { "solid": { "color": true } } }
         },
         "lineStyle": {
-          "displayName": "Line Style",
+          "displayName": "Line style", "displayNameKey": "Visual_LineStyle",
           "type": {
             "enumeration": [
-              { "displayName": "Solid",  "value": "solid" },
-              { "displayName": "Dashed", "value": "dashed" },
-              { "displayName": "Dotted", "value": "dotted" }
+              { "displayName": "Solid", "displayNameKey": "Visual_Enum_Solid",  "value": "solid" },
+              { "displayName": "Dashed", "displayNameKey": "Visual_Enum_Dashed", "value": "dashed" },
+              { "displayName": "Dotted", "displayNameKey": "Visual_Enum_Dotted", "value": "dotted" }
             ]
           }
         },
-        "showLabel":  { "displayName": "Show Label",   "type": { "bool": true } },
-        "labelSize":  { "displayName": "Label Size",   "type": { "numeric": true } },
-        "showBand":   { "displayName": "Show Band",    "type": { "bool": true } },
+        "showLabel":  { "displayName": "Show label", "displayNameKey": "Visual_ShowLabel",   "type": { "bool": true } },
+        "labelSize":  { "displayName": "Label size", "displayNameKey": "Visual_LabelSize",   "type": { "numeric": true } },
+        "showBand":   { "displayName": "Show band", "displayNameKey": "Visual_ShowBand",    "type": { "bool": true } },
         "bandMin": {
-          "displayName": "Band Min",
+          "displayName": "Band min", "displayNameKey": "Visual_BandMin",
           "type": { "numeric": true }
         },
         "bandMax": {
-          "displayName": "Band Max",
+          "displayName": "Band max", "displayNameKey": "Visual_BandMax",
           "type": { "numeric": true }
         },
         "bandColor": {
-          "displayName": "Band Color",
+          "displayName": "Band color", "displayNameKey": "Visual_BandColor",
           "type": { "fill": { "solid": { "color": true } } }
         },
-        "bandOpacity": { "displayName": "Band Opacity (%)", "type": { "numeric": true } }
+        "bandOpacity": { "displayName": "Band opacity (%)", "displayNameKey": "Visual_BandOpacity", "type": { "numeric": true } }
       }
     },
     "legend": {
-      "displayName": "Legend",
+      "displayName": "Legend", "displayNameKey": "Visual_Legend",
       "properties": {
         "show": {
-          "displayName": "Show",
+          "displayName": "Show", "displayNameKey": "Visual_Show",
           "type": { "bool": true }
         },
         "position": {
-          "displayName": "Position",
+          "displayName": "Position", "displayNameKey": "Visual_Position",
           "type": {
             "enumeration": [
-              { "displayName": "Top", "value": "top" },
-              { "displayName": "Bottom", "value": "bottom" }
+              { "displayName": "Top", "displayNameKey": "Visual_Enum_Top", "value": "top" },
+              { "displayName": "Bottom", "displayNameKey": "Visual_Enum_Bottom", "value": "bottom" }
             ]
           }
         },
         "textColor": {
-          "displayName": "Text Color",
+          "displayName": "Text color", "displayNameKey": "Visual_TextColor",
           "type": { "fill": { "solid": { "color": true } } }
         }
       }
     },
     "accessibility": {
-      "displayName": "Accessibility",
+      "displayName": "Accessibility", "displayNameKey": "Visual_Accessibility",
       "properties": {
         "highContrastMode": {
-          "displayName": "High contrast (pattern for negatives)",
+          "displayName": "High contrast (pattern for negatives)", "displayNameKey": "Visual_HighContrast",
           "type": { "bool": true }
         }
       }
@@ -400,6 +484,21 @@
               {
                 "bind": {
                   "to": "measure"
+                }
+              },
+              {
+                "bind": {
+                  "to": "previousYear"
+                }
+              },
+              {
+                "bind": {
+                  "to": "plan"
+                }
+              },
+              {
+                "bind": {
+                  "to": "forecast"
                 }
               },
               {

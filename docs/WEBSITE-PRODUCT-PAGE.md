@@ -5,15 +5,17 @@
 ## TAB 1: OVERVIEW
 
 ### Headline
-**Stop writing DAX for % change. This visual does it for you.**
+**Better than last month is not the same as on plan.**
 
 ### Subheadline
-Bar Chart with Variation % automatically calculates and displays the percentage change between consecutive bars — in any Power BI report, with zero formulas.
+Bar Chart with Variation % writes the percentage change between bars by itself, and draws a marker where the figure should have been — your plan, your budget, your forecast or last year.
 
 ### The Problem It Solves
-Every analyst has written the same DAX measure: `DIVIDE([Current] - [Previous], [Previous])`. Then formatted it. Then styled the positive/negative colors. Then added arrows. Then repeated it for every metric in every report.
+Every analyst has written the same DAX measure: `DIVIDE([Current] - [Previous], [Previous])`. Then formatted it. Then styled the positive and negative colours. Then added arrows. Then repeated it for every metric in every report.
 
-Bar Chart with Variation % eliminates that work entirely. Drop your measure in, and the variation % appears automatically — between every bar, for every panel, across every Small Multiple.
+Bar Chart with Variation % removes that work. But comparing each bar with the one before it only answers half the question. A month can be better than the last one and still be well short of plan, and that is the number the meeting is about.
+
+Bind your plan, your budget, your forecast or last year, and every bar gets a horizontal marker at that level. The bar is the actual figure; the marker says where it should be. It takes no measure of your own beyond the one you already have: no `DATEADD`, no date table, no variance column.
 
 ### How It Works
 1. Drag a date or category field to **Axis**
@@ -27,16 +29,18 @@ Bar Chart with Variation % eliminates that work entirely. Drop your measure in, 
 - Any Power BI user who needs clean, annotated bar charts without DAX complexity
 
 ### What Makes It Different
-- **No DAX required** — variation is computed inside the visual
-- **Small Multiples with shared Y scale** — all panels use the same axis for honest comparison
-- **Analytical lines** — average, min, max, median, and reference lines across all panels simultaneously
+- **The reference marker** — plan, budget, forecast or last year, drawn on the bar and included in the Y scale, so a plan above actual still fits in the panel
+- **No DAX required** — the variation is computed inside the visual, and the reference is the measure you already have
+- **Small Multiples with shared Y scale** — all panels use the same axis for honest comparison, with a column count you choose
+- **It reads well small** — the layout follows the size of the visual: in a tile the legend and the axis step aside so the bars stay legible, and come back as you enlarge it
+- **Analytical lines** — average, min, max, median and reference lines across all panels at once
 - **Per-bar colours** — one colour picker per category in Format pane → Bar Colors (Pro)
-- **Custom tooltips** — drag any field into the Tooltips bucket
+- **Accessible** — the Windows high contrast theme is followed with nothing to turn on, and the format pane is available in Spanish
 
 ### At a Glance
 | | |
 |---|---|
-| Version | 1.9.1.0 |
+| Version | 1.10.0.0 |
 | Availability | Microsoft AppSource |
 | License | Free / Pro |
 | API | Power BI Visuals API 5.11 |
@@ -52,10 +56,10 @@ Bar Chart with Variation % eliminates that work entirely. Drop your measure in, 
 Calculates `(current − previous) / |previous| × 100` for every consecutive bar pair. Configurable decimal places, arrow direction indicators, and dashed connector lines.
 
 **Bar Chart**
-Standard vertical bar chart with configurable colors for positive and negative values, opacity, border radius, and axis label styling.
+Standard vertical bar chart with configurable colours for positive and negative values, opacity, corner radius and axis label styling. Bar borders with their own colour and width, drawn inside the bar so a zero value still sits on the baseline.
 
 **Small Multiples**
-Split any measure into multiple panels by dragging a category field to the Small Multiple bucket. All panels share the same Y scale for honest visual comparison. Free tier: up to 3 panels.
+Split any measure into multiple panels by dragging a category field to the Small Multiple bucket. All panels share the same Y scale for honest visual comparison. Set the number of columns or leave it automatic. Free tier: up to 3 panels.
 
 **Tooltips**
 Hover any bar to see: value, previous value, absolute change, and variation %. Drag extra fields into the Tooltips bucket to show additional context (budget, units, region, etc.).
@@ -67,7 +71,13 @@ Cross-filter other visuals by clicking bars. Multi-select with Ctrl+Click. Right
 Show/hide X and Y axis labels independently. Configure font size for each. Panel title with position (top/bottom), color, and font size.
 
 **Panel Layout**
-Set minimum panel width in pixels — the visual scrolls horizontally when panels don't fit. Configurable bar corner radius.
+Set the column count, and a minimum panel width and height in pixels — the visual scrolls when panels don't fit. Configurable bar corner radius.
+
+**Panel Titles**
+Position top or bottom, with a separator line or a filled header in a colour of your choosing. If the title colour would not read against the header, it falls back to black or white automatically.
+
+**A Layout That Follows The Size**
+Margins are measured, not fixed, and below certain sizes elements are removed rather than shrunk — the legend first, then the Y axis, the panel title and the X labels, in that order. The variation labels are last, because they are the point of the visual. Your settings are never modified: what you turn on is the maximum, and everything returns as you enlarge the visual.
 
 **Panel Background**
 Optional background color per panel with configurable opacity. Useful for visually separating panels in dense dashboards.
@@ -75,12 +85,15 @@ Optional background color per panel with configurable opacity. Useful for visual
 **Legend**
 Show/hide legend with position (top or bottom). Color swatches match series colors.
 
-**Accessibility**
-High contrast mode renders negative bars with a diagonal stripe pattern — readable without color distinction for color-blind users or print.
+**Accessibility and languages**
+The Windows high contrast theme is followed with nothing to turn on: the visual takes the theme's own colours and gives yours back untouched when you turn it off. Separately, a high contrast switch renders negative bars with a diagonal stripe pattern, readable without colour distinction for colour-blind users or print. The format pane is available in English and Spanish, and the visual honours interactions being turned off for it.
 
 ---
 
 ### Pro Features
+
+**Reference Measures** ⭐ Pro
+Bind `Previous Year`, `Plan / Budget` or `Forecast` and pick it under Comparison → Compare to. Every bar gets a horizontal marker at that level, and the reference is included in the Y scale so a plan above actual still fits inside the panel. Absolute variance shows the size of the gap instead of its ratio. The free tier keeps comparing against the previous category, which is an equally correct answer.
 
 **Analytical Lines** ⭐ Pro
 Draw reference lines across all panels simultaneously:
@@ -116,13 +129,17 @@ Remove the 3-panel limit of the Free tier. Display as many Small Multiple panels
 | Cross-filtering | ✅ | ✅ |
 | Drill-down | ✅ | ✅ |
 | Axis labels | ✅ | ✅ |
-| Panel title & background | ✅ | ✅ |
-| High contrast mode | ✅ | ✅ |
+| Panel title, header & background | ✅ | ✅ |
+| Panel columns | ✅ | ✅ |
+| Bar border colour & width | ✅ | ✅ |
+| Sort order (Asc/Desc) | ✅ | ✅ |
+| Windows high contrast & Spanish | ✅ | ✅ |
+| Reference measures (LY, Plan, Forecast) | ❌ | ✅ |
+| Absolute variance | ❌ | ✅ |
 | Analytical lines | ❌ | ✅ |
 | Reference band | ❌ | ✅ |
 | Per-bar colours | ❌ | ✅ |
 | Value labels | ❌ | ✅ |
-| Sort order (Asc/Desc) | ❌ | ✅ |
 
 ---
 

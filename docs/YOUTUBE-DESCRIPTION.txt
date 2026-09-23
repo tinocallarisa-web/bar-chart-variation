@@ -1,55 +1,131 @@
-YOUTUBE DESCRIPTION (long)
-==========================
+BAR CHART WITH VARIATION % v1.10.0.0 — YOUTUBE
+================================================================
 
-Bar Chart with Variation % by TCViz — automatically calculates and displays
-percentage changes between consecutive bars in Power BI. No DAX required.
+
+TÍTULO (el 1 es el que recomiendo)
+----------------------------------------------------------------
+1. Actual vs Plan in one Power BI bar chart — no DAX
+2. Power BI bar chart with variation %, plan and forecast markers
+3. Stop comparing to last month: plan vs actual in Power BI
+4. Are we on plan? The Power BI bar chart that answers it
+
+Por qué el 1: nombra el trabajo que hace, no el producto. 50 caracteres,
+cabe entero en el listado, lleva "Power BI" —que es lo que la gente escribe
+al buscar— y cierra con el gancho. "no DAX" lo entiende en dos segundos
+quien ha escrito DATEADD tres veces esta semana.
+
+El título de 1.9 vendía la variación automática. Ese ya no es el titular:
+lo tienen cuatro competidores. El titular de esta versión es que la
+comparación ya no es solo contra la barra anterior.
+
+No pongas "1.10" en el título: no le dice nada a quien no conoce el visual
+y envejece con cada versión.
+
+Versión en español, si el audio es en español:
+   Real contra plan en un gráfico de barras de Power BI, sin DAX
+
+
+DESCRIPCIÓN
+----------------------------------------------------------------
+Pégala tal cual. Los dos primeros párrafos son lo único que se ve sin
+desplegar, así que empiezan por el problema y no por el nombre.
+
+>>> EMPIEZA AQUÍ >>>
+
+A bar chart that compares each month against the one before answers "is
+this month better than the last one". It does not answer the question the
+meeting is actually about: are we on plan.
+
+Bar Chart with Variation % now answers both. Bind Plan, Budget, Forecast or
+Previous Year, and every bar gets a horizontal marker at the reference
+level — the bar is the actual figure, the marker says where it should be.
+It is the IBCS reading, and it takes no measure of your own: no DATEADD, no
+date table, no variance column.
+
+WHAT IS NEW IN THIS VERSION
+• Three reference measures — Previous Year, Plan / Budget and Forecast —
+  each drawn as a marker on the bar, and included in the Y scale so a plan
+  above actual still fits in the panel.
+• Small multiples you control: set the number of columns instead of
+  accepting the automatic grid.
+• Panel titles with a filled header, not just a separator line. If your
+  title colour would not read against the band, it flips automatically.
+• Bar borders, with colour and width, drawn inside the bar so a zero value
+  still sits on the baseline.
+• Real high contrast: the visual now follows the Windows theme with nothing
+  to turn on, and the format pane is available in Spanish.
+
+FREE
+The whole chart: bars, automatic variation % with arrows and connectors,
+three panels of small multiples with a shared Y scale, bar and border
+colours, sort order, tooltips, cross-filtering, drill-down, keyboard
+navigation and high contrast.
+
+PRO
+The three reference measures, absolute variance, up to 100 panels,
+analytical lines and the reference band, value labels, and per-bar colours.
+
+Try it before you buy: while you edit without a licence, every Pro feature
+you turn on is drawn working under a "Pro preview" watermark that names it.
+Reading view shows the free result, so a published report never uses a
+feature you have not paid for.
+
+NO NETWORK ACCESS
+The visual makes no HTTP requests, stores nothing and needs no companion
+service. Your data never leaves the report.
 
 CHAPTERS
---------
-0:00 Introduction
-0:20 Core feature — automatic variation %
-0:50 Small Multiples with shared Y scale
-1:20 Data Labels & Axis options
-1:40 Analytical Lines (Pro)
-2:00 Tooltips & Interactivity
-2:20 Per-bar Colours (Pro)
-2:40 Outro
+0:00 [ajustar] Better than last month is not the same as on plan
+0:00 [ajustar] Field wells in ninety seconds
+0:00 [ajustar] Plan, Budget, Forecast: the reference marker
+0:00 [ajustar] Small multiples, and choosing your own columns
+0:00 [ajustar] Analytical lines and value labels
+0:00 [ajustar] Pro preview, and what Free gives you
 
-FEATURES
---------
-✅ Automatic variation % with arrows and connectors
-✅ Small Multiples with shared Y scale
-✅ Per-bar colours (colour picker per category) [Pro]
-✅ Analytical lines: Average, Max, Min, Median, Reference [Pro]
-✅ Custom tooltips — drag any field into the Tooltips bucket
-✅ Sort order: Auto, Ascending, Descending [Pro]
-✅ Panel background, title position, data labels [Pro]
-✅ Cross-filtering and drill-down support
-✅ Accessibility: high contrast mode
+LINKS
+Get it on AppSource: [pegar el enlace de la oferta]
+Documentation: https://tinocallarisa-web.github.io/bar-chart-variation/
+Support: support@tcviz.com
 
-FREE VS PRO
------------
-Free: up to 3 Small Multiple panels, variation %, tooltips, axis options
-Pro: up to 100 panels, analytical lines, per-bar colours, value labels (try them first as a watermarked preview)
+More Power BI custom visuals: https://tcviz.com
 
-📥 Get it on Microsoft AppSource — search "Bar Chart Variation TCViz"
-🌐 https://tcviz.com
-📧 support@tcviz.com
+<<< TERMINA AQUÍ <<<
 
----
+Los tiempos de CHAPTERS están a 0:00 a propósito: hay que ajustarlos al
+montaje. YouTube solo genera los marcadores si el primero es 0:00 y hay
+tres o más.
 
-SHORT VERSION (Shorts / LinkedIn)
-----------------------------------
-Bar Chart with Variation % by TCViz — automatic % changes between bars in Power BI.
-No DAX. Small Multiples, analytical lines, value labels & more.
-Available on Microsoft AppSource 👇
 
----
+QUÉ GRABAR
+----------------------------------------------------------------
+El vídeo se graba con el paquete de PRODUCCIÓN, no con el _test. Con el de
+test todo sale desbloqueado y sin marca de agua, y el revisor de Microsoft
+compara el vídeo con lo que hace el visual que ha instalado.
 
-5 ALTERNATIVE TITLES
----------------------
-1. Bar Chart with Automatic Variation % for Power BI — No DAX Required
-2. Power BI Bar Chart that Calculates % Change Automatically | TCViz
-3. Small Multiples Bar Chart with Variation % | Power BI Custom Visual
-4. Stop Writing DAX for % Change — This Power BI Visual Does It For You
-5. Power BI Bar Chart with Period-over-Period Variation | TCViz AppSource
+El momento que vende es uno solo: un gráfico comparando contra la barra
+anterior, y el mismo gráfico con Plan enlazado. Que se vea la barra por
+debajo del marcador. Todo lo demás es relleno alrededor de ese corte.
+
+
+MINIATURA
+----------------------------------------------------------------
+Barras con el marcador de referencia por encima de dos de ellas, bien
+grande. Es lo único que distingue este visual del gráfico de barras nativo
+y de los otros cuatro del marketplace, y se tiene que entender a 300
+píxeles. Si la miniatura es el logo o una captura general de Power BI, el
+título da igual.
+
+
+URL PARA PARTNER CENTER
+----------------------------------------------------------------
+Solo la forma canónica:
+   https://www.youtube.com/watch?v=<id>
+
+youtu.be, /shorts/ y /embed/ son rechazo automático por la política
+100.3.3.3. Cuando tengas el id nuevo hay que cambiarlo en
+docs/APPSOURCE-LISTING.md, docs/CERTIFICATION-NOTES.md,
+docs/CERTIFICATION-NOTES-SHORT.txt, la infografía Y EN PARTNER CENTER.
+El único que Microsoft revisa es el último.
+
+El id que llevan los documentos ahora es hALaKTXPsMA, el de la versión
+anterior. Si grabas uno nuevo, hay que sustituirlo en los cuatro sitios.

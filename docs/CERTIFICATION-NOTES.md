@@ -1,4 +1,4 @@
-# Certification Notes — Bar Chart with Variation % v1.9.2.0
+# Certification Notes — Bar Chart with Variation % v1.10.0.0
 
 The short version to paste into Partner Center is
 [`CERTIFICATION-NOTES-SHORT.txt`](./CERTIFICATION-NOTES-SHORT.txt). That field truncates at 2,500
@@ -10,7 +10,7 @@ characters without warning.
 |---|---|
 | Display Name | Bar Chart with Variation % |
 | GUID | barChartVariation98877665544332211 |
-| Version | 1.9.2.0 |
+| Version | 1.10.0.0 |
 | Author | TCViz |
 | Support URL | https://tinocallarisa-web.github.io/bar-chart-variation/support.html |
 | Privacy URL | https://tinocallarisa-web.github.io/bar-chart-variation/privacy.html |
@@ -22,6 +22,77 @@ characters without warning.
 - **Privacy policy:** https://tinocallarisa-web.github.io/bar-chart-variation/privacy.html
 - **Terms of service:** https://tinocallarisa-web.github.io/bar-chart-variation/terms.html
 - **Demo video:** https://www.youtube.com/watch?v=hALaKTXPsMA
+
+---
+
+## What changed in 1.10.0.0
+
+### Three reference measures (Pro)
+
+`Previous Year`, `Plan / Budget` and `Forecast`. Until now the variation was always against the
+previous category on the axis, which answers "is this month better than the last one" but not "are
+we on plan". Bind one of the three, pick it under **Format → Comparison → Compare to**, and every
+bar gets a horizontal marker at the reference level: the bar is the actual figure and the marker
+says where it should be. The reference is included in the Y domain, so a plan above actual still
+fits inside the panel instead of being drawn outside it.
+
+The three wells are Pro. The free tier does not lose its comparison: it keeps comparing against the
+previous category, which is an equally correct result rather than a cut-down one.
+
+### Accessibility, localization and interactions — three claims made good
+
+These three were previously **claimed and not implemented**, one of them in this very document.
+They are listed in full because the earlier version of these notes was wrong about them.
+
+- **High contrast.** What existed was a manual switch in the format pane that draws a diagonal
+  pattern on negative bars — a colour-blindness aid, not high contrast. The visual never asked
+  Power BI whether the Windows high contrast theme was active. It now reads
+  `colorPalette.isHighContrast` and paints from the four guaranteed colours: bars filled with
+  `background` and outlined in `foreground`, text and axes in `foreground`, reference marker and
+  analytical lines in `foregroundSelected`. Per-series and conditional colours stand down while the
+  theme is active, because a colour picked from a swatch has no contrast guarantee against it. The
+  override is applied *after* the copy the format pane reads, so the user's own colours are
+  untouched and return the moment the theme is turned off.
+- **Localization.** `capabilities.json` contained **zero** `displayNameKey`, so the two
+  `stringResources` folders were dead files and the pane showed the same English text whatever the
+  report language. Fifteen labels were raw identifiers — users were reading `DefaultBarColor`,
+  `BarSettings`, `ShowArrows` — and three named a different setting from the one being edited.
+  There are now 95 keys, complete in `en-US` and `es-ES`, plus a `LocalizationManager` for the
+  strings the code draws.
+- **`host.allowInteractions`.** When a report author turns interactions off for the visual, Power BI
+  sets that flag; the visual went on selecting anyway, so a click still cross-filtered the page.
+  Clicks, context menu and selection now stand down.
+
+### Layout that depends on the size of the visual
+
+Every margin was a constant regardless of the viewport, so on a 200×140 tile the Y axis took 24% of
+the width and the labels 43% of the height, leaving the chart about 124×10 pixels; at 1000×120 it
+had none. The left margin is now measured from the longest axis label and capped at 25% of the
+width, and below certain sizes elements are removed rather than shrunk. The plot area is reserved
+first and the ornaments take what is left, in order of value: legend, Y axis, panel title, X labels,
+and the variation labels last, because they are what the visual is for. The user's settings are not
+modified — what they enabled is the maximum, and the format pane still shows their choice.
+
+### Smaller additions
+
+- **Small multiples column count** (`Panel layout → Columns`, 0 = automatic), capped at the number
+  of panels. Free.
+- **Filled header for the panel title** as an alternative to the separator line, with its own fill
+  colour. Both the title colour and the band colour are the user's to choose, so the title falls
+  back to black or white whenever the WCAG contrast against the band drops below 3:1. Free.
+- **Bar border colour and width**, drawn *inside* the bar: a plain SVG stroke straddles the outline,
+  so the bar would grow by half the width on each side and a zero value would stop sitting on the
+  baseline. Free, off by default.
+
+### Fixed
+
+- **The bar colour could not be set to the default blue.** The code used the default value itself as
+  the signal for "the user has not chosen anything", so picking `#378ADD` — the very colour the pane
+  offers — was discarded and the report theme colour used instead. Read from `metadata.objects` now.
+- **`LinesColor` did nothing.** Exposed in the pane, never used in the render. Removed rather than
+  given an invented meaning.
+- **The watermark was barely visible.** Grey at 22% opacity. Now white outlined in dark, and it
+  names the feature that turned it on.
 
 ---
 
@@ -95,8 +166,10 @@ Official `IVisualLicenseManager` only: `getAvailableServicePlans()`, matched to 
 - Horizontal and vertical scroll
 - Sort order: Ascending and Descending
 - Tooltips (value, change, variation %, extra tooltip fields)
-- Cross-filtering, context menu, highlighting
-- High contrast pattern for negative bars
+- Cross-filtering, context menu, highlighting (honouring `host.allowInteractions`)
+- Bar border colour and width
+- Small multiples column count, and the filled header for panel titles
+- Windows high contrast theme, and the format pane in Spanish
 
 ### Pro tier (requires AppSource license)
 - Up to 100 Small Multiple panels
@@ -104,6 +177,8 @@ Official `IVisualLicenseManager` only: `getAvailableServicePlans()`, matched to 
 - Reference band (min/max corridor)
 - Value labels on bars
 - Per-bar colours (Bar Colors, one picker per category)
+- The three reference measures: Previous Year, Plan / Budget and Forecast
+- Absolute variance (the relative percentage stays free)
 - Without a licence these render as a "Pro preview" with a watermark (see above)
 
 ---
@@ -144,8 +219,12 @@ Filter-in (highlight) is supported: non-highlighted bars are rendered at 30% opa
 4. Turn on **Analytical Lines (Pro) → Show Average** or **Data Labels (Pro) → Show** — the feature renders with the watermark and the banner names it
 5. Turn those settings off and use 3 panels or fewer — the watermark and the notification clear
 6. Set **Sort Order → Ascending** — bars reorder, no watermark (free feature)
-7. Click a bar — other visuals cross-filter
-8. Publish to Web or export (unsupported licensing environment) — 3 panels and a neutral note, no watermark, no purchase prompt
+7. Click a bar — other visuals cross-filter. Turn interactions off for the visual from the report — the click stops filtering
+8. Bind a measure to **Plan / Budget** and set **Comparison → Compare to → Plan** — the marker renders on every bar under the watermark. Switch to reading view — the comparison returns to the previous category and the marker disappears
+9. Turn the Windows high contrast theme on — bars take the theme colours and negatives keep their pattern; turn it off and the user's colours return unchanged
+10. Set the report language to Spanish — the format pane is in Spanish
+11. Shrink the visual to roughly 200×140 — the legend, the panel title and the X labels drop out and the bars stay legible; enlarge it and they come back
+12. Publish to Web or export (unsupported licensing environment) — 3 panels and a neutral note, no watermark, no purchase prompt
 
 ### Pro tier test (same package, active "bar-chart-variation-pro-tcviz" plan)
 1. More than 3 Small Multiple values — all panels render, no note
@@ -154,10 +233,14 @@ Filter-in (highlight) is supported: non-highlighted bars are rendered at 30% opa
 4. Sort Order → Ascending / Descending — bars reorder with their values
 5. Bar Colors → pick a colour for one category — that bar changes
 6. Panel Layout → raise Min Panel Height with many panels — a vertical scroll bar appears
+7. Panel Layout → Columns = 2 with six panels — two columns and three rows
+8. Comparison → Compare to → Previous Year / Plan / Forecast — the marker follows the chosen measure
 
 ---
 
 ## Known Warnings (non-blocking)
 
 - `Format Pane`: the classic `enumerateObjectInstances` API is used; migration to
-  `getFormattingModel` is not yet required.
+  `getFormattingModel` is not yet required. It is the only feature warning the build still
+  reports — `High Contrast`, `Localizations`, `Color Palette` and `Allow Interactions` were all
+  resolved in this version.

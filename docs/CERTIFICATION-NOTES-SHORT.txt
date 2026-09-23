@@ -1,40 +1,42 @@
-Bar Chart with Variation % 1.9.2.0 - GUID barChartVariation98877665544332211
-Full notes: docs/CERTIFICATION-NOTES.md, branch "certification" of
-github.com/tinocallarisa-web/bar-chart-variation
+Bar Chart with Variation % 1.10.0.0 - GUID barChartVariation98877665544332211
 
-WHAT CHANGED
-1.9.0.0 is published. Licensing fixed: spIdentifier matched as full Service ID or Plan ID
-"bar-chart-variation-pro-tcviz"; Warning accepted; unsupported environments honoured.
-Licence requested once, deferred, out of update(). Purchase path: notifyFeatureBlocked
-(localized en/es, <500 chars) plus notifyLicenseRequired(General). Our own "Pro: +N more
-panels" text removed. Pro settings labelled "(Pro)". Sort order stays free, as in 1.9.0.0.
-Landing page implemented (supportsLandingPage was declared). npm audit: 0; eslint: 0.
+WHAT CHANGED IN 1.10.0.0
+1. THREE REFERENCE MEASURES (Pro): Previous Year, Plan / Budget, Forecast. Bind one, pick
+   it in Format > Comparison > Compare to, and every bar gets a horizontal marker at that
+   level: the bar is the actual figure, the marker where it should be. Free keeps
+   comparing against the previous category on the axis, as before.
+2. ACCESSIBILITY AND LOCALIZATION, claimed before and not really there. The visual now
+   reads colorPalette.isHighContrast and paints from foreground / background /
+   foregroundSelected, so the Windows theme is honoured with nothing to turn on, and
+   per-series and conditional colours stand down. The format pane is localized with
+   displayNameKey, 95 keys in en-US and es-ES; there was not one key before, so the
+   resource files were dead. host.allowInteractions is now respected.
+3. Bar border colour and width, free, off by default. Drawn inside the bar, so a zero
+   value stays on the baseline.
+4. Fixed: the bar colour could not be set to the default blue - the default value was
+   itself the "not configured" sentinel. Now read from metadata.objects. LinesColor,
+   unused, removed.
 
-PRO PREVIEW (watermark, per the publishing guidelines)
-Free user in edit mode, licence resolved, supported environment: Pro settings render with
-a "Pro preview" watermark on paid features only. In reading view, before the licence
-resolves, or where it cannot be read (Publish to Web, export): free result, no watermark.
+PRO PREVIEW (watermark, per the guidelines)
+Free user editing, licence resolved: Pro features render under a "Pro preview" watermark
+naming them. Reading view, or where the licence cannot be read: free result, no watermark.
 
-PRIVACY
-No network calls, no telemetry, no storage. Only the dataView. privileges is [].
+PRIVACY: no network calls, no telemetry, no storage. Only the dataView. privileges [].
 
 FREE VS PRO
-Free: bars, variation %, 3 panels, sort order, tooltips, cross-filtering, highlighting,
-titles, backgrounds, legend, scroll, high contrast. No watermark on free features.
-Pro: up to 100 panels, analytical lines and band, value labels, per-bar colours.
+Free: bars, variation %, 3 panels, bar and border colours, sort, tooltips,
+cross-filtering, legend, high contrast, es-ES.
+Pro: the three reference measures, absolute variance, 100 panels, analytical lines and
+band, value labels, per-bar colours.
 
 TEST - FREE (no plan)
-1. No fields: landing page. Axis = date, Values = measure: variation % appears.
-2. Edit mode, Small Multiple with 4+ values: all panels, "Pro preview" watermark, licence
-   banner. Reading view: 3 panels, neutral note, no watermark.
-3. Analytical Lines (Pro) > Show Average: line with watermark, banner. Turn off: clears.
-4. Sort Order Ascending: bars reorder, no watermark.
-5. Click a bar: other visuals cross-filter.
+1. No fields: landing page. Axis + Values: variation % appears.
+2. Small Multiple, 4+ values, editing: all panels watermarked. Reading view: 3 panels.
+3. Bind Plan / Budget, Compare to = Plan: marker on every bar, under the watermark.
+4. Windows high contrast on: bars take the theme colours, negatives keep the pattern.
+5. Sort Ascending: bars reorder. Click a bar: cross-filtering.
+TEST - PRO: the same, no watermark, no notification.
 
-TEST - PRO (active plan)
-All panels, lines, labels and colours render with no watermark and no notification.
-
-Rendering events on every path of update(). Known warning: Format Pane (classic API).
-
+Rendering events on every path of update(). Known gap: Format Pane (classic API).
 Video https://www.youtube.com/watch?v=hALaKTXPsMA
-Support/privacy/terms: tinocallarisa-web.github.io/bar-chart-variation/
+Support: tinocallarisa-web.github.io/bar-chart-variation/

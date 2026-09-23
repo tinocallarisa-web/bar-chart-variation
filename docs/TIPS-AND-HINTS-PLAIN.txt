@@ -22,15 +22,58 @@ VARIATION %
 . Set positive/negative colors independently
 
 
+COMPARING AGAINST A PLAN [PRO]
+------------------------------
+By default each bar is compared with the one before it. That answers "is this
+month better than the last one". To answer "are we on plan", bind one of the
+three reference measures and pick it:
+
+    Format pane > Comparison > Compare to
+    Previous bar ... the category before it on the axis (free, the default)
+    Previous Year .. your same measure for the prior year or period
+    Plan / Budget .. the planned or budgeted figure
+    Forecast ....... the forecast figure
+
+. Every bar then gets a horizontal marker at the reference level. The bar is the
+  actual figure and the marker says where it should be
+. The reference is included in the Y scale, so a plan above actual still fits
+  inside the panel instead of being drawn off the top
+. Variance > Absolute shows the size of the gap instead of its percentage, or
+  Both to show the two
+. No DAX needed: bind the measure you already have. The visual does not step
+  back through a date table, it reads the measure you gave it
+
+
 SMALL MULTIPLES
 ---------------
 . Sort Order: sort the axis categories ascending or descending by label
     Auto ......... Power BI default order
     Ascending .... A to Z, smallest to largest
     Descending ... Z to A, largest to smallest
+. Columns: set how many panel columns you want; 0 lays them out automatically.
+    It is capped at the number of panels — asking for six columns with two
+    panels would leave four empty cells and shrink the two that matter
 . Min Panel Width: set a minimum px width; the visual scrolls horizontally if needed
 . Panel Title > Position: Top or Bottom — use Bottom to save vertical space
+. Panel Title > Style: a separator line, or a filled header with its own colour.
+    If your title colour would not read against the band, it flips to black or
+    white by itself — you cannot configure an invisible title by accident
 . Panel Background: add a subtle fill color to each panel to aid separation
+
+
+SIZE AND LAYOUT
+---------------
+The layout follows the size of the visual. In a small tile the legend, the Y
+axis, the panel title and the X labels step aside, in that order, so the bars
+and their percentages stay legible; they come back as you enlarge it.
+
+. Your settings are not changed. What you turn on is the maximum, not an
+  obligation: the format pane keeps showing what you chose
+. The variation labels are the last thing to go, because they are the point of
+  the visual. If they disappear, the visual is too small to be useful there
+. If you need an element to stay at a small size, give the visual more room —
+  there is no way to force it, because forcing it is what produced a chart with
+  ten pixels of bars underneath a stack of labels
 
 
 ANALYTICAL LINES [PRO]
@@ -76,9 +119,15 @@ PERFORMANCE TIPS
 
 ACCESSIBILITY
 -------------
-. Enable High Contrast Mode in Format pane > Accessibility
-    Negative bars render with a diagonal stripe pattern instead of color alone
-    Useful for color-blind users or printed reports
+. The Windows high contrast theme is followed with nothing to turn on: the
+    visual takes the theme's own colours, and your colours return untouched
+    when you turn the theme off
+. Format pane > Accessibility > High contrast draws a diagonal stripe pattern on
+    negative bars instead of relying on colour alone. That one is for colour
+    blindness and for printing, and it is independent of the Windows theme
+. The format pane is available in English and Spanish
+. If the report author turns interactions off for the visual, clicking a bar no
+    longer filters the page
 
 
 FREE VS PRO
@@ -91,7 +140,11 @@ Analytical lines         No          Yes (Avg, Max, Min, Median, Reference)
 Reference band           No          Yes
 Per-bar colours          No          Yes (picker per category)
 Value labels             No          Yes
-Sort order               Auto only   Ascending / Descending
+Reference measures       No          Previous Year, Plan / Budget, Forecast
+Absolute variance        No          Yes (the percentage is free)
+Sort order               Yes         Yes
+Bar border               Yes         Yes
+Panel columns and title  Yes         Yes
 
 
 COMMON QUESTIONS
@@ -99,14 +152,28 @@ COMMON QUESTIONS
 Q: Why is the first bar missing a variation arrow?
 A: There is no previous value to compare against. This is by design.
 
-Q: Can I show variation against a fixed base instead of the previous bar?
-A: Use a Reference Line set to your base value.
+Q: Can I show variation against a plan instead of the previous bar?
+A: Bind your plan measure to the Plan / Budget well and set Comparison >
+   Compare to > Plan. Every bar gets a marker at the plan level. Previous Year
+   and Forecast work the same way. For a single fixed number that is the same
+   for every bar, use an Analytical Lines reference line instead.
+
+Q: Do I need a date table or DAX for the Previous Year comparison?
+A: No. The visual does not step back through a calendar — it reads the measure
+   you put in the well. If you already have a "Sales LY" measure, bind it.
+
+Q: My panel title disappeared when I made the visual smaller.
+A: That is deliberate. Below a certain size the ornaments are removed so the
+   bars stay legible. Your setting is untouched and the title returns when you
+   enlarge the visual.
 
 Q: The panels look too small. What can I do?
 A: Increase Min Panel Width in Panel Layout. The visual will scroll horizontally.
 
 Q: Why are my per-bar colours not showing?
-A: Per-bar colours require a Pro licence.
+A: Per-bar colours require a Pro licence. They are also stood down while the
+   Windows high contrast theme is active, because a colour picked from a swatch
+   has no contrast guarantee against that theme.
 
 Q: Can I use this visual in Power BI Service / Embedded?
 A: Yes — it works in all Power BI environments that support custom visuals.
