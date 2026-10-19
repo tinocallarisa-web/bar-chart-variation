@@ -55,7 +55,7 @@ READS WELL AT ANY SIZE
 
 The layout follows the size of the visual. In a small tile the legend, the axis and the titles step aside so the bars and their percentages stay legible, and they come back as you enlarge it. Your settings are never changed: what you turn on is the maximum, not an obligation.
 
-INTEGRATED WITH POWER BI
+NATIVE INTEGRATION
 
 • Click a bar to cross-filter the report, and the visual honours interactions being turned off
 • Filters and highlighting from other visuals are reflected in the bars
