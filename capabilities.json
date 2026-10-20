@@ -784,6 +784,24 @@
             "bool": true
           }
         },
+        "showTrend": {
+          "displayName": "Trend line",
+          "displayNameKey": "Visual_ShowTrend",
+          "type": {
+            "bool": true
+          }
+        },
+        "trendColor": {
+          "displayName": "Trend color",
+          "displayNameKey": "Visual_TrendColor",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
         "refValue": {
           "displayName": "Reference value",
           "displayNameKey": "Visual_ReferenceValue",

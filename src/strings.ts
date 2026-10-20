@@ -7,6 +7,7 @@ export const STRINGS: Record<string, Record<string, string>> = {
     "es-ES": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} forma parte del plan Pro y se muestra como vista previa con marca de agua.",
         "UI_FeatPanels": "más de {0} paneles",
+        "UI_FeatTrend": "la línea de tendencia",
         "UI_FeatLines": "las líneas analíticas",
         "UI_FeatBand": "la banda de referencia",
         "UI_FeatValueLabels": "las etiquetas de valor",
@@ -53,6 +54,7 @@ export const STRINGS: Record<string, Record<string, string>> = {
     "pt-BR": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} faz parte do plano Pro e é mostrado como prévia com marca d’água.",
         "UI_FeatPanels": "mais de {0} painéis",
+        "UI_FeatTrend": "a linha de tendência",
         "UI_FeatLines": "as linhas analíticas",
         "UI_FeatBand": "a faixa de referência",
         "UI_FeatValueLabels": "os rótulos de valor",
@@ -99,6 +101,7 @@ export const STRINGS: Record<string, Record<string, string>> = {
     "fr-FR": {
         "UI_NoticePreview": "Bar Chart with Variation % : {0} fait partie du plan Pro et s’affiche en aperçu avec filigrane.",
         "UI_FeatPanels": "plus de {0} panneaux",
+        "UI_FeatTrend": "la ligne de tendance",
         "UI_FeatLines": "les lignes analytiques",
         "UI_FeatBand": "la bande de référence",
         "UI_FeatValueLabels": "les étiquettes de valeur",
@@ -142,6 +145,7 @@ export const STRINGS: Record<string, Record<string, string>> = {
     "de-DE": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} gehört zum Pro-Plan und wird als Vorschau mit Wasserzeichen gezeigt.",
         "UI_FeatPanels": "mehr als {0} Felder",
+        "UI_FeatTrend": "die Trendlinie",
         "UI_FeatLines": "Analyselinien",
         "UI_FeatBand": "das Referenzband",
         "UI_FeatValueLabels": "Wertbeschriftungen",
@@ -185,6 +189,7 @@ export const STRINGS: Record<string, Record<string, string>> = {
     "it-IT": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} fa parte del piano Pro ed è mostrato come anteprima con filigrana.",
         "UI_FeatPanels": "più di {0} pannelli",
+        "UI_FeatTrend": "la linea di tendenza",
         "UI_FeatLines": "le linee analitiche",
         "UI_FeatBand": "la banda di riferimento",
         "UI_FeatValueLabels": "le etichette dei valori",
@@ -229,6 +234,7 @@ export const STRINGS: Record<string, Record<string, string>> = {
     "nl-NL": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} hoort bij het Pro-abonnement en wordt als voorbeeld met watermerk getoond.",
         "UI_FeatPanels": "meer dan {0} panelen",
+        "UI_FeatTrend": "de trendlijn",
         "UI_FeatLines": "analyselijnen",
         "UI_FeatBand": "de referentieband",
         "UI_FeatValueLabels": "waardelabels",
@@ -273,6 +279,7 @@ export const STRINGS: Record<string, Record<string, string>> = {
     "pl-PL": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} należy do planu Pro i jest pokazane jako podgląd ze znakiem wodnym.",
         "UI_FeatPanels": "ponad {0} paneli",
+        "UI_FeatTrend": "linię trendu",
         "UI_FeatLines": "linie analityczne",
         "UI_FeatBand": "pasmo odniesienia",
         "UI_FeatValueLabels": "etykiety wartości",
@@ -318,6 +325,7 @@ export const STRINGS: Record<string, Record<string, string>> = {
     "ja-JP": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} は Pro プランの機能で、透かし付きのプレビューとして表示されます。",
         "UI_FeatPanels": "{0} を超えるパネル",
+        "UI_FeatTrend": "傾向線",
         "UI_FeatLines": "分析線",
         "UI_FeatBand": "参照帯",
         "UI_FeatValueLabels": "値のラベル",
@@ -364,6 +372,7 @@ export const STRINGS: Record<string, Record<string, string>> = {
     "zh-CN": {
         "UI_NoticePreview": "Bar Chart with Variation %：{0} 属于 Pro 计划，以带水印的预览显示。",
         "UI_FeatPanels": "超过 {0} 个面板",
+        "UI_FeatTrend": "趋势线",
         "UI_FeatLines": "分析线",
         "UI_FeatBand": "参考色带",
         "UI_FeatValueLabels": "值标签",
@@ -410,6 +419,7 @@ export const STRINGS: Record<string, Record<string, string>> = {
     "ko-KR": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0}은(는) Pro 플랜 기능이며 워터마크가 있는 미리 보기로 표시됩니다.",
         "UI_FeatPanels": "{0}개 초과 패널",
+        "UI_FeatTrend": "추세선",
         "UI_FeatLines": "분석선",
         "UI_FeatBand": "참조 밴드",
         "UI_FeatValueLabels": "값 레이블",
@@ -456,6 +466,7 @@ export const STRINGS: Record<string, Record<string, string>> = {
     "pt-PT": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} faz parte do plano Pro e é mostrado como prévia com marca d’água.",
         "UI_FeatPanels": "mais de {0} painéis",
+        "UI_FeatTrend": "a linha de tendência",
         "UI_FeatLines": "as linhas analíticas",
         "UI_FeatBand": "a faixa de referência",
         "UI_FeatValueLabels": "os rótulos de valor",

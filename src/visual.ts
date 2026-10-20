@@ -113,6 +113,8 @@ interface VisualSettings {
         showMax: boolean;
         showMin: boolean;
         showMedian: boolean;
+        showTrend: boolean;
+        trendColor: string;
         showRef: boolean;
         refValue: number;
         lineColor: string;
@@ -354,6 +356,8 @@ export class Visual implements IVisual {
             showMax:     false,
             showMin:     false,
             showMedian:  false,
+            showTrend:   false,
+            trendColor:  "#605E5C",
             showRef:     false,
             refValue:    0,
             lineColor:   "#C96442",
@@ -709,6 +713,8 @@ export class Visual implements IVisual {
         this.settings.analyticalLines.showMax     = getValue(al, "showMax",     false);
         this.settings.analyticalLines.showMin     = getValue(al, "showMin",     false);
         this.settings.analyticalLines.showMedian  = getValue(al, "showMedian",  false);
+        this.settings.analyticalLines.showTrend   = getValue(al, "showTrend",   false);
+        this.settings.analyticalLines.trendColor  = getValue(al, "trendColor",  "#605E5C");
         this.settings.analyticalLines.showRef     = getValue(al, "showRef",     false);
         this.settings.analyticalLines.refValue    = getValue(al, "refValue",    0);
         this.settings.analyticalLines.lineColor   = getValue(al, "lineColor",   "#C96442");
@@ -1117,6 +1123,7 @@ export class Visual implements IVisual {
         const lines = this.settings.analyticalLines;
         const attempted: string[] = [];
         if (seriesList.length > maxPanels) attempted.push(this.tr("UI_FeatPanels", "more than {0} panels").replace("{0}", String(maxPanels)));
+        if (lines.showTrend) attempted.push(this.tr("UI_FeatTrend", "the trend line"));
         if (lines.showAverage || lines.showMax || lines.showMin || lines.showMedian || lines.showRef) attempted.push(this.tr("UI_FeatLines", "analytical lines"));
         if (lines.showBand) attempted.push(this.tr("UI_FeatBand", "the reference band"));
         if (this.settings.valueLabels.show) attempted.push(this.tr("UI_FeatValueLabels", "value labels"));
@@ -1156,6 +1163,7 @@ export class Visual implements IVisual {
             this.settings.analyticalLines.showMax     = false;
             this.settings.analyticalLines.showMin     = false;
             this.settings.analyticalLines.showMedian  = false;
+            this.settings.analyticalLines.showTrend   = false;
             this.settings.analyticalLines.showRef     = false;
             this.settings.analyticalLines.showBand    = false;
             // 2. Value labels — disabled
@@ -1507,6 +1515,24 @@ export class Visual implements IVisual {
                 });
         };
 
+        // Tendencia: recta de mínimos cuadrados del valor contra la posición en el eje, por panel.
+        const tendencia = (vals: number[]): [number, number] | null => {
+            const n = vals.length;
+            if (n < 2) { return null; }
+            const mx = (n - 1) / 2, my = d3.mean(vals) || 0;
+            let sxy = 0, sxx = 0;
+            vals.forEach((v, i) => { sxy += (i - mx) * (v - my); sxx += (i - mx) * (i - mx); });
+            const b = sxx ? sxy / sxx : 0;
+            return [my - b * mx, my + b * (n - 1 - mx)];
+        };
+        const trazoTendencia = (sel: Selection<SVGGElement>, x1: number, y1: number, x2: number, y2: number) => {
+            sel.append("line").classed("trend-line", true)
+                .attr("x1", x1).attr("y1", y1).attr("x2", x2).attr("y2", y2)
+                .attr("stroke", this.settings.analyticalLines.trendColor).attr("stroke-width", 2)
+                .attr("stroke-dasharray", "6,4").attr("stroke-linecap", "round")
+                .attr("pointer-events", "none").attr("aria-hidden", "true");
+        };
+
         const drawHorizontal = (series: SeriesData, pi: number, pg: Selection<SVGGElement>) => {
             const dp = vlS.decimalPlaces;
             const cmpRole  = this.settings.comparison.compareTo;
@@ -1571,6 +1597,10 @@ export class Visual implements IVisual {
                         .text(fmt.format(b.v));
                 }
             });
+            if (this.settings.analyticalLines.showTrend) {
+                const t = tendencia(series.values);
+                if (t) { trazoTendencia(ca, xsH(t[0]), centro(0), xsH(t[1]), centro(catValues.length - 1)); }
+            }
             if (!(this.settings.variationLabels.show && hVarW > 0)) { return; }
             const mode = this.settings.comparison.varianceMode;
             const fmtVar = (delta: number, pc: number): string => {
@@ -1843,6 +1873,12 @@ export class Visual implements IVisual {
                         .text(fmt.format(v));
                 }
             });
+
+            if (this.settings.analyticalLines.showTrend) {
+                const t = tendencia(series.values);
+                const xc = (i: number) => x(catValues[i]) + x.bandwidth() / 2;
+                if (t) { trazoTendencia(ca, xc(0), y(t[0]), xc(catValues.length - 1), y(t[1])); }
+            }
 
             // ── Variation labels ───────────────────────────────────────────
             // Con referencia: una etiqueta por barra, encima de su propia columna, porque

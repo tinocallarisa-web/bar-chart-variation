@@ -593,6 +593,18 @@ export const FORMAT_SPEC: SpecCard[] = [
                 "kind": "bool"
             },
             {
+                "name": "showTrend",
+                "key": "Visual_ShowTrend",
+                "label": "Trend line",
+                "kind": "bool"
+            },
+            {
+                "name": "trendColor",
+                "key": "Visual_TrendColor",
+                "label": "Trend color",
+                "kind": "color"
+            },
+            {
                 "name": "refValue",
                 "key": "Visual_ReferenceValue",
                 "label": "Reference value",

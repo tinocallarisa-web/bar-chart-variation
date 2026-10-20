@@ -175,4 +175,7 @@ B = {
 'Orientation': ['Orientación', 'Orientação', 'Orientation', 'Ausrichtung', 'Orientamento', 'Richting', 'Orientacja', '向き', '方向', '방향'],
 'Vertical (columns)': ['Vertical (columnas)', 'Vertical (colunas)', 'Verticale (colonnes)', 'Vertikal (Säulen)', 'Verticale (colonne)', 'Verticaal (kolommen)', 'Pionowo (kolumny)', '縦 (縦棒)', '垂直 (柱形)', '세로(세로 막대)'],
 'Horizontal (bars)': ['Horizontal (barras)', 'Horizontal (barras)', 'Horizontale (barres)', 'Horizontal (Balken)', 'Orizzontale (barre)', 'Horizontaal (staven)', 'Poziomo (słupki)', '横 (横棒)', '水平 (条形)', '가로(가로 막대)'],
+'Trend line': ['Línea de tendencia', 'Linha de tendência', 'Ligne de tendance', 'Trendlinie', 'Linea di tendenza', 'Trendlijn', 'Linia trendu', '傾向線', '趋势线', '추세선'],
+'Trend color': ['Color de la tendencia', 'Cor da tendência', 'Couleur de la tendance', 'Trendfarbe', 'Colore della tendenza', 'Kleur trend', 'Kolor trendu', '傾向線の色', '趋势线颜色', '추세선 색'],
+'the trend line': ['la línea de tendencia', 'a linha de tendência', 'la ligne de tendance', 'die Trendlinie', 'la linea di tendenza', 'de trendlijn', 'linię trendu', '傾向線', '趋势线', '추세선'],
 }
