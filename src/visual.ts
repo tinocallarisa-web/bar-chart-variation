@@ -217,6 +217,8 @@ export class Visual implements IVisual {
     /** Temporizador que deja la barra de Upgrade cuando termina el banner */
     private licenseIconTimer: number | null = null;
     private attemptedPro: string[] = [];
+    /** Identidades que Power BI pasa al restaurar un marcador; getSelectionIds() puede no tenerlas todavía. */
+    private restoredIds: powerbi.visuals.ISelectionId[] = [];
     private lastOptions: VisualUpdateOptions;
     private rawSettings: VisualSettings;
     private dataView: DataView;
@@ -343,7 +345,13 @@ export class Visual implements IVisual {
         // Click on background clears selection
         this.svg.on("click", () => {
             if (!this.interactive()) { return; }
-            selMgr.clear();
+            this.restoredIds = [];
+            selMgr.clear().then(() => this.paintSelection());
+        });
+        // Marcadores y selección hecha desde fuera: solo repintar. Nunca persistProperties aquí.
+        selMgr.registerOnSelectCallback((ids: powerbi.visuals.ISelectionId[]) => {
+            this.restoredIds = ids || [];
+            this.paintSelection();
         });
     }
 
@@ -368,6 +376,7 @@ export class Visual implements IVisual {
             }
             this.updateSettings(this.dataView);
             this.render(options);
+            this.paintSelection();
             this.events.renderingFinished(options);
         } catch (e) {
             this.events.renderingFailed(options, String(e));
@@ -427,6 +436,7 @@ export class Visual implements IVisual {
         try {
             this.updateSettings(dv);
             this.render(o);
+            this.paintSelection();
         } catch (_) { /* lo ya pintado se queda */ }
     }
 
@@ -641,7 +651,9 @@ export class Visual implements IVisual {
      * visual. Indefinido significa permitido: solo false bloquea.
      */
     private interactive(): boolean {
-        return (this.host as any)?.allowInteractions !== false;
+        // hostCapabilities es donde la API 5.x lo pone; host.allowInteractions solo existía en versiones antiguas.
+        const h: any = this.host;
+        return (h?.hostCapabilities?.allowInteractions ?? h?.allowInteractions) !== false;
     }
 
     /**
@@ -1390,11 +1402,22 @@ export class Visual implements IVisual {
                     .attr("role", "img")
                     .attr("aria-label", ariaLabel)
                     .attr("tabindex", "0")
-                    .on("click", function(event: MouseEvent) {
+                    .attr("data-opac", opac)
+                    .on("click", (event: MouseEvent) => {
                         if (!interactive) { return; }
                         event.stopPropagation();
-                        const multiSelect = event.ctrlKey || event.metaKey;
-                        selMgr.select(selId, multiSelect).then(() => { /* update handled by Power BI */ });
+                        this.selectBar(selId, event.ctrlKey || event.metaKey);
+                    })
+                    .on("keydown", (event: KeyboardEvent) => {
+                        if (!interactive) { return; }
+                        if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault(); event.stopPropagation();
+                            this.selectBar(selId, event.ctrlKey || event.metaKey);
+                        } else if (event.key === "Escape") {
+                            event.preventDefault();
+                            this.restoredIds = [];
+                            selMgr.clear().then(() => this.paintSelection());
+                        }
                     })
 
                 // ── Reference marker ───────────────────────────────────────
@@ -1707,6 +1730,41 @@ export class Visual implements IVisual {
     private clear() {
         this.chartGroup.selectAll("*").remove();
         this.legendGroup.selectAll("*").remove();
+    }
+
+    private keyOf(id: any): string {
+        const k = id?.getKey?.();
+        if (typeof k === "string") { return k; }
+        const sel = id?.getSelector?.();
+        return sel ? JSON.stringify(sel) : "";
+    }
+
+    /**
+     * Clic en una barra. Seleccionar no alterna: volver a pulsar la única barra seleccionada se resuelve con
+     * clear() (receta de Calendar y Box & Whisker). Ctrl/Cmd añade o quita.
+     */
+    private selectBar(id: powerbi.visuals.ISelectionId, multi: boolean): void {
+        if (!id) { return; }
+        const actual = (this.selectionManager.getSelectionIds() as powerbi.visuals.ISelectionId[]) || [];
+        const k = this.keyOf(id);
+        this.restoredIds = [];
+        const yaSola = !multi && actual.length === 1 && this.keyOf(actual[0]) === k;
+        (yaSola ? this.selectionManager.clear() : this.selectionManager.select(id, multi)).then(() => this.paintSelection());
+    }
+
+    /** Atenúa las barras no seleccionadas (clic propio o marcador restaurado). */
+    private paintSelection(): void {
+        const own = (this.selectionManager.getSelectionIds() as powerbi.visuals.ISelectionId[]) || [];
+        const sel = own.length ? own : this.restoredIds;
+        const keys = new Set(sel.map(i => this.keyOf(i)).filter(Boolean));
+        const igual = (a: any, b: any) => !!(a?.equals?.(b) || b?.equals?.(a) || a?.includes?.(b, true) || b?.includes?.(a, true));
+        const any = keys.size > 0 || sel.length > 0;
+        this.svg.selectAll<SVGRectElement, BarDatum>(".bar-rect").each(function (d: BarDatum) {
+            const base = Number(this.getAttribute("data-opac") || 1);
+            const on = !any || (d?.selectionId && (keys.has((d.selectionId as any)?.getKey?.() ?? "") || sel.some(x => igual(x, d.selectionId))));
+            this.setAttribute("opacity", String(on ? base : base * 0.35));
+            this.setAttribute("aria-selected", any && on ? "true" : "false");
+        });
     }
 
     /**
