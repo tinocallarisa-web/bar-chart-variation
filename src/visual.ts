@@ -1867,7 +1867,11 @@ export class Visual implements IVisual {
                 }
                 return null;
             }).filter(Boolean);
-            cards.push({ uid: `${card.obj}_card`, displayName: this.tr(card.key, card.label), groups: [{ uid: `${card.obj}_g`, displayName: "", slices }] });
+            // "Restablecer valores predeterminados" de la tarjeta: todas sus propiedades, también el color guardado por
+            // barra con el botón fx (descriptor con el selector comodín).
+            const revertToDefaultDescriptors = slices.map((sl: any) => sl.control.properties.descriptor);
+            cards.push({ uid: `${card.obj}_card`, displayName: this.tr(card.key, card.label), revertToDefaultDescriptors,
+                groups: [{ uid: `${card.obj}_g`, displayName: "", slices }] });
         }
         // Un color por barra (Pro) y uno por serie: instancias con su selector, como hacía el enumerado anterior.
         const cat = this.dataView?.categorical?.categories?.[0];
