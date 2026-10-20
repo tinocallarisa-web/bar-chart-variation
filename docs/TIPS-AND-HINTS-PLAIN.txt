@@ -52,8 +52,8 @@ LOOK
 ----
 
 - Colours come from the report theme until you choose your own.
-- Style template: Clean (default), Classic, Minimal, Contrast, Compact, IBCS style. A
-  template only fills what you have not set.
+- Style template: Clean (default), Classic, Minimal, Contrast, Compact, IBCS style.
+  Choosing one replaces the colours and styles it defines; your other settings stay.
 - Panel layout → Orientation → Horizontal for long category names.
 - On narrow bars the variation labels drop the arrows, shrink a little and alternate
   heights rather than overlap.

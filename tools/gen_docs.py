@@ -91,7 +91,7 @@ FREE_PRO = [
 ]
 
 FORMAT = [
-    ("Style template", "Clean, Classic, Minimal, Contrast, Compact, IBCS style. A template only fills what you have not set yourself; Clean is the default look. Setup guide: turn it back on to see the guide again."),
+    ("Style template", "Clean, Classic, Minimal, Contrast, Compact, IBCS style. Choosing a template applies it: the settings it defines (colours, a bar colour rule, title style, corners) are replaced and the rest stays. Clean is the default look. Setup guide: turn it back on to see the guide again."),
     ("Bar settings", "Default bar colour, with conditional formatting (fx) rules (Pro); negative bar colour (a bar below its comparison); opacity; axis text colour; bar border colour and width (drawn inside the bar, so a zero stays on the baseline); connector colour."),
     ("Comparison", "Compare to: Previous bar, Previous Year, Plan / Budget or Forecast (the last three Pro, with their field bound); Variance format (Pro): Relative (%), Absolute or Both; reference marker and its colour."),
     ("Variation labels", "Show; font size; positive and negative colour; decimal places; arrows; connectors (a bracket between consecutive bars, or a line from the label to its bar through the reference marker)."),

@@ -281,6 +281,8 @@ export class Visual implements IVisual {
     private guideStep = 2;
     private guideEl: HTMLDivElement | null = null;
     private landingEl: HTMLDivElement | null = null;
+    /** Última plantilla vista en esta sesión: si cambia, se aplica (ver aplicarPlantilla). */
+    private tplVisto: string | null = null;
     /** Identidades que Power BI pasa al restaurar un marcador; getSelectionIds() puede no tenerlas todavía. */
     private restoredIds: powerbi.visuals.ISelectionId[] = [];
     private lastOptions: VisualUpdateOptions;
@@ -471,6 +473,12 @@ export class Visual implements IVisual {
             }
             this.hideLanding();
             this.updateSettings(this.dataView);
+            // Elegir una plantilla (en el panel o en el asistente) la aplica de verdad: se borran los ajustes que ella
+            // define, porque un ajuste guardado manda sobre la plantilla. Solo al CAMBIARLA y editando; nunca al abrir.
+            const vm = (options as any).viewMode;
+            const editando = typeof vm === "number" && vm !== 0;
+            if (editando && this.tplVisto !== null && this.tplVisto !== this.template) { this.aplicarPlantilla(this.template); }
+            this.tplVisto = this.template;
             this.render(options);
             this.paintSelection();
             this.markSubSelectables();
@@ -2579,6 +2587,25 @@ export class Visual implements IVisual {
                 .style("font-weight", axS.yBold ? "bold" : "normal").style("font-style", axS.yItalic ? "italic" : "normal")
                 .text(ty);
         }
+    }
+
+    /**
+     * Quita los ajustes guardados que la plantilla define, para que se vea. Incluye la regla fx del color de barra
+     * (guardada con el selector comodín). Lo que la plantilla no toca, se queda como estaba.
+     */
+    private aplicarPlantilla(nombre: string): void {
+        const t = TEMPLATES[nombre] || {};
+        const remove: any[] = [];
+        for (const obj of Object.keys(t)) {
+            const props: any = {};
+            for (const pr of Object.keys(t[obj])) { props[pr] = null; }
+            remove.push({ objectName: obj, selector: null, properties: props });
+        }
+        if (t.barSettings && "barColor" in t.barSettings) {
+            remove.push({ objectName: "barSettings", properties: { barColor: null },
+                selector: dataViewWildcard.createDataViewWildcardSelector(dataViewWildcard.DataViewWildcardMatchingOption.InstancesAndTotals) });
+        }
+        if (remove.length) { this.host.persistProperties({ remove }); }
     }
 
     /** Miniatura de una plantilla: cuatro barras con la tercera negativa y su color de variación. */
