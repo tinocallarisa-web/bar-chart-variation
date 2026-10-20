@@ -752,7 +752,13 @@ export class Visual implements IVisual {
     private render(options: VisualUpdateOptions) {
         this.clear();
         const categorical = this.dataView.categorical;
-        const categories  = categorical.categories[0];
+        // Con una jerarquía expandida ("Expandir todo") llega una columna por nivel: la barra es la combinación.
+        const catCols     = categorical.categories.filter((c: any) => c?.source?.roles?.category);
+        const categories  = catCols.length ? catCols[catCols.length - 1] : categorical.categories[0];
+        const idOfRow = (b: powerbi.visuals.ISelectionIdBuilder, i: number) => {
+            for (const c of (catCols.length ? catCols : [categories])) { b = b.withCategory(c, i); }
+            return b;
+        };
         const values      = categorical.values;
         const host        = this.host;
         const width       = options.viewport.width;
@@ -773,12 +779,14 @@ export class Visual implements IVisual {
             format: categories.source.format,
             cultureSelector: host.locale
         });
-        let catValues           = categories.values.map(v => {
+        const fmtCat = (col: any, v: any) => {
             if (v === null || v === undefined) { return ""; }
-            return v instanceof Date || categories.source.format
-                ? catFormatter.format(v)
-                : v.toString();
-        });
+            if (!(v instanceof Date || col.source.format)) { return v.toString(); }
+            return valueFormatter.create({ format: col.source.format, cultureSelector: host.locale }).format(v);
+        };
+        let catValues           = categories.values.map((v, i) => catCols.length > 1
+            ? catCols.map((c: any) => fmtCat(c, c.values[i])).join(" · ")
+            : (v === null || v === undefined ? "" : (v instanceof Date || categories.source.format ? catFormatter.format(v) : v.toString())));
 
         // ── Sort order ─────────────────────────────────────────────────────
         // El orden es gratuito: ya funcionaba sin licencia en la 1.9.0.0 publicada, y
@@ -838,7 +846,7 @@ export class Visual implements IVisual {
                 const sh    = sortIndexMap.map(i => shRaw[i]);
                 const sid   = host.createSelectionIdBuilder().withSeries(values, group).createSelectionId();
                 const bsids = sortIndexMap.map(origCi =>
-                    host.createSelectionIdBuilder().withSeries(values, group).withCategory(categories, origCi).createSelectionId()
+                    idOfRow(host.createSelectionIdBuilder().withSeries(values, group), origCi).createSelectionId()
                 );
                 let color = barColorSetting;
                 const objs: any = group.objects;
@@ -885,7 +893,7 @@ export class Visual implements IVisual {
                 const sh    = sortIndexMap.map(i => shRaw[i]);
                 const sid  = host.createSelectionIdBuilder().withMeasure(val.source.queryName).createSelectionId();
                 const bsids = sortIndexMap.map(origCi =>
-                    host.createSelectionIdBuilder().withCategory(categories, origCi).createSelectionId()
+                    idOfRow(host.createSelectionIdBuilder(), origCi).createSelectionId()
                 );
                 let color = barColorSetting;
                 const objs: any = val.objects;
