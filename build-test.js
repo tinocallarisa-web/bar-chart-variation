@@ -63,6 +63,13 @@ if (process.argv.includes("--debug")) {
     console.log("Debug:      rotulo DBG activado");
 }
 
+// --fxdiag: rotulo con los colores que llegan de Power BI (general, por serie, por barra).
+if (process.argv.includes("--fxdiag")) {
+    const FX = "const DEBUG_FX = false;";
+    if (!patchedTs.includes(FX)) { console.error("\nERROR: No se encuentra DEBUG_FX en visual.ts.\n"); process.exit(1); }
+    patchedTs = patchedTs.replace(FX, "const DEBUG_FX = true; // PATCHED BY build-test.js --fxdiag");
+}
+
 // 3. Patch pbiviz.json — sufijo propio por modo, para que convivan en Desktop
 const realGuid      = pbivizObj.visual.guid;
 const testGuid      = realGuid + (forceFree ? "_testfree" : "_test");

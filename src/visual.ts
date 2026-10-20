@@ -184,6 +184,8 @@ const PLAN_ID = "bar-chart-variation-pro-tcviz";
 
 // ServicePlanState es un const enum: en runtime hacen falta los numeros.
 const STATE_ACTIVE = 1;
+/** Diagnóstico de colores: build-test.js --fxdiag lo pone a true. En producción, siempre false. */
+const DEBUG_FX = false;
 const STATE_WARNING = 2;
 
 // spIdentifier = Service ID completo (editor.oferta.plan); se acepta también el Plan ID solo
@@ -751,9 +753,14 @@ export class Visual implements IVisual {
      * las barras traen el color por defecto, no es una regla: se descartan para que el color negativo siga mandando.
      */
     private soloReglas(colors: (string | null)[]): (string | null)[] {
-        const def = String(this.settings.barSettings.barColor || "").toLowerCase();
-        const distintos = colors.some(c => c != null && c.toLowerCase() !== def);
-        return distintos ? colors : colors.map(() => null);
+        return this.colorFijo(colors) !== null ? colors.map(() => null) : colors;
+    }
+
+    /** Todas las barras con el mismo color: es un color fijo guardado barra a barra, no una regla. */
+    private colorFijo(colors: (string | null)[]): string | null {
+        const vistos = colors.filter(c => c != null).map(c => String(c).toLowerCase());
+        if (!vistos.length || vistos.length < colors.length) { return null; }
+        return vistos.every(c => c === vistos[0]) ? colors[0] : null;
     }
 
     /** Medidas de referencia (previousYear | plan | forecast) alineadas al orden de categorias. */
@@ -906,7 +913,7 @@ export class Visual implements IVisual {
                         format: gv.source.format || ""
                     }));
                 const refValues = this.readRefValues(group.values as any[], sortIndexMap);
-                seriesList.push({ name, values: sv, highlights: sh, color, cfColors: this.soloReglas(cfColors), refValues, selectionId: sid, barSelectionIds: bsids, tooltipFields });
+                seriesList.push({ name, values: sv, highlights: sh, color: (color === barColorSetting && this.colorFijo(cfColors)) || color, cfColors: this.soloReglas(cfColors), refValues, selectionId: sid, barSelectionIds: bsids, tooltipFields });
             }
         } else {
             // Solo las columnas del rol "measure" son barras. Las de referencia y las de
@@ -950,7 +957,7 @@ export class Visual implements IVisual {
                         format: v2.source.format || ""
                     }));
                 const refValues = this.readRefValues(values as any[], sortIndexMap);
-                seriesList.push({ name, values: sv, highlights: sh, color, cfColors: this.soloReglas(cfColors), refValues, selectionId: sid, barSelectionIds: bsids, tooltipFields });
+                seriesList.push({ name, values: sv, highlights: sh, color: (color === barColorSetting && this.colorFijo(cfColors)) || color, cfColors: this.soloReglas(cfColors), refValues, selectionId: sid, barSelectionIds: bsids, tooltipFields });
             }
         }
 
@@ -1002,6 +1009,14 @@ export class Visual implements IVisual {
             attempted.push(this.tr("UI_FeatAbsolute", "absolute variance"));
         }
         this.attemptedPro = this.isPro ? [] : attempted;
+        if (DEBUG_FX) {
+            const c0: any = (grouped && grouped[0]) || null;
+            const m0: any = c0 ? (c0.values as any[]).filter((g: any) => g?.source?.roles?.measure)[0] : (values as any[])[0];
+            const col = (o: any) => o ? JSON.stringify(o).replace(/"solid":\{"color":/g, "").slice(0, 70) : "-";
+            (this as any).diagFx = "DIAG meta.barSettings=" + col(this.dataView?.metadata?.objects?.barSettings) +
+                " | grupo0.obj=" + col(c0?.objects) + " | medida.obj[0..1]=" + col(m0?.objects?.[0]) + "," + col(m0?.objects?.[1]) +
+                " | cat.obj[0]=" + col(categories.objects?.[0]) + " | serie0.color=" + seriesList[0]?.color + " cf0=" + seriesList[0]?.cfColors?.[0];
+        }
 
         // Pro-only features: enforce when not licensed and not in Pro preview
         if (!this.isPro && !preview) {
@@ -1688,6 +1703,11 @@ export class Visual implements IVisual {
 
         // ── Watermark & freemium message ───────────────────────────────────
         this.renderWatermark(svgWidth, svgHeight, preview && this.attemptedPro.length > 0);
+        if (DEBUG_FX && (this as any).diagFx) {
+            this.messageGroup.selectAll(".dbgfx").remove();
+            this.messageGroup.append("text").classed("dbgfx", true).attr("x", 4).attr("y", svgHeight - 4)
+                .style("font-size", "9px").style("fill", "#C00000").text((this as any).diagFx);
+        }
         // Nota neutra, sin llamada a comprar: la ruta de compra es la notificacion de Power BI.
         const msgData = isLimited ? [`Showing ${maxPanels} of ${seriesList.length} panels`] : [];
         this.messageGroup.selectAll(".freemium-msg").data(msgData)
@@ -1846,8 +1866,11 @@ export class Visual implements IVisual {
                         // Color de barra con formato condicional (fx): la regla se evalúa por barra. Como en los gráficos
                         // nativos con Leyenda, con Small Multiple (valores agrupados por serie) Power BI no la entrega.
                         const fx = card.obj === "barSettings" && p.name === "barColor";
+                        // altConstantValueSelector null: el color FIJO se guarda a nivel general (como antes de fx) y solo
+                        // las reglas se evalúan por barra. Sin él, el fijo llegaba barra a barra y pisaba el color negativo.
                         const d2: any = fx ? { ...descriptor, instanceKind: powerbi.VisualEnumerationInstanceKinds.ConstantOrRule,
-                            selector: dataViewWildcard.createDataViewWildcardSelector(dataViewWildcard.DataViewWildcardMatchingOption.InstancesAndTotals) } : descriptor;
+                            selector: dataViewWildcard.createDataViewWildcardSelector(dataViewWildcard.DataViewWildcardMatchingOption.InstancesAndTotals),
+                            altConstantValueSelector: null } : descriptor;
                         return { uid, displayName, control: { type: powerbi.visuals.FormattingComponent.ColorPicker, properties: { descriptor: d2, value: { value: v || "" } } } };
                     }
                     case "text": return { uid, displayName, control: { type: powerbi.visuals.FormattingComponent.TextInput, properties: { descriptor, value: v ?? "", placeholder: "" } } };
