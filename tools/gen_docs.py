@@ -16,7 +16,7 @@ REPO = "https://github.com/tinocallarisa-web/bar-chart-variation"
 # La versión de las páginas: la que se va a enviar (pbiviz.json se sube en la etapa de versión del pipeline).
 VERSION = "1.11.0.0"
 FECHA = "21 October 2026"
-VIDEO = "https://www.youtube.com/watch?v=vIszaUlC6G0"
+VIDEO = "https://www.youtube.com/watch?v=RljhNfnuMuM"
 SAMPLE = REPO + "/raw/main/SampleData_BarChartVariation.xlsx"
 
 plantilla = io.open(os.path.join(WC, "privacy.html"), encoding="utf-8").read()

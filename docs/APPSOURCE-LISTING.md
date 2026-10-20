@@ -109,10 +109,10 @@ Horizontal bars. Six style templates and a setup guide. Format on the canvas. A 
 | Privacy policy | https://tinocallarisa-web.github.io/bar-chart-variation/privacy.html |
 | Terms / licence | https://tinocallarisa-web.github.io/bar-chart-variation/terms.html |
 | GitHub repo | https://github.com/tinocallarisa-web/bar-chart-variation |
-| Video | https://www.youtube.com/watch?v=vIszaUlC6G0 |
+| Video | https://www.youtube.com/watch?v=RljhNfnuMuM |
 
 Canonical YouTube URL only (policy 100.3.3.3). Shortened links, Shorts and embed URLs are
-rejected automatically. The id above is the 1.10.0.0 video. If a 1.11 video replaces it, change
+rejected automatically. The id above is the 1.11.0.0 video (1.10 was vIszaUlC6G0). If it is ever replaced, change
 it here, in `CERTIFICATION-NOTES-SHORT.txt`, in `tools/gen_docs.py` (then regenerate), in the
 infographic **and in Partner Center** — the console is the only one Microsoft reviews.
 

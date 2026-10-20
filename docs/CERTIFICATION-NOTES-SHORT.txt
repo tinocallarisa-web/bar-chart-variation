@@ -37,5 +37,5 @@ axis to format it. Panel layout > Orientation > Horizontal. Windows high contras
 theme colours, negatives patterned. With a licence: no watermark, no notice.
 
 Rendering events on every update() path. allowInteractions from hostCapabilities.
-Video https://www.youtube.com/watch?v=vIszaUlC6G0
+Video https://www.youtube.com/watch?v=RljhNfnuMuM
 Support: tinocallarisa-web.github.io/bar-chart-variation/
