@@ -2178,7 +2178,8 @@ export class Visual implements IVisual {
             .join("text").classed("freemium-msg", true)
             .attr("x", svgWidth / 2).attr("y", svgHeight - 6)
             .attr("text-anchor", "middle")
-            .style("font-size", "11px").style("font-weight", "normal").style("fill", "#83827D")
+            .style("font-size", "11px").style("font-weight", "normal")
+            .style("fill", this.hcActive() ? ((this.colorPalette as any).foreground?.value || "#000000") : "#83827D")
             .text(d => d);
 
         // ── Tooltips via wrapper (handles all mouse events) ─────────────────

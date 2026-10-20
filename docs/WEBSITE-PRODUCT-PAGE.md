@@ -1,3 +1,5 @@
+> **DESFASADO (describe la 1.9).** La ficha viva está en tcviz-web `src/data.jsx`; se rehace al publicar la 1.11.
+
 # Bar Chart with Variation % — Product Page Content
 
 ---

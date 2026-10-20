@@ -4,7 +4,7 @@ All notable changes to this visual are documented here.
 
 ---
 
-## [1.11.0.0] — 2026-10-21
+## [1.11.0.0] — 2026-10-20
 
 ### Added
 - **Horizontal orientation.** Panel layout → Orientation → Horizontal (bars): categories on the left, bars to the right, the variation in its own column, and the bracket turned on its side. Everything else works the same way in both orientations: references, selection, bookmarks, tooltips, small multiples, analytical lines. Free.
