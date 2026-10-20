@@ -1209,6 +1209,35 @@ export class Visual implements IVisual {
             ? Math.min(cellH * 0.45, Math.max(20, rise))
             : 0;
 
+        // ── Etiquetas de variación: que no se pisen ──────────────────────
+        // Con barras estrechas (varios paneles, muchas categorías) el porcentaje es más ancho que su hueco.
+        // Por orden: fuera las flechas, hasta 2 px menos de letra (nunca por debajo de 8) y, si aún no cabe,
+        // dos alturas alternas. Nunca se oculta ninguna: cada porcentaje es un dato.
+        const vlS = this.settings.variationLabels;
+        let varFs = vlS.fontSize, varArrows = vlS.showArrows, varStagger = false;
+        if (varH > 0) {
+            const cmpR = this.settings.comparison.compareTo, modeV = this.settings.comparison.varianceMode;
+            let maxLen = 0;
+            for (const sr of visible) {
+                const ref = cmpR !== "previous" ? sr.refValues[cmpR] : undefined;
+                for (let i = ref ? 0 : 1; i < sr.values.length; i++) {
+                    const base = ref ? Number(ref[i]) : sr.values[i - 1];
+                    if (!base || !isFinite(base)) { continue; }
+                    const d = sr.values[i] - base;
+                    const rel = pct(d / Math.abs(base) * 100, vlS.decimalPlaces).length + 2;
+                    const len = !ref || (modeV !== "absolute" && modeV !== "both") ? rel
+                              : modeV === "absolute" ? fmt.format(d).length + 1 : fmt.format(d).length + rel + 3;
+                    maxLen = Math.max(maxLen, len);
+                }
+            }
+            const ancho = () => (maxLen + (varArrows ? 2 : 0)) * varFs * 0.6;
+            const hueco = bandW * 0.95;
+            if (ancho() > hueco) { varArrows = false; }
+            const minFs = Math.max(8, vlS.fontSize - 2);
+            while (ancho() > hueco && varFs > minFs) { varFs--; }
+            if (ancho() > hueco) { varStagger = true; varH += varFs + 3; }
+        }
+
         // ── Reparto vertical ───────────────────────────────────────────────
         // El area de dibujo se reserva PRIMERO y los adornos se quedan con lo que sobra,
         // por orden de valor. Al reves -- que es como estaba -- en un panel de 140 px los
@@ -1599,7 +1628,7 @@ export class Visual implements IVisual {
                     const isPos  = delta >= 0;
                     const vColor = isPos ? this.settings.variationLabels.positiveColor
                                          : this.settings.variationLabels.negativeColor;
-                    const arrow  = this.settings.variationLabels.showArrows ? (isPos ? "▲ " : "▼ ") : "";
+                    const arrow  = varArrows ? (isPos ? "▲ " : "▼ ") : "";
                     const sign   = isPos ? "+" : "";
                     const rel    = `${sign}${pct(pctV, dp)}%`;
                     const abs    = `${sign}${fmt.format(delta)}`;
@@ -1608,9 +1637,9 @@ export class Visual implements IVisual {
                                  :                       rel;
                     pg.append("text")
                         .attr("x", x(catValues[i]) + x.bandwidth() / 2)
-                        .attr("y", titleH + varH - 8)
+                        .attr("y", titleH + varH - 8 - (varStagger && i % 2 === 1 ? varFs + 3 : 0))
                         .attr("text-anchor", "middle")
-                        .style("font-size", `${this.settings.variationLabels.fontSize}px`)
+                        .style("font-size", `${varFs}px`)
                         .style("font-weight", "bold").style("fill", vColor)
                         .attr("aria-hidden", "true")
                         .text(`${arrow}${txt}`);
@@ -1626,7 +1655,7 @@ export class Visual implements IVisual {
                     const isPos  = diff >= 0;
                     const vColor = isPos ? this.settings.variationLabels.positiveColor
                                         : this.settings.variationLabels.negativeColor;
-                    const arrow  = this.settings.variationLabels.showArrows ? (isPos ? "▲ " : "▼ ") : "";
+                    const arrow  = varArrows ? (isPos ? "▲ " : "▼ ") : "";
                     const sign   = isPos ? "+" : "";
 
                     // Bracket connector in pg coords (spans from bar tops up into varH zone)
@@ -1642,9 +1671,9 @@ export class Visual implements IVisual {
                     }
 
                     pg.append("text")
-                        .attr("x", (xc1 + xc2) / 2).attr("y", titleH + varH - 8)
+                        .attr("x", (xc1 + xc2) / 2).attr("y", titleH + varH - 8 - (varStagger && i % 2 === 0 ? varFs + 3 : 0))
                         .attr("text-anchor", "middle")
-                        .style("font-size", `${this.settings.variationLabels.fontSize}px`)
+                        .style("font-size", `${varFs}px`)
                         .style("font-weight", "bold").style("fill", vColor)
                         .text(`${arrow}${sign}${pct(diff, this.settings.variationLabels.decimalPlaces)}%`);
                 }
