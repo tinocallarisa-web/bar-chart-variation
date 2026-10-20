@@ -21,6 +21,7 @@ import VisualTooltipDataItem = powerbi.extensibility.VisualTooltipDataItem;
 
 import { createTooltipServiceWrapper, ITooltipServiceWrapper } from "powerbi-visuals-utils-tooltiputils";
 import { FORMAT_SPEC } from "./formatSpec";
+import { STRINGS } from "./strings";
 
 type Selection<T extends d3.BaseType> = d3.Selection<T, any, any, any>;
 
@@ -179,15 +180,7 @@ const REF_LABELS: Record<string, string> = {
     forecast: "Forecast"
 };
 const PLAN_ID = "bar-chart-variation-pro-tcviz";
-// La API de licencias exige localizar el texto del aviso (maximo 500 caracteres).
-const ES_LABELS: Record<string, string> = {
-    "more than 3 panels": "más de 3 paneles",
-    "analytical lines": "las líneas analíticas",
-    "the reference band": "la banda de referencia",
-    "value labels": "las etiquetas de valor",
-    "per-bar colours": "los colores por barra",
-    "absolute variance": "la desviación absoluta"
-};
+
 // ServicePlanState es un const enum: en runtime hacen falta los numeros.
 const STATE_ACTIVE = 1;
 const STATE_WARNING = 2;
@@ -469,14 +462,8 @@ export class Visual implements IVisual {
             this.notifiedPro = this.attemptedPro.slice();
             if (added.length === 0) return;
             this.noticeShown = true;
-            const n = added.length;
-            const es = (this.host.locale || "").toLowerCase().startsWith("es");
-            const items = es ? added.map(a => ES_LABELS[a] || a) : added;
-            const list = n === 1 ? items[0]
-                : items.slice(0, -1).join(", ") + (es ? " y " : " and ") + items[n - 1];
-            const msg = es
-                ? `Bar Chart with Variation %: ${list} ${n === 1 ? "forma" : "forman"} parte del plan Pro y se ${n === 1 ? "muestra" : "muestran"} como vista previa con marca de agua.`
-                : `Bar Chart with Variation %: ${list} ${n === 1 ? "is" : "are"} part of the Pro plan, shown as a watermarked preview.`;
+            const msg = this.tr("UI_NoticePreview", "Bar Chart with Variation %: {0} — part of the Pro plan, shown as a watermarked preview.")
+                .replace("{0}", added.join(", "));
             // Power BI muestra una notificación a la vez: se retira la anterior, se lanza el banner
             // con la función concreta (unos 10 s) y, al terminar, la barra de Upgrade persistente.
             const show = () => {
@@ -615,12 +602,25 @@ export class Visual implements IVisual {
      * el propio nombre de la clave, asi que se compara y se cae al ingles.
      */
     private tr(key: string, fallback: string): string {
+        // Primero la tabla del bundle (src/strings.ts): Power BI Desktop solo traduce con getDisplayName las claves
+        // declaradas en capabilities.json, y los textos propios del visual no lo están.
+        const own = this.stringsFor()?.[key];
+        if (own) { return own; }
         try {
             const s = this.localization?.getDisplayName(key);
             return s && s !== key ? s : fallback;
         } catch (_) {
             return fallback;
         }
+    }
+
+    private stringsFor(): Record<string, string> | undefined {
+        const loc = String(this.host?.locale || "");
+        if (!loc || /^en/i.test(loc)) { return undefined; }
+        if (STRINGS[loc]) { return STRINGS[loc]; }
+        const lang = loc.split("-")[0].toLowerCase();
+        const k = Object.keys(STRINGS).sort().find(x => x.toLowerCase().startsWith(lang + "-"));
+        return k ? STRINGS[k] : undefined;
     }
 
     /** Nombre visible de una medida de referencia, en el idioma del informe. */
@@ -750,7 +750,7 @@ export class Visual implements IVisual {
             .attr("width", width)
             .attr("height", height)
             .attr("role", "img")
-            .attr("aria-label", "Bar Chart with Variation % — " + (categories?.source?.displayName || ""));
+            .attr("aria-label", this.tr("UI_AriaChart", "Bar Chart with Variation %") + " — " + (categories?.source?.displayName || ""));
 
         const hasHighlights     = values[0]?.highlights != null;
         // Las categorias se formatean con el format string de su propia columna. Sin esto,
@@ -927,11 +927,11 @@ export class Visual implements IVisual {
         // apagarlo, para que Power BI muestre su aviso de compra.
         const lines = this.settings.analyticalLines;
         const attempted: string[] = [];
-        if (seriesList.length > maxPanels) attempted.push(`more than ${maxPanels} panels`);
-        if (lines.showAverage || lines.showMax || lines.showMin || lines.showMedian || lines.showRef) attempted.push("analytical lines");
-        if (lines.showBand) attempted.push("the reference band");
-        if (this.settings.valueLabels.show) attempted.push("value labels");
-        if (seriesList.some(s => s.cfColors.some(c => c != null))) attempted.push("per-bar colours");
+        if (seriesList.length > maxPanels) attempted.push(this.tr("UI_FeatPanels", "more than {0} panels").replace("{0}", String(maxPanels)));
+        if (lines.showAverage || lines.showMax || lines.showMin || lines.showMedian || lines.showRef) attempted.push(this.tr("UI_FeatLines", "analytical lines"));
+        if (lines.showBand) attempted.push(this.tr("UI_FeatBand", "the reference band"));
+        if (this.settings.valueLabels.show) attempted.push(this.tr("UI_FeatValueLabels", "value labels"));
+        if (seriesList.some(s => s.cfColors.some(c => c != null))) attempted.push(this.tr("UI_FeatBarColours", "per-bar colours"));
         // Los tres pozos de referencia son Pro desde 1.10.0.0.
         //
         // Hasta 1.9.3.0 eran gratuitos, con el argumento de que comparar contra una
@@ -944,13 +944,13 @@ export class Visual implements IVisual {
         const refBound = REF_ROLES.filter(r => seriesList.some(s => !!s.refValues[r]));
         if (refBound.length > 0) {
             attempted.push(refBound.length === 1
-                ? `the ${REF_LABELS[refBound[0]]} reference`
-                : "the reference measures");
+                ? this.tr("UI_FeatOneRef", "the {0} reference").replace("{0}", this.refLabel(refBound[0]))
+                : this.tr("UI_FeatRefs", "the reference measures"));
         }
         const usesRefAny = cmpRoleSel !== "previous"
             && seriesList.some(s => !!s.refValues[cmpRoleSel]);
         if (usesRefAny && this.settings.comparison.varianceMode !== "relative") {
-            attempted.push("absolute variance");
+            attempted.push(this.tr("UI_FeatAbsolute", "absolute variance"));
         }
         this.attemptedPro = this.isPro ? [] : attempted;
 
@@ -1194,7 +1194,7 @@ export class Visual implements IVisual {
                     const upBtn = pg.append("g")
                         .attr("transform", `translate(0, ${titleH / 2 - 5})`)
                         .style("cursor", "pointer")
-                        .attr("aria-label", "Drill up")
+                        .attr("aria-label", this.tr("UI_DrillUp", "Drill up"))
                         .on("click", (event: MouseEvent) => {
                             event.stopPropagation();
                             hostRef.drill({ roleName: "category", drillType: 1 as any });
@@ -1210,7 +1210,7 @@ export class Visual implements IVisual {
                     const dnBtn = pg.append("g")
                         .attr("transform", `translate(${canDrillUp ? 18 : 0}, ${titleH / 2 - 5})`)
                         .style("cursor", "pointer")
-                        .attr("aria-label", "Drill down")
+                        .attr("aria-label", this.tr("UI_DrillDown", "Drill down"))
                         .on("click", (event: MouseEvent) => {
                             event.stopPropagation();
                             hostRef.drill({ roleName: "category", drillType: 2 as any });
@@ -1313,7 +1313,7 @@ export class Visual implements IVisual {
                 if (base !== null && base !== undefined && base !== 0) {
                     const varPct = ((v - base) / Math.abs(base) * 100).toFixed(dp);
                     const sign   = Number(varPct) >= 0 ? "+" : "";
-                    ariaLabel   += `, variation from ${useRef ? refLabel : "previous"}: ${sign}${varPct}%`;
+                    ariaLabel   += ", " + this.tr("UI_AriaVariation", "variation from {0}").replace("{0}", useRef ? refLabel : this.tr("UI_PreviousLower", "previous")) + `: ${sign}${varPct}%`;
                 }
 
                 // Tooltip data for this bar
@@ -1326,7 +1326,7 @@ export class Visual implements IVisual {
                 });
                 if (base !== null && base !== undefined) {
                     tooltipItems.push({
-                        displayName: useRef ? refLabel : "Previous",
+                        displayName: useRef ? refLabel : this.tr("UI_Previous", "Previous"),
                         value: fmt.format(base)
                     });
                     if (base !== 0) {
@@ -1334,11 +1334,11 @@ export class Visual implements IVisual {
                         const varPct   = (absDelta / Math.abs(base)) * 100;
                         const sign     = absDelta >= 0 ? "+" : "";
                         tooltipItems.push({
-                            displayName: "Change",
+                            displayName: this.tr("UI_Change", "Change"),
                             value: `${sign}${fmt.format(absDelta)}`
                         });
                         tooltipItems.push({
-                            displayName: "Variation %",
+                            displayName: this.tr("UI_VariationPct", "Variation %"),
                             value: `${sign}${varPct.toFixed(dp)}%`,
                             color: isNeg
                                 ? this.settings.variationLabels.negativeColor
@@ -1528,10 +1528,10 @@ export class Visual implements IVisual {
         }
 
         const lineConfigs: { show: boolean; value: number; label: string }[] = [
-            { show: al.showAverage, value: d3.mean(allValsFlat) || 0,     label: "Avg" },
-            { show: al.showMax,     value: d3.max(allValsFlat)  || 0,     label: "Max" },
-            { show: al.showMin,     value: d3.min(allValsFlat)  || 0,     label: "Min" },
-            { show: al.showMedian,  value: d3.median(allValsFlat) || 0,   label: "Median" },
+            { show: al.showAverage, value: d3.mean(allValsFlat) || 0,     label: this.tr("UI_Avg", "Avg") },
+            { show: al.showMax,     value: d3.max(allValsFlat)  || 0,     label: this.tr("UI_Max", "Max") },
+            { show: al.showMin,     value: d3.min(allValsFlat)  || 0,     label: this.tr("UI_Min", "Min") },
+            { show: al.showMedian,  value: d3.median(allValsFlat) || 0,   label: this.tr("UI_Median", "Median") },
             { show: al.showRef,     value: al.refValue,                   label: fmt.format(al.refValue) }
         ];
 
@@ -1587,7 +1587,7 @@ export class Visual implements IVisual {
             this.legendGroup.append("text")
                 .attr("x", startX + swatchSize + 4).attr("y", ly + swatchSize)
                 .style("font-size", "10px").style("fill", this.settings.legend.textColor)
-                .text("Positive");
+                .text(this.tr("UI_Positive", "Positive"));
 
             // Negative item
             if (this.settings.accessibility.highContrastMode) {
@@ -1604,7 +1604,7 @@ export class Visual implements IVisual {
             this.legendGroup.append("text")
                 .attr("x", startX + itemSpacing + swatchSize + 4).attr("y", ly + swatchSize)
                 .style("font-size", "10px").style("fill", this.settings.legend.textColor)
-                .text("Negative");
+                .text(this.tr("UI_Negative", "Negative"));
         }
 
         // ── Watermark & freemium message ───────────────────────────────────
@@ -1689,11 +1689,11 @@ export class Visual implements IVisual {
         const g = this.chartGroup.append("g").classed("landing", true).attr("transform", "translate(16,8)");
         const lines: [string, number, string, string, number][] = [
             ["Bar Chart with Variation %", 16, "700", "#3D3929", 16],
-            ["1. Drag a date or category field to Axis.", 12, "400", "#535146", 26],
-            ["2. Drag a numeric measure to Values: variation % appears between bars.", 12, "400", "#535146", 20],
-            ["3. Optional: Small Multiple splits the chart into panels; Tooltips adds fields.", 12, "400", "#535146", 20],
-            ["Pro plan on Microsoft AppSource: up to 100 panels, analytical lines,", 12, "600", "#83827D", 30],
-            ["reference band, value labels and per-bar colours.", 12, "600", "#83827D", 18]
+            [this.tr("UI_Landing1", "1. Drag a date or category field to Axis."), 12, "400", "#535146", 26],
+            [this.tr("UI_Landing2", "2. Drag a numeric measure to Values: variation % appears between bars."), 12, "400", "#535146", 20],
+            [this.tr("UI_Landing3", "3. Optional: Small Multiple splits the chart into panels; Tooltips adds fields."), 12, "400", "#535146", 20],
+            [this.tr("UI_Landing4", "Pro plan on Microsoft AppSource: up to 100 panels, analytical lines,"), 12, "600", "#83827D", 30],
+            [this.tr("UI_Landing5", "reference band, value labels and per-bar colours."), 12, "600", "#83827D", 18]
         ];
         let y = 0;
         for (const [text, size, weight, color, dy] of lines) {
