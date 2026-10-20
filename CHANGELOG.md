@@ -26,6 +26,7 @@ All notable changes to this visual are documented here.
 - **The reference band is visible when you turn it on.** Its limits started at 0 and 0, so Show band drew nothing — while still triggering the Pro preview. With no limits typed, the band now marks the typical range (25th to 75th percentile of the values); typed limits are used in whichever order they come.
 - **Selection is visible and reversible.** The other bars dim; clicking the only selected bar again clears it; bookmarks restore the selection; Enter or Space selects the focused bar and Esc clears.
 - **Drilldown in the visual header and expanded hierarchies.** With several levels expanded, each bar is labelled with all of them ("Q1 · Jan") and selects with the identity of each level.
+- **New start screen.** With no fields, the visual shows what it does, the three wells to fill, links to the guide, the product page and the video (opened only when you click them), and what Pro adds. It adapts to three sizes.
 - **Modern format pane.** Rebuilt on the current Power BI formatting model, with "Reset to default" on every card. Every setting saved in an existing report is kept.
 
 ### Fixed

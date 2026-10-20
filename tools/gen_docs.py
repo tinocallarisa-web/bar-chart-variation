@@ -216,7 +216,7 @@ small multiples, both orientations and style templates. <strong>Pro</strong> add
 <h2 id="quickstart">Quick Start</h2>
 <div class="card">
 <ol style="padding-left:20px;font-size:14px;color:var(--t2)">
-<li>Add <strong>{html.escape(NAME)}</strong> to the page. With no fields it shows a start screen with these steps.</li>
+<li>Add <strong>{html.escape(NAME)}</strong> to the page. With no fields it shows a start screen with these steps and links to this guide and the video.</li>
 <li>Drag a date or category field to <strong>Axis</strong> and a measure to <strong>Values</strong>. The variation % appears between the bars.</li>
 <li>Optional: a field in <strong>Small Multiple</strong> for one panel per region, product or team.</li>
 <li>Pro: drag your plan to <strong>Plan / Budget</strong> (or last year to <strong>Previous Year</strong>) and choose it under Comparison → Compare to.</li>
@@ -307,7 +307,10 @@ def privacy():
 <p>The visual <strong>does not collect, transmit or store any data</strong>. Every calculation — variations, references, analytical lines —
 happens inside Power BI, on the data of your report.</p>
 <h2>3. No network access</h2>
-<p>The visual declares <strong>no network privileges</strong> (<code>"privileges": []</code>), so Power BI does not let it make any web request.</p>
+<p>The visual declares <strong>no network privileges</strong> (<code>"privileges": []</code>), so Power BI does not let it make any web request.
+The icon on the start screen is bundled inside the visual.</p>
+<p>The <em>Guide</em>, <em>Product page</em> and <em>Video</em> links on the start screen ask Power BI to open those pages in your browser,
+only when you click them (Power BI Desktop asks first). The visual sends nothing.</p>
 <h2>4. Cookies and storage</h2>
 <p>No cookies and no browser storage. Formatting settings are saved in your report by Power BI, like those of any visual.</p>
 <h2>5. Licensing</h2>

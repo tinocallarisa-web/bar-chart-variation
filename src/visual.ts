@@ -21,6 +21,7 @@ import VisualTooltipDataItem = powerbi.extensibility.VisualTooltipDataItem;
 
 import { createTooltipServiceWrapper, ITooltipServiceWrapper } from "powerbi-visuals-utils-tooltiputils";
 import { FORMAT_SPEC } from "./formatSpec";
+import { LANDING_ICON } from "./landingIcon";
 import {
     HtmlSubSelectableClass, HtmlSubSelectionHelper, SubSelectableDisplayNameAttribute,
     SubSelectableObjectNameAttribute, SubSelectableTypeAttribute,
@@ -227,6 +228,11 @@ const TEMPLATES: Record<string, Record<string, Record<string, any>>> = {
         panelTitle: { titleStyle: "line", useSeriesColor: false, customColor: "#262626" }, legend: { textColor: "#262626" } },
 };
 
+// Enlaces de la pantalla de inicio: solo se abren con un clic, a través de host.launchUrl.
+const URL_GUIDE = "https://tinocallarisa-web.github.io/bar-chart-variation/support.html";
+const URL_PRODUCT = "https://tcviz.com/product/chart-variation-pro/?ref=visual-bar-chart-variation";
+const URL_VIDEO = "https://www.youtube.com/watch?v=vIszaUlC6G0";
+
 // ServicePlanState es un const enum: en runtime hacen falta los numeros.
 const STATE_ACTIVE = 1;
 /** Diagnóstico de colores: build-test.js --fxdiag lo pone a true. En producción, siempre false. */
@@ -274,6 +280,7 @@ export class Visual implements IVisual {
     private guideOn = true;
     private guideStep = 2;
     private guideEl: HTMLDivElement | null = null;
+    private landingEl: HTMLDivElement | null = null;
     /** Identidades que Power BI pasa al restaurar un marcador; getSelectionIds() puede no tenerlas todavía. */
     private restoredIds: powerbi.visuals.ISelectionId[] = [];
     private lastOptions: VisualUpdateOptions;
@@ -462,6 +469,7 @@ export class Visual implements IVisual {
                 this.events.renderingFinished(options);
                 return;
             }
+            this.hideLanding();
             this.updateSettings(this.dataView);
             this.render(options);
             this.paintSelection();
@@ -2227,28 +2235,129 @@ export class Visual implements IVisual {
      * Pagina de bienvenida (supportsLandingPage estaba declarado sin implementar):
      * como empezar y que añade Pro. Solo SVG con textContent, sin innerHTML.
      */
+    /**
+     * Qué es, cómo empezar con los pozos reales, ayuda y qué añade el Pro. Tres tamaños, como el radar y Box & Whisker.
+     * Los enlaces solo se abren al hacer clic (host.launchUrl); el Pro es texto, sin botón de compra.
+     */
     private renderLanding(width: number, height: number): void {
-        this.svg.attr("width", width).attr("height", height);
+        this.svg.attr("width", width).attr("height", height).style("display", "none");
         this.target.style.overflowX = "hidden";
         this.target.style.overflowY = "hidden";
         this.renderWatermark(width, height, false);
         this.messageGroup.selectAll("*").remove();
-        const g = this.chartGroup.append("g").classed("landing", true).attr("transform", "translate(16,8)");
-        const lines: [string, number, string, string, number][] = [
-            ["Bar Chart with Variation %", 16, "700", "#3D3929", 16],
-            [this.tr("UI_Landing1", "1. Drag a date or category field to Axis."), 12, "400", "#535146", 26],
-            [this.tr("UI_Landing2", "2. Drag a numeric measure to Values: variation % appears between bars."), 12, "400", "#535146", 20],
-            [this.tr("UI_Landing3", "3. Optional: Small Multiple splits the chart into panels; Tooltips adds fields."), 12, "400", "#535146", 20],
-            [this.tr("UI_Landing4", "Pro plan on Microsoft AppSource: up to 100 panels, analytical lines,"), 12, "600", "#83827D", 30],
-            [this.tr("UI_Landing5", "reference band, value labels and per-bar colours."), 12, "600", "#83827D", 18]
-        ];
-        let y = 0;
-        for (const [text, size, weight, color, dy] of lines) {
-            y += dy;
-            g.append("text").attr("x", 0).attr("y", y)
-                .style("font-size", `${size}px`).style("font-weight", weight).style("fill", color)
-                .text(text);
+        if (this.guideEl) { this.guideEl.style.display = "none"; }
+        if (!this.landingEl) {
+            this.landingEl = document.createElement("div");
+            this.target.appendChild(this.landingEl);
         }
+        const el = this.landingEl;
+        while (el.firstChild) { el.removeChild(el.firstChild); }
+        const size = (width >= 600 && height >= 340) ? "l" : (width >= 360 && height >= 220) ? "m" : "s";
+        el.className = "bcv-landing bcv-landing-" + size;
+        el.style.display = "flex";
+        const hc = this.hcActive();
+        const pal: any = this.colorPalette;
+        const fg = hc ? (pal.foreground?.value || "#000000") : "";
+        const bg = hc ? (pal.background?.value || "#FFFFFF") : "";
+        el.style.background = hc ? bg : "";
+        const mk = (tag: string, cls?: string, text?: string): HTMLElement => {
+            const n = document.createElement(tag);
+            if (cls) { n.className = cls; }
+            if (text !== undefined) { n.textContent = text; }
+            if (fg) { n.style.color = fg; }
+            return n;
+        };
+        const axis = this.tr("Visual_Axis", "Axis"), val = this.tr("Visual_Values", "Values"), sm = this.tr("Visual_SmallMultiple", "Small Multiple");
+        const box = mk("div", "bcv-l-box");
+        el.appendChild(box);
+        const head = mk("div", "bcv-l-head");
+        const img = document.createElement("img");
+        img.src = LANDING_ICON; img.alt = ""; img.className = "bcv-l-icon";
+        head.appendChild(img);
+        const titles = mk("div");
+        titles.appendChild(mk("div", "bcv-l-title", "Bar Chart with Variation %"));
+        if (size !== "s") {
+            titles.appendChild(mk("div", "bcv-l-tag", size === "l"
+                ? this.tr("UI_LandingTagline", "Plan vs actual: the variance on every bar, calculated for you.")
+                : this.tr("UI_LandingTaglineShort", "The variance on every bar.")));
+        }
+        head.appendChild(titles);
+        box.appendChild(head);
+        const link = (txt: string, url: string, cls: string): HTMLElement => {
+            const a = mk("a", cls) as HTMLAnchorElement;
+            a.href = url; a.tabIndex = 0; a.textContent = txt;
+            if (hc) { a.style.background = "transparent"; a.style.borderColor = fg; }
+            const open = (e: Event) => { e.preventDefault(); e.stopPropagation(); this.host.launchUrl(url); };
+            a.addEventListener("click", open);
+            a.addEventListener("keydown", (e: KeyboardEvent) => { if (e.key === "Enter" || e.key === " ") { open(e); } });
+            return a;
+        };
+        const links: [string, string, string][] = [
+            [this.tr("UI_LandingGuide", "Guide"), this.tr("UI_LandingGuideSub", "support page"), URL_GUIDE],
+            [this.tr("UI_LandingProduct", "Product page"), "tcviz.com", URL_PRODUCT],
+        ];
+        if (URL_VIDEO) { links.push([this.tr("UI_LandingVideo", "Video"), "YouTube", URL_VIDEO]); }
+        if (size === "s") {
+            box.appendChild(mk("p", "bcv-l-do", this.tr("UI_LandingSmall", "Add {axis} and {val}; {sm} for panels.")
+                .replace("{axis}", axis).replace("{val}", val).replace("{sm}", sm)));
+            const row = mk("div", "bcv-l-inline");
+            row.appendChild(link(links[0][0], links[0][2], "bcv-l-a"));
+            box.appendChild(row);
+            return;
+        }
+        const L = size === "l";
+        const steps = mk("ol", "bcv-l-steps");
+        const step = (n: number, well: string, txt: string) => {
+            const li = mk("li");
+            const num = mk("b", "bcv-l-n", String(n));
+            if (hc) { num.style.background = fg; num.style.color = bg; }
+            li.appendChild(num);
+            const sp = mk("span");
+            sp.appendChild(mk("strong", "bcv-l-well", well));
+            sp.appendChild(document.createTextNode(" · " + txt));
+            li.appendChild(sp);
+            steps.appendChild(li);
+        };
+        step(1, axis, L ? this.tr("UI_LandingStep1", "months, quarters or products — one bar per value") : this.tr("UI_LandingStep1Short", "one bar per value"));
+        step(2, val, L ? this.tr("UI_LandingStep2", "the figure: the variation % appears between the bars") : this.tr("UI_LandingStep2Short", "the figure on each bar"));
+        step(3, sm, L ? this.tr("UI_LandingStep3", "optional: one panel per region, product or team") : this.tr("UI_LandingStep3Short", "optional: one panel per value"));
+        if (L) {
+            const cols = mk("div", "bcv-l-cols");
+            const c1 = mk("div");
+            c1.appendChild(mk("div", "bcv-l-lbl", this.tr("UI_LandingStart", "Start in 3 steps")));
+            c1.appendChild(steps);
+            const c2 = mk("div");
+            c2.appendChild(mk("div", "bcv-l-lbl", this.tr("UI_LandingHelp", "Help")));
+            const list = mk("div", "bcv-l-links");
+            for (const [txt, sub, url] of links) {
+                const a = link(txt, url, "bcv-l-card");
+                a.appendChild(mk("small", "bcv-l-sub", sub));
+                list.appendChild(a);
+            }
+            c2.appendChild(list);
+            cols.appendChild(c1); cols.appendChild(c2);
+            box.appendChild(cols);
+        } else {
+            box.appendChild(steps);
+            const row = mk("div", "bcv-l-inline");
+            for (const l of links) { row.appendChild(link(l[1] === "tcviz.com" ? "tcviz.com" : l[0], l[2], "bcv-l-a")); }
+            box.appendChild(row);
+        }
+        if (!this.isPro) {
+            const pro = mk("div", "bcv-l-pro");
+            const chip = mk("span", "bcv-l-chip", "Pro");
+            if (hc) { chip.style.background = "transparent"; chip.style.border = "1px solid " + fg; }
+            pro.appendChild(chip);
+            pro.appendChild(mk("span", undefined, L
+                ? this.tr("UI_LandingPro", "Plan, budget, forecast or last year as references, absolute variance, up to 100 panels, analytical and trend lines, value labels.")
+                : this.tr("UI_LandingProShort", "Plan vs actual, up to 100 panels, trend lines.")));
+            box.appendChild(pro);
+        }
+    }
+
+    private hideLanding(): void {
+        if (this.landingEl) { this.landingEl.style.display = "none"; }
+        this.svg.style("display", null);
     }
 
     private clear() {

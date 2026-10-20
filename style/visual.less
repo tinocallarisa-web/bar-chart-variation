@@ -80,3 +80,46 @@
     .bcv-g-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 6px; }
     .bcv-g-chip { border-style: solid; border-radius: 6px; padding: 4px; cursor: pointer; background: #FFFFFF; font: 11px "Segoe UI", sans-serif; color: #252423; display: flex; flex-direction: column; align-items: center; gap: 2px; }
 }
+
+// Pantalla de inicio: la de la serie (radar, Box & Whisker), en tres tamaños
+.bcv-landing {
+    display: none;
+    position: absolute;
+    inset: 0;
+    color: #605E5C;
+    font-family: "Segoe UI", sans-serif;
+    .bcv-l-box { display: flex; flex-direction: column; justify-content: center; gap: 18px; width: 100%; height: 100%; box-sizing: border-box; padding: 24px 32px; overflow: hidden; }
+    .bcv-l-head { display: flex; gap: 12px; align-items: center; }
+    .bcv-l-icon { width: 44px; height: 44px; border-radius: 9px; flex-shrink: 0; }
+    .bcv-l-title { font-size: 20px; font-weight: 600; color: #252423; }
+    .bcv-l-tag { font-size: 14px; margin-top: 2px; }
+    .bcv-l-cols { display: grid; grid-template-columns: 1.15fr 1fr; gap: 28px; }
+    .bcv-l-lbl { font-size: 10.5px; font-weight: 600; letter-spacing: 1.3px; text-transform: uppercase; color: #8A8886; margin-bottom: 7px; }
+    .bcv-l-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; font-size: 13.5px; }
+    .bcv-l-steps li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; }
+    .bcv-l-n { display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: #2B6CB0; color: #FFFFFF; font-size: 10.5px; }
+    .bcv-l-well { color: #252423; }
+    .bcv-l-links { display: grid; gap: 7px; }
+    .bcv-l-card { display: flex; align-items: center; gap: 9px; padding: 7px 10px; border: 1px solid #E1DFDD; border-radius: 6px; background: #F7F6F3; color: #252423; text-decoration: none; font-size: 13.5px; cursor: pointer; }
+    .bcv-l-card:hover, .bcv-l-card:focus-visible { border-color: #2B6CB0; outline: none; }
+    .bcv-l-sub { margin-left: auto; color: #8A8886; font-size: 11px; }
+    .bcv-l-inline { display: flex; gap: 14px; flex-wrap: wrap; }
+    .bcv-l-a { color: #2B6CB0; font-weight: 600; text-decoration: none; cursor: pointer; }
+    .bcv-l-a:hover, .bcv-l-a:focus-visible { text-decoration: underline; outline: none; }
+    .bcv-l-pro { display: flex; gap: 9px; align-items: center; flex-wrap: wrap; border-top: 1px solid #EDEBE9; padding-top: 12px; font-size: 13px; }
+    .bcv-l-chip { font-size: 10px; font-weight: 600; letter-spacing: .6px; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; background: #E3F2E8; color: #2F7A47; }
+    .bcv-l-do { margin: 0; font-size: 12px; line-height: 1.45; }
+}
+.bcv-landing-m {
+    .bcv-l-box { gap: 11px; padding: 16px 20px; }
+    .bcv-l-icon { width: 34px; height: 34px; }
+    .bcv-l-title { font-size: 16px; }
+    .bcv-l-tag, .bcv-l-steps, .bcv-l-inline { font-size: 12.5px; }
+    .bcv-l-pro { font-size: 12px; padding-top: 9px; }
+}
+.bcv-landing-s {
+    .bcv-l-box { gap: 8px; padding: 12px 14px; }
+    .bcv-l-icon { width: 26px; height: 26px; border-radius: 6px; }
+    .bcv-l-title { font-size: 14px; }
+    .bcv-l-inline { font-size: 12px; }
+}
