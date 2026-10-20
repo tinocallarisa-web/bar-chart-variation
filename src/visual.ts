@@ -1645,6 +1645,11 @@ export class Visual implements IVisual {
                         .text(`${arrow}${txt}`);
                 }
             } else if (this.settings.variationLabels.show && varH > 0) {
+                // Cada barra intermedia es extremo de dos corchetes. Si cada corchete dibujara sus dos verticales, la
+                // barra tendría dos líneas discontinuas superpuestas con los guiones desfasados, que se leen como una
+                // línea continua. Por eso los corchetes solo dibujan su tramo horizontal y cada vertical se pinta una vez.
+                const conVertical = new Set<number>();
+                const bktY = titleH + varH - 2;
                 for (let i = 1; i < catValues.length; i++) {
                     const v1 = series.values[i - 1];
                     const v2 = series.values[i];
@@ -1660,14 +1665,12 @@ export class Visual implements IVisual {
 
                     // Bracket connector in pg coords (spans from bar tops up into varH zone)
                     if (this.settings.variationLabels.showConnectors) {
-                        const bTop1 = titleH + varH + y(v1);
-                        const bTop2 = titleH + varH + y(v2);
-                        const bktY  = titleH + varH - 2;
-                        pg.append("polyline")
-                            .attr("points", `${xc1},${bTop1} ${xc1},${bktY} ${xc2},${bktY} ${xc2},${bTop2}`)
-                            .attr("fill", "none")
+                        conVertical.add(i - 1); conVertical.add(i);
+                        pg.append("line")
+                            .attr("x1", xc1).attr("y1", bktY).attr("x2", xc2).attr("y2", bktY)
                             .attr("stroke", this.settings.barSettings.connectorColor)
-                            .attr("stroke-width", 1).attr("stroke-dasharray", "2,2");
+                            .attr("stroke-width", 1).attr("stroke-dasharray", "2,2")
+                            .attr("aria-hidden", "true");
                     }
 
                     pg.append("text")
@@ -1677,6 +1680,14 @@ export class Visual implements IVisual {
                         .style("font-weight", "bold").style("fill", vColor)
                         .text(`${arrow}${sign}${pct(diff, this.settings.variationLabels.decimalPlaces)}%`);
                 }
+                conVertical.forEach(i => {
+                    const xc = x(catValues[i]) + x.bandwidth() / 2;
+                    pg.append("line")
+                        .attr("x1", xc).attr("y1", bktY).attr("x2", xc).attr("y2", titleH + varH + y(series.values[i]))
+                        .attr("stroke", this.settings.barSettings.connectorColor)
+                        .attr("stroke-width", 1).attr("stroke-dasharray", "2,2")
+                        .attr("aria-hidden", "true");
+                });
             }
         });
 
