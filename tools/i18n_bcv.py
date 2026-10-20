@@ -172,4 +172,7 @@ B = {
 'Y title text': ['Texto del título Y', 'Texto do título Y', 'Texte du titre Y', 'Text des Y-Titels', 'Testo titolo Y', 'Tekst Y-titel', 'Tekst tytułu Y', 'Y タイトルのテキスト', 'Y 标题文本', 'Y 제목 텍스트'],
 'X axis': ['Eje X', 'Eixo X', 'Axe X', 'X-Achse', 'Asse X', 'X-as', 'Oś X', 'X 軸', 'X 轴', 'X축'],
 'Y axis': ['Eje Y', 'Eixo Y', 'Axe Y', 'Y-Achse', 'Asse Y', 'Y-as', 'Oś Y', 'Y 軸', 'Y 轴', 'Y축'],
+'Orientation': ['Orientación', 'Orientação', 'Orientation', 'Ausrichtung', 'Orientamento', 'Richting', 'Orientacja', '向き', '方向', '방향'],
+'Vertical (columns)': ['Vertical (columnas)', 'Vertical (colunas)', 'Verticale (colonnes)', 'Vertikal (Säulen)', 'Verticale (colonne)', 'Verticaal (kolommen)', 'Pionowo (kolumny)', '縦 (縦棒)', '垂直 (柱形)', '세로(세로 막대)'],
+'Horizontal (bars)': ['Horizontal (barras)', 'Horizontal (barras)', 'Horizontale (barres)', 'Horizontal (Balken)', 'Orizzontale (barre)', 'Horizontaal (staven)', 'Poziomo (słupki)', '横 (横棒)', '水平 (条形)', '가로(가로 막대)'],
 }

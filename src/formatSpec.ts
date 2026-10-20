@@ -514,6 +514,24 @@ export const FORMAT_SPEC: SpecCard[] = [
         "label": "Panel layout",
         "props": [
             {
+                "name": "orientation",
+                "key": "Visual_Orientation",
+                "label": "Orientation",
+                "kind": "enum",
+                "items": [
+                    {
+                        "value": "vertical",
+                        "key": "Visual_Enum_Vertical",
+                        "label": "Vertical (columns)"
+                    },
+                    {
+                        "value": "horizontal",
+                        "key": "Visual_Enum_Horizontal",
+                        "label": "Horizontal (bars)"
+                    }
+                ]
+            },
+            {
                 "name": "columns",
                 "key": "Visual_Columns",
                 "label": "Columns (0 = auto)",

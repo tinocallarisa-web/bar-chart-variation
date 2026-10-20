@@ -101,6 +101,7 @@ interface VisualSettings {
         bgOpacity: number;
     };
     panelLayout: {
+        orientation: string;    // vertical | horizontal
         columns: number;        // 0 = automatico
         minPanelWidth: number;
         minPanelHeight: number;
@@ -341,6 +342,7 @@ export class Visual implements IVisual {
             bgOpacity:      30
         },
         panelLayout: {
+            orientation: "vertical",
             columns: 0,
             minPanelWidth: 120,
             minPanelHeight: 120,
@@ -693,6 +695,7 @@ export class Visual implements IVisual {
         const pl = (objects?.panelLayout ?? {}) as any;
 
         nombreDe.set(pl, "panelLayout");
+        this.settings.panelLayout.orientation    = getValue(pl, "orientation",    "vertical");
         this.settings.panelLayout.columns        = getValue(pl, "columns",        0);
         this.settings.panelLayout.minPanelWidth  = getValue(pl, "minPanelWidth",  120);
         this.settings.panelLayout.enableScroll   = getValue(pl, "enableScroll",   true);
@@ -1222,22 +1225,29 @@ export class Visual implements IVisual {
             fmt.format(yDomain[0]).length, fmt.format(yDomain[1]).length
         ) * yFs * (this.settings.axisSettings.yBold ? 0.66 : 0.60);
 
+        // Horizontal: las categorías van a la izquierda de cada panel y el eje de valores abajo, uno por columna.
+        const horiz = this.settings.panelLayout.orientation === "horizontal";
         // Títulos de eje: texto propio o, si está vacío, el nombre del campo.
         const axS = this.settings.axisSettings;
         const tituloFs = Math.max(axS.xFontSize, axS.yFontSize) + 1;
         const tituloX = axS.showXTitle ? (axS.xTitle || catCols.map((cc: any) => cc.source.displayName).join(" · ")) : "";
         const tituloY = axS.showYTitle ? (axS.yTitle || (values[0]?.source?.displayName || "")) : "";
+        // En horizontal el título de las categorías va a la izquierda y el de los valores abajo.
+        const tituloAbajo = horiz ? tituloY : tituloX;
+        const tituloIzq   = horiz ? tituloX : tituloY;
         const L = this.layoutFor(width, height, ncols, nrows, anchoEtiquetaY, {
-            yLabels:   this.settings.axisSettings.showYLabels,
+            yLabels:   !horiz && this.settings.axisSettings.showYLabels,
             legend:    this.settings.legend.show,
             legendPos,
-            xTitleH:   tituloX ? tituloFs + 6 : 0,
-            yTitleW:   tituloY ? tituloFs + 6 : 0
+            xTitleH:   tituloAbajo ? tituloFs + 6 : 0,
+            yTitleW:   tituloIzq ? tituloFs + 6 : 0
         });
-        this.settings.axisSettings.showYLabels = L.yLabels;
+        if (!horiz) { this.settings.axisSettings.showYLabels = L.yLabels; }
         this.settings.legend.show              = L.legend;
 
-        const oML = L.oML, oMT = L.oMT, oMR = L.oMR, oMB = L.oMB;
+        // Eje de valores horizontal: una franja abajo, bajo la última fila de paneles.
+        const valAxisH = horiz && axS.showYLabels && height >= 120 ? axS.yFontSize + 8 : 0;
+        const oML = L.oML, oMT = L.oMT, oMR = L.oMR, oMB = L.oMB + valAxisH;
         const legendH = L.legendH;
 
         // ── Scroll: expand SVG if panels would be narrower or shorter than the minimum ──
@@ -1303,9 +1313,9 @@ export class Visual implements IVisual {
         // dos alturas alternas. Nunca se oculta ninguna: cada porcentaje es un dato.
         const vlS = this.settings.variationLabels;
         let varFs = vlS.fontSize, varArrows = vlS.showArrows, varStagger = false;
-        if (varH > 0) {
+        let maxLen = 0;
+        if (vlS.show) {
             const cmpR = this.settings.comparison.compareTo, modeV = this.settings.comparison.varianceMode;
-            let maxLen = 0;
             for (const sr of visible) {
                 const ref = cmpR !== "previous" ? sr.refValues[cmpR] : undefined;
                 for (let i = ref ? 0 : 1; i < sr.values.length; i++) {
@@ -1318,6 +1328,10 @@ export class Visual implements IVisual {
                     maxLen = Math.max(maxLen, len);
                 }
             }
+        }
+        // Horizontal: las variaciones van en una columna a la derecha y las categorías a la izquierda, no encima ni debajo.
+        if (horiz) { varH = 0; xLblH = 0; }
+        if (varH > 0) {
             const ancho = () => (maxLen + (varArrows ? 2 : 0)) * varFs * 0.6;
             const hueco = bandW * 0.95;
             if (ancho() > hueco) { varArrows = false; }
@@ -1355,7 +1369,7 @@ export class Visual implements IVisual {
                 this.settings.axisSettings.showXLabels = false;
             }
         }
-        this.settings.variationLabels.show = varH > 0 && this.settings.variationLabels.show;
+        this.settings.variationLabels.show = (horiz || varH > 0) && this.settings.variationLabels.show;
         this.settings.panelTitle.show = showTitle;
 
         const innerH  = Math.max(cellH  - 2 * cellPad - titleH - varH - xLblH, 10);
@@ -1384,7 +1398,7 @@ export class Visual implements IVisual {
         }
 
         // ── Y axis — one per ROW on the left side of the grid ─────────────
-        if (this.settings.axisSettings.showYLabels) {
+        if (this.settings.axisSettings.showYLabels && !horiz) {
             for (let r = 0; r < nrows; r++) {
                 const yOffsetForRow = oMT + r * cellH + cellPad + titleH + varH;
                 const yAxisG = this.chartGroup.append("g").classed("y-axis", true)
@@ -1410,6 +1424,203 @@ export class Visual implements IVisual {
         const canDrillDown = drillableTypes.includes(2 /* DrillType.Down */);
         const canDrillUp   = drillableTypes.includes(1 /* DrillType.Up */);
         const hostRef      = this.host;
+
+        // ── Horizontal: geometría común ───────────────────────────────────
+        // Categorías a la izquierda, barras hacia la derecha, variación en una columna a la derecha. Si el panel es
+        // estrecho, primero se quita la columna de variación encogiendo la letra y después las categorías.
+        const hTop  = showTitle && titlePos === "top" ? titleH : 0;
+        // La letra sigue al alto de la fila (mínimo 6 px). Las categorías que aun así no caben se aclaran (una de cada k);
+        // los porcentajes no se quitan nunca.
+        const hStep  = innerH / Math.max(catValues.length, 1);
+        const hVarFs = Math.min(vlS.fontSize, Math.max(6, hStep * 0.9));
+        const hCatFs = Math.min(xFs, Math.max(6, hStep * 0.9));
+        const hCatEvery = hStep < hCatFs ? Math.ceil(hCatFs / hStep) : 1;
+        const hVarArrows = vlS.showArrows && maxLen * hVarFs * 0.6 < innerW * 0.25;
+        const hConn = vlS.showConnectors && this.settings.comparison.compareTo === "previous";
+        let hCatW = horiz && axS.showXLabels ? Math.min(innerW * 0.4, estLblW + 8) : 0;
+        let hVarW = horiz && vlS.show ? Math.min(innerW * 0.35, (maxLen + (hVarArrows ? 2 : 0)) * hVarFs * 0.6 + (hConn ? 16 : 8)) : 0;
+        if (horiz && innerW - hCatW - hVarW < 40) { hVarW = 0; }
+        if (horiz && innerW - hCatW - hVarW < 40) { hCatW = 0; }
+        if (horiz && hVarW === 0) { this.settings.variationLabels.show = false; }
+        const hPlotW = Math.max(innerW - hCatW - hVarW, 10);
+        // Sin el 15% de aire de la vertical: aquí la variación tiene su propia columna. Solo las etiquetas de valor piden sitio.
+        const xsH = d3.scaleLinear()
+            .domain([yDomain[0], Math.max(maxVal, 0) * (this.settings.valueLabels.show ? 1.12 : 1) || 1]).nice()
+            .range([0, hPlotW]);
+
+        // Lo que comparten las dos orientaciones para cada barra: color, accesibilidad, tooltip y eventos.
+        const barInfo = (series: SeriesData, ci: number, useRef: boolean, refArr: (number | null)[] | undefined, refLabel: string, dp: number) => {
+            const cat    = catValues[ci];
+            const v      = series.values[ci];
+            const hl     = series.highlights[ci];
+            const pv     = ci > 0 ? series.values[ci - 1] : null;
+            const base   = useRef ? refArr[ci] : pv;
+            const isNeg  = v < 0 || (base !== null && base !== undefined && v < base);
+            const cfColor = (this.isPro || preview) && !this.hcActive() ? series.cfColors[ci] : null;
+            const fill    = cfColor ? cfColor : (isNeg ? negFill : series.color);
+            const opac   = (hasHighlights && hl == null) ? barOpacity * 0.3 : barOpacity;
+            let ariaLabel = `${series.name}, ${cat}: ${fmt.format(v)}`;
+            if (base !== null && base !== undefined && base !== 0) {
+                const varN   = (v - base) / Math.abs(base) * 100;
+                const sign   = varN >= 0 ? "+" : "";
+                ariaLabel   += ", " + this.tr("UI_AriaVariation", "variation from {0}").replace("{0}", useRef ? refLabel : this.tr("UI_PreviousLower", "previous")) + `: ${sign}${pct(varN, dp)}%`;
+            }
+            const tooltipItems: VisualTooltipDataItem[] = [];
+            tooltipItems.push({ displayName: cat, value: fmt.format(v), color: fill === `url(#${patternId})` ? negColor : fill, header: series.name });
+            if (base !== null && base !== undefined) {
+                tooltipItems.push({ displayName: useRef ? refLabel : this.tr("UI_Previous", "Previous"), value: fmt.format(base) });
+                if (base !== 0) {
+                    const absDelta = v - base;
+                    const sign     = absDelta >= 0 ? "+" : "";
+                    tooltipItems.push({ displayName: this.tr("UI_Change", "Change"), value: `${sign}${fmt.format(absDelta)}` });
+                    tooltipItems.push({ displayName: this.tr("UI_VariationPct", "Variation %"), value: `${sign}${pct(absDelta / Math.abs(base) * 100, dp)}%`,
+                        color: isNeg ? this.settings.variationLabels.negativeColor : this.settings.variationLabels.positiveColor });
+                }
+            }
+            series.tooltipFields.forEach(tf => {
+                const tv = tf.values[ci];
+                if (tv !== null) {
+                    const tfFmt = tf.format ? valueFormatter.create({ format: tf.format }) : valueFormatter.create({});
+                    tooltipItems.push({ displayName: tf.name, value: tfFmt.format(tv) });
+                }
+            });
+            return { cat, v, base, isNeg, fill, opac, ariaLabel, tooltipItems, selId: series.barSelectionIds[ci] };
+        };
+        const barEvents = (sel: any, selId: powerbi.visuals.ISelectionId) => {
+            const interactive = this.interactive();
+            sel.style("cursor", interactive ? "pointer" : "default")
+                .on("click", (event: MouseEvent) => {
+                    if (!interactive) { return; }
+                    event.stopPropagation();
+                    this.selectBar(selId, event.ctrlKey || event.metaKey);
+                })
+                .on("keydown", (event: KeyboardEvent) => {
+                    if (!interactive) { return; }
+                    if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault(); event.stopPropagation();
+                        this.selectBar(selId, event.ctrlKey || event.metaKey);
+                    } else if (event.key === "Escape") {
+                        event.preventDefault();
+                        this.restoredIds = [];
+                        this.selectionManager.clear().then(() => this.paintSelection());
+                    }
+                });
+        };
+
+        const drawHorizontal = (series: SeriesData, pi: number, pg: Selection<SVGGElement>) => {
+            const dp = vlS.decimalPlaces;
+            const cmpRole  = this.settings.comparison.compareTo;
+            const refArr   = cmpRole !== "previous" ? series.refValues[cmpRole] : undefined;
+            const useRef   = !!refArr;
+            const refLabel = this.refLabel(cmpRole);
+            const ys = d3.scaleBand().domain(catValues).rangeRound([0, innerH]).paddingInner(0.35);
+            const bh = ys.bandwidth();
+            const ca = pg.append("g").attr("transform", `translate(${hCatW},${hTop})`);
+            ca.append("line")
+                .attr("x1", xsH(0)).attr("y1", 0).attr("x2", xsH(0)).attr("y2", innerH)
+                .attr("stroke", this.settings.barSettings.axisTextColor)
+                .attr("stroke-width", 0.5).attr("opacity", 0.5);
+            const centro = (ci: number) => ys(catValues[ci]) + bh / 2;
+            catValues.forEach((cat, ci) => {
+                const b = barInfo(series, ci, useRef, refArr, refLabel, dp);
+                const by = ys(cat);
+                const bx = xsH(Math.min(0, b.v));
+                const bw = Math.max(Math.abs(xsH(b.v) - xsH(0)), 1);
+                const bw2 = Math.max(0, Math.min(this.settings.barSettings.borderWidth, bw / 2, bh / 2));
+                const clipId = `bar-clip-${pi}-${ci}`;
+                if (bw2 > 0) {
+                    ca.append("clipPath").attr("id", clipId).append("rect")
+                        .attr("x", bx).attr("y", by).attr("width", bw).attr("height", bh)
+                        .attr("rx", this.settings.panelLayout.barBorderRadius);
+                }
+                const rect = ca.append("rect")
+                    .datum({ selectionId: b.selId, tooltipInfo: b.tooltipItems } as BarDatum)
+                    .classed("bar-rect", true)
+                    .attr("x", bx).attr("y", by).attr("width", bw).attr("height", bh)
+                    .attr("fill", b.fill).attr("opacity", b.opac)
+                    .attr("stroke", bw2 > 0 ? this.settings.barSettings.borderColor : "none")
+                    .attr("stroke-width", bw2 > 0 ? bw2 * 2 : 0)
+                    .attr("clip-path", bw2 > 0 ? `url(#${clipId})` : null)
+                    .attr("rx", this.settings.panelLayout.barBorderRadius)
+                    .attr("role", "img").attr("aria-label", b.ariaLabel)
+                    .attr("tabindex", "0").attr("data-opac", b.opac);
+                barEvents(rect, b.selId);
+                // Marca de referencia: vertical, al nivel del plan, cruzando la barra.
+                if (useRef && this.settings.comparison.showMarker && b.base !== null && b.base !== undefined && isFinite(Number(b.base))) {
+                    const rx = xsH(Number(b.base));
+                    ca.append("line").classed("ref-marker", true)
+                        .attr("x1", rx).attr("x2", rx).attr("y1", by - 1).attr("y2", by + bh + 1)
+                        .attr("stroke", this.settings.comparison.markerColor).attr("stroke-width", 2)
+                        .attr("stroke-linecap", "square").attr("pointer-events", "none").attr("aria-hidden", "true");
+                }
+                if (hCatW > 0 && ci % hCatEvery === 0) {
+                    ca.append("text").classed("x-label", true)
+                        .attr("x", -4).attr("y", by + bh / 2)
+                        .attr("text-anchor", "end").attr("dominant-baseline", "central")
+                        .style("font-size", `${hCatFs}px`).style("fill", axS.xColor)
+                        .style("font-weight", axS.xBold ? "bold" : "normal").style("font-style", axS.xItalic ? "italic" : "normal")
+                        .text(cat);
+                }
+                if (this.settings.valueLabels.show) {
+                    const pos = b.v >= 0;
+                    ca.append("text")
+                        .attr("x", pos ? xsH(b.v) + 3 : xsH(b.v) - 3).attr("y", by + bh / 2)
+                        .attr("text-anchor", pos ? "start" : "end").attr("dominant-baseline", "central")
+                        .style("font-size", `${this.settings.valueLabels.fontSize}px`)
+                        .style("fill", this.settings.valueLabels.color).style("font-weight", "bold")
+                        .text(fmt.format(b.v));
+                }
+            });
+            if (!(this.settings.variationLabels.show && hVarW > 0)) { return; }
+            const mode = this.settings.comparison.varianceMode;
+            const fmtVar = (delta: number, pc: number): string => {
+                const sg  = delta >= 0 ? "+" : "";
+                const rel = `${sg}${pct(pc, dp)}%`;
+                const abs = `${sg}${fmtAxis.format(delta)}`;
+                return mode === "absolute" ? abs : mode === "both" ? `${abs} (${rel})` : rel;
+            };
+            const etiqueta = (x: number, y: number, delta: number, pc: number) => {
+                const isPos = delta >= 0;
+                ca.append("text").classed("var-label", true)
+                    .attr("x", x).attr("y", y).attr("text-anchor", "start").attr("dominant-baseline", "central")
+                    .style("font-size", `${hVarFs}px`).style("font-weight", "bold")
+                    .style("fill", isPos ? vlS.positiveColor : vlS.negativeColor)
+                    .attr("aria-hidden", "true")
+                    .text(`${hVarArrows ? (isPos ? "▲ " : "▼ ") : ""}${fmtVar(delta, pc)}`);
+            };
+            if (useRef) {
+                // Con referencia: la desviación va en la fila de su barra.
+                for (let i = 0; i < catValues.length; i++) {
+                    const rv = refArr[i];
+                    if (rv === null || rv === undefined || !isFinite(Number(rv)) || Number(rv) === 0) { continue; }
+                    const delta = series.values[i] - Number(rv);
+                    etiqueta(hPlotW + 6, centro(i), delta, delta / Math.abs(Number(rv)) * 100);
+                }
+                return;
+            }
+            // Contra la barra anterior: entre las dos filas, con el corchete en vertical. Cada horizontal se pinta una vez.
+            const bktX = hPlotW + 5;
+            const conH = new Set<number>();
+            for (let i = 1; i < catValues.length; i++) {
+                const v1 = series.values[i - 1], v2 = series.values[i];
+                if (v1 === 0) { continue; }
+                const y1 = centro(i - 1), y2 = centro(i);
+                if (hConn) {
+                    conH.add(i - 1); conH.add(i);
+                    ca.append("line")
+                        .attr("x1", bktX).attr("y1", y1).attr("x2", bktX).attr("y2", y2)
+                        .attr("stroke", this.settings.barSettings.connectorColor)
+                        .attr("stroke-width", 1).attr("stroke-dasharray", "2,2").attr("aria-hidden", "true");
+                }
+                etiqueta(bktX + (hConn ? 5 : 1), (y1 + y2) / 2, v2 - v1, (v2 - v1) / Math.abs(v1) * 100);
+            }
+            conH.forEach(i => {
+                ca.append("line")
+                    .attr("x1", xsH(Math.max(0, series.values[i]))).attr("y1", centro(i)).attr("x2", bktX).attr("y2", centro(i))
+                    .attr("stroke", this.settings.barSettings.connectorColor)
+                    .attr("stroke-width", 1).attr("stroke-dasharray", "2,2").attr("aria-hidden", "true");
+            });
+        };
 
         // ── Draw each panel ────────────────────────────────────────────────
         visible.forEach((series, pi) => {
@@ -1516,6 +1727,8 @@ export class Visual implements IVisual {
                     .text(series.name);
             }
 
+            if (horiz) { drawHorizontal(series, pi, pg); return; }
+
             // ── Chart area ─────────────────────────────────────────────────
             const caTopOffset = (showTitle && titlePos === "top") ? titleH + varH : varH;
             const ca = pg.append("g").attr("transform", `translate(0,${caTopOffset})`);
@@ -1538,78 +1751,11 @@ export class Visual implements IVisual {
             const useRef    = !!refArr;
             const refLabel  = this.refLabel(cmpRole);
             catValues.forEach((cat, ci) => {
-                const v      = series.values[ci];
-                const hl     = series.highlights[ci];
-                const pv     = ci > 0 ? series.values[ci - 1] : null;
-                // Con referencia enlazada se compara contra ella; si no, contra la barra anterior.
-                const base   = useRef ? refArr[ci] : pv;
-                const isNeg  = v < 0 || (base !== null && base !== undefined && v < base);
-                // Color priority: CF rule (per-bar) > negative color > series color
-                const cfColor = (this.isPro || preview) && !this.hcActive()
-                    ? series.cfColors[ci] : null;
-                const fill    = cfColor
-                    ? cfColor
-                    : (isNeg ? negFill : series.color);
-                const opac   = (hasHighlights && hl == null) ? barOpacity * 0.3 : barOpacity;
+                const { v, base, fill, opac, ariaLabel, tooltipItems, selId } = barInfo(series, ci, useRef, refArr, refLabel, dp);
                 const bx     = x(cat);
                 const bw     = x.bandwidth();
                 const by     = y(Math.max(0, v));
                 const bh     = Math.max(Math.abs(y(v) - y(0)), 1);
-
-                // Aria label: panel, category, value, variation vs prior period
-                let ariaLabel = `${series.name}, ${cat}: ${fmt.format(v)}`;
-                if (base !== null && base !== undefined && base !== 0) {
-                    const varN   = (v - base) / Math.abs(base) * 100;
-                    const varPct = pct(varN, dp);
-                    const sign   = varN >= 0 ? "+" : "";
-                    ariaLabel   += ", " + this.tr("UI_AriaVariation", "variation from {0}").replace("{0}", useRef ? refLabel : this.tr("UI_PreviousLower", "previous")) + `: ${sign}${varPct}%`;
-                }
-
-                // Tooltip data for this bar
-                const tooltipItems: VisualTooltipDataItem[] = [];
-                tooltipItems.push({
-                    displayName: cat,
-                    value: fmt.format(v),
-                    color: fill === `url(#${patternId})` ? negColor : fill,
-                    header: series.name
-                });
-                if (base !== null && base !== undefined) {
-                    tooltipItems.push({
-                        displayName: useRef ? refLabel : this.tr("UI_Previous", "Previous"),
-                        value: fmt.format(base)
-                    });
-                    if (base !== 0) {
-                        const absDelta = v - base;
-                        const varPct   = (absDelta / Math.abs(base)) * 100;
-                        const sign     = absDelta >= 0 ? "+" : "";
-                        tooltipItems.push({
-                            displayName: this.tr("UI_Change", "Change"),
-                            value: `${sign}${fmt.format(absDelta)}`
-                        });
-                        tooltipItems.push({
-                            displayName: this.tr("UI_VariationPct", "Variation %"),
-                            value: `${sign}${pct(varPct, dp)}%`,
-                            color: isNeg
-                                ? this.settings.variationLabels.negativeColor
-                                : this.settings.variationLabels.positiveColor
-                        });
-                    }
-                }
-
-                // Extra tooltip fields dragged into the Tooltips bucket
-                series.tooltipFields.forEach(tf => {
-                    const tv = tf.values[ci];
-                    if (tv !== null) {
-                        const tfFmt = tf.format
-                            ? valueFormatter.create({ format: tf.format })
-                            : valueFormatter.create({});
-                        tooltipItems.push({ displayName: tf.name, value: tfFmt.format(tv) });
-                    }
-                });
-
-                const selId    = series.barSelectionIds[ci];
-                const selMgr   = this.selectionManager;
-                const interactive = this.interactive();
 
                 // Grosor acotado: pasado de la mitad del ancho, el borde se come la barra.
                 const bw2 = Math.max(0, Math.min(this.settings.barSettings.borderWidth, bw / 2, bh / 2));
@@ -1622,7 +1768,7 @@ export class Visual implements IVisual {
                 }
 
                 // selectionId + tooltipInfo stored as D3 datum
-                ca.append("rect")
+                const rectV = ca.append("rect")
                     .datum({ selectionId: selId, tooltipInfo: tooltipItems } as BarDatum)
                     .classed("bar-rect", true)
                     .attr("x", bx).attr("y", by)
@@ -1635,27 +1781,11 @@ export class Visual implements IVisual {
                     .attr("stroke-width", bw2 > 0 ? bw2 * 2 : 0)
                     .attr("clip-path", bw2 > 0 ? `url(#${clipId})` : null)
                     .attr("rx", this.settings.panelLayout.barBorderRadius)
-                    .style("cursor", interactive ? "pointer" : "default")
                     .attr("role", "img")
                     .attr("aria-label", ariaLabel)
                     .attr("tabindex", "0")
-                    .attr("data-opac", opac)
-                    .on("click", (event: MouseEvent) => {
-                        if (!interactive) { return; }
-                        event.stopPropagation();
-                        this.selectBar(selId, event.ctrlKey || event.metaKey);
-                    })
-                    .on("keydown", (event: KeyboardEvent) => {
-                        if (!interactive) { return; }
-                        if (event.key === "Enter" || event.key === " ") {
-                            event.preventDefault(); event.stopPropagation();
-                            this.selectBar(selId, event.ctrlKey || event.metaKey);
-                        } else if (event.key === "Escape") {
-                            event.preventDefault();
-                            this.restoredIds = [];
-                            selMgr.clear().then(() => this.paintSelection());
-                        }
-                    })
+                    .attr("data-opac", opac);
+                barEvents(rectV, selId);
 
                 // ── Reference marker ───────────────────────────────────────
                 // Marca horizontal al nivel de la referencia, al estilo IBCS: la barra es
@@ -1794,7 +1924,60 @@ export class Visual implements IVisual {
         const al    = this.settings.analyticalLines;
         const allValsFlat = visible.flatMap(s => s.values);
 
-        if (al.showBand && al.bandMax > al.bandMin) {
+        // Horizontal: un eje de valores bajo cada columna de paneles.
+        if (horiz && valAxisH > 0) {
+            for (let c = 0; c < Math.min(ncols, numPanels); c++) {
+                const xAxisG = this.chartGroup.append("g").classed("y-axis", true)
+                    .attr("transform", `translate(${oML + c * cellW + cellPad + hCatW},${oMT + gridH + 2})`);
+                d3.axisBottom(xsH).ticks(Math.max(2, Math.floor(hPlotW / 70))).tickSize(0).tickFormat((d: any) => fmtAxis.format(d))(xAxisG as any);
+                xAxisG.select(".domain").remove();
+                xAxisG.selectAll("text")
+                    .style("fill", axS.yColor)
+                    .style("font-weight", axS.yBold ? "bold" : "normal")
+                    .style("font-style", axS.yItalic ? "italic" : "normal")
+                    .style("font-size", `${axS.yFontSize}px`);
+            }
+        }
+
+        if (horiz) {
+            // Líneas y banda en vertical, una por panel.
+            const cfgH: { show: boolean; value: number; label: string }[] = [
+                { show: al.showAverage, value: d3.mean(allValsFlat) || 0,   label: this.tr("UI_Avg", "Avg") },
+                { show: al.showMax,     value: d3.max(allValsFlat)  || 0,   label: this.tr("UI_Max", "Max") },
+                { show: al.showMin,     value: d3.min(allValsFlat)  || 0,   label: this.tr("UI_Min", "Min") },
+                { show: al.showMedian,  value: d3.median(allValsFlat) || 0, label: this.tr("UI_Median", "Median") },
+                { show: al.showRef,     value: al.refValue,                 label: fmt.format(al.refValue) }
+            ];
+            const dashH = al.lineStyle === "dashed" ? "6,3" : al.lineStyle === "dotted" ? "2,3" : null;
+            for (let pi = 0; pi < numPanels; pi++) {
+                const x0 = oML + (pi % ncols) * cellW + cellPad + hCatW;
+                const y0 = oMT + Math.floor(pi / ncols) * cellH + cellPad + hTop;
+                if (al.showBand && al.bandMax > al.bandMin) {
+                    this.chartGroup.append("rect")
+                        .attr("x", x0 + xsH(al.bandMin)).attr("y", y0)
+                        .attr("width", Math.abs(xsH(al.bandMax) - xsH(al.bandMin))).attr("height", innerH)
+                        .attr("fill", al.bandColor).attr("opacity", al.bandOpacity / 100)
+                        .attr("pointer-events", "none").attr("aria-hidden", "true");
+                }
+                for (const lc of cfgH) {
+                    if (!lc.show) { continue; }
+                    const lx = x0 + xsH(lc.value);
+                    const ln = this.chartGroup.append("line")
+                        .attr("x1", lx).attr("x2", lx).attr("y1", y0).attr("y2", y0 + innerH)
+                        .attr("stroke", al.lineColor).attr("stroke-width", 1.5)
+                        .attr("pointer-events", "none").attr("aria-hidden", "true");
+                    if (dashH) { ln.attr("stroke-dasharray", dashH); }
+                    if (al.showLabel) {
+                        this.chartGroup.append("text")
+                            .attr("x", lx + 2).attr("y", y0 + al.labelSize)
+                            .style("font-size", `${al.labelSize}px`).style("fill", al.lineColor).style("font-weight", "600")
+                            .attr("pointer-events", "none").text(lc.label);
+                    }
+                }
+            }
+        }
+
+        if (!horiz && al.showBand && al.bandMax > al.bandMin) {
             const bandY1 = y(al.bandMax);
             const bandY2 = y(al.bandMin);
             const bandH  = Math.abs(bandY2 - bandY1);
@@ -1820,7 +2003,7 @@ export class Visual implements IVisual {
                          : null;
 
         for (const lc of lineConfigs) {
-            if (!lc.show) continue;
+            if (!lc.show || horiz) continue;
             // Draw one line per row, at the correct y position inside each row's chart area
             for (let r = 0; r < nrows; r++) {
                 const lineY = oMT + r * cellH + cellPad + titleH + varH + y(lc.value);
@@ -1889,8 +2072,8 @@ export class Visual implements IVisual {
 
         // ── Watermark & freemium message ───────────────────────────────────
         this.renderWatermark(svgWidth, svgHeight, preview && this.attemptedPro.length > 0);
-        this.renderAxisTitles(L.xTitleH ? tituloX : "", L.yTitleW ? tituloY : "", tituloFs, oML, oMT, oMR, oMB, legendH,
-            svgWidth, svgHeight);
+        this.renderAxisTitles(L.xTitleH ? tituloAbajo : "", L.yTitleW ? tituloIzq : "", tituloFs, oML, oMT, oMR, oMB - valAxisH, legendH,
+            svgWidth, svgHeight, horiz);
         this.renderGuide(editing);
         if (DEBUG_FX && (this as any).diagFx) {
             this.messageGroup.selectAll(".dbgfx").remove();
@@ -2188,11 +2371,13 @@ export class Visual implements IVisual {
 
     /** Títulos de eje, uno por visual (no por panel): X centrado abajo, Y girado a la izquierda. */
     private renderAxisTitles(tx: string, ty: string, fs: number, oML: number, oMT: number, oMR: number, oMB: number,
-        legendH: number, w: number, h: number): void {
-        const axS = this.settings.axisSettings;
+        legendH: number, w: number, h: number, horiz = false): void {
+        // En horizontal cada título conserva el estilo de su eje: abajo va el de valores (Y), a la izquierda el de categorías (X).
+        const a = this.settings.axisSettings;
+        const axS = horiz ? { ...a, xColor: a.yColor, xBold: a.yBold, xItalic: a.yItalic, yColor: a.xColor, yBold: a.xBold, yItalic: a.xItalic } : a;
         const legAbajo = this.settings.legend.show && this.settings.legend.position === "bottom" ? legendH : 0;
         if (tx) {
-            this.chartGroup.append("text").classed("axis-title x-title", true)
+            this.chartGroup.append("text").classed(horiz ? "axis-title y-title" : "axis-title x-title", true)
                 .attr("x", oML + (w - oML - oMR) / 2).attr("y", h - legAbajo - 6)
                 .attr("text-anchor", "middle")
                 .style("font-size", `${fs}px`).style("fill", axS.xColor)
@@ -2201,7 +2386,7 @@ export class Visual implements IVisual {
         }
         if (ty) {
             const cy = oMT + (h - oMT - oMB) / 2;
-            this.chartGroup.append("text").classed("axis-title y-title", true)
+            this.chartGroup.append("text").classed(horiz ? "axis-title x-title" : "axis-title y-title", true)
                 .attr("x", fs + 2).attr("y", cy)
                 .attr("text-anchor", "middle")
                 .attr("transform", `rotate(-90,${fs + 2},${cy})`)

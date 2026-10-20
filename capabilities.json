@@ -695,6 +695,24 @@
       "displayName": "Panel layout",
       "displayNameKey": "Visual_PanelLayout",
       "properties": {
+        "orientation": {
+          "displayName": "Orientation",
+          "displayNameKey": "Visual_Orientation",
+          "type": {
+            "enumeration": [
+              {
+                "value": "vertical",
+                "displayName": "Vertical (columns)",
+                "displayNameKey": "Visual_Enum_Vertical"
+              },
+              {
+                "value": "horizontal",
+                "displayName": "Horizontal (bars)",
+                "displayNameKey": "Visual_Enum_Horizontal"
+              }
+            ]
+          }
+        },
         "columns": {
           "displayName": "Columns (0 = auto)",
           "displayNameKey": "Visual_Columns",
