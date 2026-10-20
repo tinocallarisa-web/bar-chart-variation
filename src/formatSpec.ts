@@ -364,6 +364,12 @@ export const FORMAT_SPEC: SpecCard[] = [
                 ]
             },
             {
+                "name": "hideEmpty",
+                "key": "Visual_HideEmpty",
+                "label": "Hide empty categories",
+                "kind": "bool"
+            },
+            {
                 "name": "showXLabels",
                 "key": "Visual_ShowXLabels",
                 "label": "Show X labels",
@@ -428,6 +434,18 @@ export const FORMAT_SPEC: SpecCard[] = [
                 "kind": "bool"
             },
             {
+                "name": "showXTitle",
+                "key": "Visual_ShowXTitle",
+                "label": "X axis title",
+                "kind": "bool"
+            },
+            {
+                "name": "xTitle",
+                "key": "Visual_XTitleText",
+                "label": "X title text",
+                "kind": "text"
+            },
+            {
                 "name": "yFontSize",
                 "key": "Visual_YLabelSize",
                 "label": "Y label size",
@@ -450,6 +468,18 @@ export const FORMAT_SPEC: SpecCard[] = [
                 "key": "Visual_YLabelItalic",
                 "label": "Y label italic",
                 "kind": "bool"
+            },
+            {
+                "name": "showYTitle",
+                "key": "Visual_ShowYTitle",
+                "label": "Y axis title",
+                "kind": "bool"
+            },
+            {
+                "name": "yTitle",
+                "key": "Visual_YTitleText",
+                "label": "Y title text",
+                "kind": "text"
             }
         ]
     },

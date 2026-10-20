@@ -513,6 +513,13 @@
             ]
           }
         },
+        "hideEmpty": {
+          "displayName": "Hide empty categories",
+          "displayNameKey": "Visual_HideEmpty",
+          "type": {
+            "bool": true
+          }
+        },
         "showXLabels": {
           "displayName": "Show X labels",
           "displayNameKey": "Visual_ShowXLabels",
@@ -589,6 +596,20 @@
             "bool": true
           }
         },
+        "showXTitle": {
+          "displayName": "X axis title",
+          "displayNameKey": "Visual_ShowXTitle",
+          "type": {
+            "bool": true
+          }
+        },
+        "xTitle": {
+          "displayName": "X title text",
+          "displayNameKey": "Visual_XTitleText",
+          "type": {
+            "text": true
+          }
+        },
         "yFontSize": {
           "displayName": "Y label size",
           "displayNameKey": "Visual_YLabelSize",
@@ -621,6 +642,20 @@
           "displayNameKey": "Visual_YLabelItalic",
           "type": {
             "bool": true
+          }
+        },
+        "showYTitle": {
+          "displayName": "Y axis title",
+          "displayNameKey": "Visual_ShowYTitle",
+          "type": {
+            "bool": true
+          }
+        },
+        "yTitle": {
+          "displayName": "Y title text",
+          "displayNameKey": "Visual_YTitleText",
+          "type": {
+            "text": true
           }
         }
       }

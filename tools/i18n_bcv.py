@@ -165,4 +165,9 @@ B = {
 'Y label color': ['Color de las etiquetas Y', 'Cor dos rótulos Y', 'Couleur des étiquettes Y', 'Farbe der Y-Beschriftungen', 'Colore etichette Y', 'Kleur Y-labels', 'Kolor etykiet Y', 'Y ラベルの色', 'Y 标签颜色', 'Y 레이블 색'],
 'Y label bold': ['Etiquetas Y en negrita', 'Rótulos Y em negrito', 'Étiquettes Y en gras', 'Y-Beschriftungen fett', 'Etichette Y in grassetto', 'Y-labels vet', 'Etykiety Y pogrubione', 'Y ラベルを太字', 'Y 标签加粗', 'Y 레이블 굵게'],
 'Y label italic': ['Etiquetas Y en cursiva', 'Rótulos Y em itálico', 'Étiquettes Y en italique', 'Y-Beschriftungen kursiv', 'Etichette Y in corsivo', 'Y-labels cursief', 'Etykiety Y kursywą', 'Y ラベルを斜体', 'Y 标签倾斜', 'Y 레이블 기울임꼴'],
+'Hide empty categories': ['Ocultar categorías vacías', 'Ocultar categorias vazias', 'Masquer les catégories vides', 'Leere Kategorien ausblenden', 'Nascondi categorie vuote', 'Lege categorieën verbergen', 'Ukryj puste kategorie', '空のカテゴリを非表示', '隐藏空类别', '빈 범주 숨기기'],
+'X axis title': ['Título del eje X', 'Título do eixo X', 'Titre de l’axe X', 'Titel der X-Achse', 'Titolo asse X', 'Titel X-as', 'Tytuł osi X', 'X 軸のタイトル', 'X 轴标题', 'X축 제목'],
+'X title text': ['Texto del título X', 'Texto do título X', 'Texte du titre X', 'Text des X-Titels', 'Testo titolo X', 'Tekst X-titel', 'Tekst tytułu X', 'X タイトルのテキスト', 'X 标题文本', 'X 제목 텍스트'],
+'Y axis title': ['Título del eje Y', 'Título do eixo Y', 'Titre de l’axe Y', 'Titel der Y-Achse', 'Titolo asse Y', 'Titel Y-as', 'Tytuł osi Y', 'Y 軸のタイトル', 'Y 轴标题', 'Y축 제목'],
+'Y title text': ['Texto del título Y', 'Texto do título Y', 'Texte du titre Y', 'Text des Y-Titels', 'Testo titolo Y', 'Tekst Y-titel', 'Tekst tytułu Y', 'Y タイトルのテキスト', 'Y 标题文本', 'Y 제목 텍스트'],
 }

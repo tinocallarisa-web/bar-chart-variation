@@ -85,6 +85,11 @@ interface VisualSettings {
         yColor: string;
         yBold: boolean;
         yItalic: boolean;
+        hideEmpty: boolean;
+        showXTitle: boolean;
+        xTitle: string;
+        showYTitle: boolean;
+        yTitle: string;
     };
     panelStyle: {
         showBackground: boolean;
@@ -315,7 +320,12 @@ export class Visual implements IVisual {
             xItalic:     false,
             yColor:      "#666666",
             yBold:       false,
-            yItalic:     false
+            yItalic:     false,
+            hideEmpty:   false,
+            showXTitle:  false,
+            xTitle:      "",
+            showYTitle:  false,
+            yTitle:      ""
         },
         panelStyle: {
             showBackground: false,
@@ -642,6 +652,11 @@ export class Visual implements IVisual {
         this.settings.axisSettings.yBold       = getValue(ax, "yBold",       false);
         this.settings.axisSettings.xItalic     = getValue(ax, "xItalic",     false);
         this.settings.axisSettings.yItalic     = getValue(ax, "yItalic",     false);
+        this.settings.axisSettings.hideEmpty   = getValue(ax, "hideEmpty",   false);
+        this.settings.axisSettings.showXTitle  = getValue(ax, "showXTitle",  false);
+        this.settings.axisSettings.xTitle      = getValue(ax, "xTitle",      "");
+        this.settings.axisSettings.showYTitle  = getValue(ax, "showYTitle",  false);
+        this.settings.axisSettings.yTitle      = getValue(ax, "yTitle",      "");
 
         const ps = (objects?.panelStyle ?? {}) as any;
 
@@ -759,7 +774,7 @@ export class Visual implements IVisual {
     private layoutFor(
         width: number, height: number, ncols: number, nrows: number,
         anchoEtiquetaY: number,
-        quiere: { yLabels: boolean; legend: boolean; legendPos: string }
+        quiere: { yLabels: boolean; legend: boolean; legendPos: string; xTitleH?: number; yTitleW?: number }
     ) {
         // La leyenda es lo primero que sobra: repite lo que ya dice el color de la barra.
         // 24 px sobre un visual de 150 es el 16% del alto para dos palabras.
@@ -767,21 +782,24 @@ export class Visual implements IVisual {
         const legendH = legend ? LEGEND_H : 0;
 
         const oMT = 8 + (legend && quiere.legendPos === "top"    ? legendH : 0);
-        const oMB = 8 + (legend && quiere.legendPos === "bottom" ? legendH : 0);
+        // Títulos de eje: solo si queda sitio para el gráfico (por debajo de ~150 px se quitan, no se encogen).
+        const xTitleH = quiere.xTitleH && height >= 150 ? quiere.xTitleH : 0;
+        const yTitleW = quiere.yTitleW && width >= 200 ? quiere.yTitleW : 0;
+        const oMB = 8 + (legend && quiere.legendPos === "bottom" ? legendH : 0) + xTitleH;
         const oMR = 8;
 
         // El eje Y se MIDE. 48 px fijos esta bien a 600 de ancho y es absurdo a 200,
         // donde se comia una cuarta parte del grafico.
         const pedido = Math.ceil(anchoEtiquetaY + 10);
-        const anchoUtil = width - 8 - oMR;
+        const anchoUtil = width - 8 - oMR - yTitleW;
         const yLabels = quiere.yLabels && anchoUtil / ncols >= 90 && pedido <= width * 0.25;
-        const oML = yLabels ? Math.min(pedido, Math.floor(width * 0.25)) : 8;
+        const oML = (yLabels ? Math.min(pedido, Math.floor(width * 0.25)) : 8) + yTitleW;
 
         const cellW = Math.max((width - oML - oMR) / ncols, 1);
         const cellH = Math.max((height - oMT - oMB) / nrows, 1);
         const cellPad = (cellW < 120 || cellH < 100) ? 4 : 10;
 
-        return { legend, legendH, yLabels, oML, oMT, oMR, oMB, cellPad };
+        return { legend, legendH, yLabels, oML, oMT, oMR, oMB, cellPad, xTitleH, yTitleW };
     }
 
     /** Alto contraste real: el que activa Windows, no el interruptor del panel. */
@@ -1031,6 +1049,24 @@ export class Visual implements IVisual {
 
         if (seriesList.length === 0) return;
 
+        // Categorías vacías (0 o en blanco en todos los paneles), típicamente los meses que aún no han llegado:
+        // contra la barra anterior salen como una caída del -100% que no ha ocurrido. Se quitan del eje.
+        if (this.settings.axisSettings.hideEmpty) {
+            const keep = catValues.map((_, i) => i).filter(i => seriesList.some(sr => sr.values[i] !== 0));
+            if (keep.length > 0 && keep.length < catValues.length) {
+                const pick = <T>(a: T[]): T[] => (a ? keep.map(i => a[i]) : a);
+                catValues = pick(catValues);
+                for (const sr of seriesList) {
+                    sr.values = pick(sr.values);
+                    sr.highlights = pick(sr.highlights);
+                    sr.cfColors = pick(sr.cfColors);
+                    sr.barSelectionIds = pick(sr.barSelectionIds);
+                    for (const r of Object.keys(sr.refValues)) { sr.refValues[r] = pick(sr.refValues[r]); }
+                    for (const tf of sr.tooltipFields) { tf.values = pick(tf.values); }
+                }
+            }
+        }
+
         // ── Free / Pro gates ───────────────────────────────────────────────
         const maxPanels = 3;
         // Vista previa Pro: Free con la licencia ya resuelta y en un entorno que puede
@@ -1160,10 +1196,17 @@ export class Visual implements IVisual {
             fmt.format(yDomain[0]).length, fmt.format(yDomain[1]).length
         ) * yFs * (this.settings.axisSettings.yBold ? 0.66 : 0.60);
 
+        // Títulos de eje: texto propio o, si está vacío, el nombre del campo.
+        const axS = this.settings.axisSettings;
+        const tituloFs = Math.max(axS.xFontSize, axS.yFontSize) + 1;
+        const tituloX = axS.showXTitle ? (axS.xTitle || catCols.map((cc: any) => cc.source.displayName).join(" · ")) : "";
+        const tituloY = axS.showYTitle ? (axS.yTitle || (values[0]?.source?.displayName || "")) : "";
         const L = this.layoutFor(width, height, ncols, nrows, anchoEtiquetaY, {
             yLabels:   this.settings.axisSettings.showYLabels,
             legend:    this.settings.legend.show,
-            legendPos
+            legendPos,
+            xTitleH:   tituloX ? tituloFs + 6 : 0,
+            yTitleW:   tituloY ? tituloFs + 6 : 0
         });
         this.settings.axisSettings.showYLabels = L.yLabels;
         this.settings.legend.show              = L.legend;
@@ -1820,6 +1863,8 @@ export class Visual implements IVisual {
 
         // ── Watermark & freemium message ───────────────────────────────────
         this.renderWatermark(svgWidth, svgHeight, preview && this.attemptedPro.length > 0);
+        this.renderAxisTitles(L.xTitleH ? tituloX : "", L.yTitleW ? tituloY : "", tituloFs, oML, oMT, oMR, oMB, legendH,
+            svgWidth, svgHeight);
         this.renderGuide(editing);
         if (DEBUG_FX && (this as any).diagFx) {
             this.messageGroup.selectAll(".dbgfx").remove();
@@ -2031,6 +2076,31 @@ export class Visual implements IVisual {
             pie.appendChild(boton(this.tr("UI_GuideFinish", "Finish"), true, terminar));
         }
         el.appendChild(pie);
+    }
+
+    /** Títulos de eje, uno por visual (no por panel): X centrado abajo, Y girado a la izquierda. */
+    private renderAxisTitles(tx: string, ty: string, fs: number, oML: number, oMT: number, oMR: number, oMB: number,
+        legendH: number, w: number, h: number): void {
+        const axS = this.settings.axisSettings;
+        const legAbajo = this.settings.legend.show && this.settings.legend.position === "bottom" ? legendH : 0;
+        if (tx) {
+            this.chartGroup.append("text").classed("axis-title", true)
+                .attr("x", oML + (w - oML - oMR) / 2).attr("y", h - legAbajo - 6)
+                .attr("text-anchor", "middle")
+                .style("font-size", `${fs}px`).style("fill", axS.xColor)
+                .style("font-weight", axS.xBold ? "bold" : "normal").style("font-style", axS.xItalic ? "italic" : "normal")
+                .text(tx);
+        }
+        if (ty) {
+            const cy = oMT + (h - oMT - oMB) / 2;
+            this.chartGroup.append("text").classed("axis-title", true)
+                .attr("x", fs + 2).attr("y", cy)
+                .attr("text-anchor", "middle")
+                .attr("transform", `rotate(-90,${fs + 2},${cy})`)
+                .style("font-size", `${fs}px`).style("fill", axS.yColor)
+                .style("font-weight", axS.yBold ? "bold" : "normal").style("font-style", axS.yItalic ? "italic" : "normal")
+                .text(ty);
+        }
     }
 
     /** Miniatura de una plantilla: cuatro barras con la tercera negativa y su color de variación. */
