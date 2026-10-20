@@ -66,9 +66,19 @@ if (process.argv.includes("--debug")) {
 // 3. Patch pbiviz.json — sufijo propio por modo, para que convivan en Desktop
 const realGuid      = pbivizObj.visual.guid;
 const testGuid      = realGuid + (forceFree ? "_testfree" : "_test");
-const patchedPbiviz = originalPbiviz.replace('"' + realGuid + '"', '"' + testGuid + '"');
+// Power BI Desktop guarda cada visual por guid + versión: con la misma versión sigue sirviendo el paquete
+// anterior aunque importes uno nuevo. Cada build de prueba lleva su propio último dígito (contador local).
+const CONTADOR = path.join(ROOT, ".tmp", "test-build-counter");
+fs.mkdirSync(path.dirname(CONTADOR), { recursive: true });
+const n = (parseInt(fs.existsSync(CONTADOR) ? fs.readFileSync(CONTADOR, "utf8") : "0", 10) || 0) + 1;
+fs.writeFileSync(CONTADOR, String(n), "utf8");
+const partes = pbivizObj.visual.version.split(".");
+partes[3] = String(Number(partes[3]) + n);
+const testVersion = partes.join(".");
+const patchedPbiviz = originalPbiviz.replace('"' + realGuid + '"', '"' + testGuid + '"')
+    .replace('"version": "' + pbivizObj.visual.version + '"', '"version": "' + testVersion + '"');
 
-console.log("GUID test:  " + testGuid);
+console.log("GUID test:  " + testGuid + "  versión " + testVersion);
 
 // 4. Escribir parcheados
 fs.writeFileSync(VISUAL_TS,   patchedTs,     "utf8");
@@ -90,7 +100,7 @@ try {
 }
 
 if (buildOk) {
-    const name = testGuid + "." + pbivizObj.visual.version + ".pbiviz";
+    const name = testGuid + "." + testVersion + ".pbiviz";
     console.log("\nBuild TEST listo en dist/" + name);
     console.log("Importa el .pbiviz en Power BI Desktop y prueba.\n");
 } else {
