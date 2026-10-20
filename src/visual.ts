@@ -20,6 +20,7 @@ import VisualTooltipDataItem = powerbi.extensibility.VisualTooltipDataItem;
 // DrillType is a const enum — use numeric values: Up=1, Down=2, MoveToNextlevel=3
 
 import { createTooltipServiceWrapper, ITooltipServiceWrapper } from "powerbi-visuals-utils-tooltiputils";
+import { FORMAT_SPEC } from "./formatSpec";
 
 type Selection<T extends d3.BaseType> = d3.Selection<T, any, any, any>;
 
@@ -1708,170 +1709,63 @@ export class Visual implements IVisual {
         this.legendGroup.selectAll("*").remove();
     }
 
-    public enumerateObjectInstances(options: powerbi.EnumerateVisualObjectInstancesOptions): powerbi.VisualObjectInstanceEnumeration {
-        // El panel muestra lo que eligio el usuario, no lo que pinta el tier gratuito:
-        // si no, un ajuste Pro se apagaba solo al activarlo.
-        const effective = this.settings;
-        if (this.rawSettings) this.settings = this.rawSettings;
-        try {
-            return this.enumerateInstances(options);
-        } finally {
-            this.settings = effective;
+    /**
+     * Panel de formato moderno. Las tarjetas salen de src/formatSpec.ts, generado desde capabilities.json, así que
+     * conservan los objetos y propiedades que ya usan los informes publicados. Muestra lo que eligió el usuario
+     * (rawSettings), no lo que pinta el tier gratuito: si no, un ajuste Pro parecería apagarse solo al activarlo.
+     */
+    public getFormattingModel(): powerbi.visuals.FormattingModel {
+        const S: any = this.rawSettings || this.settings;
+        const cards: any[] = [];
+        for (const card of FORMAT_SPEC) {
+            const vals = S[card.obj] || {};
+            const slices = card.props.map(p => {
+                const descriptor = { objectName: card.obj, propertyName: p.name };
+                const displayName = this.tr(p.key, p.label);
+                const v = vals[p.name];
+                const uid = `${card.obj}_${p.name}`;
+                switch (p.kind) {
+                    case "bool": return { uid, displayName, control: { type: powerbi.visuals.FormattingComponent.ToggleSwitch, properties: { descriptor, value: !!v } } };
+                    case "num": return { uid, displayName, control: { type: powerbi.visuals.FormattingComponent.NumUpDown, properties: { descriptor, value: Number(v) || 0 } } };
+                    case "fontSize": return { uid, displayName, control: { type: powerbi.visuals.FormattingComponent.NumUpDown, properties: { descriptor, value: Number(v) || 0 } } };
+                    case "color": return { uid, displayName, control: { type: powerbi.visuals.FormattingComponent.ColorPicker, properties: { descriptor, value: { value: v || "" } } } };
+                    case "text": return { uid, displayName, control: { type: powerbi.visuals.FormattingComponent.TextInput, properties: { descriptor, value: v ?? "", placeholder: "" } } };
+                    case "enum": {
+                        const items = (p.items || []).map(it => ({ value: it.value, displayName: this.tr(it.key, it.label) }));
+                        const value = items.find(it => it.value === v) ?? items[0];
+                        return { uid, displayName, control: { type: powerbi.visuals.FormattingComponent.Dropdown, properties: { descriptor, value, items } } };
+                    }
+                }
+                return null;
+            }).filter(Boolean);
+            cards.push({ uid: `${card.obj}_card`, displayName: this.tr(card.key, card.label), groups: [{ uid: `${card.obj}_g`, displayName: "", slices }] });
         }
-    }
-
-    private enumerateInstances(options: powerbi.EnumerateVisualObjectInstancesOptions): powerbi.VisualObjectInstance[] {
-        const objectName = options.objectName;
-        const instances: powerbi.VisualObjectInstance[] = [];
-        switch (objectName) {
-            case "barSettings":
-                instances.push({ objectName, selector: null, properties: {
-                    barColor:       this.settings.barSettings.barColor,
-                    negativeColor:  this.settings.barSettings.negativeColor,
-                    barOpacity:     this.settings.barSettings.barOpacity,
-                    axisTextColor:  this.settings.barSettings.axisTextColor,
-                    borderColor:    this.settings.barSettings.borderColor,
-                    borderWidth:    this.settings.barSettings.borderWidth,
-                    connectorColor: this.settings.barSettings.connectorColor
-                }});
-                break;
-            case "comparison":
-                instances.push({ objectName, selector: null, properties: {
-                    compareTo:    this.settings.comparison.compareTo,
-                    varianceMode: this.settings.comparison.varianceMode,
-                    showMarker:   this.settings.comparison.showMarker,
-                    markerColor:  this.settings.comparison.markerColor
-                }});
-                break;
-            case "variationLabels":
-                instances.push({ objectName, selector: null, properties: {
-                    show:           this.settings.variationLabels.show,
-                    fontSize:       this.settings.variationLabels.fontSize,
-                    positiveColor:  this.settings.variationLabels.positiveColor,
-                    negativeColor:  this.settings.variationLabels.negativeColor,
-                    decimalPlaces:  this.settings.variationLabels.decimalPlaces,
-                    showArrows:     this.settings.variationLabels.showArrows,
-                    showConnectors: this.settings.variationLabels.showConnectors
-                }});
-                break;
-            case "valueLabels":
-                instances.push({ objectName, selector: null, properties: {
-                    show:               this.settings.valueLabels.show,
-                    color:              this.settings.valueLabels.color,
-                    fontSize:           this.settings.valueLabels.fontSize,
-                    displayUnits:       this.settings.valueLabels.displayUnits,
-                    valueDecimalPlaces: this.settings.valueLabels.valueDecimalPlaces
-                }});
-                break;
-            case "panelTitle":
-                instances.push({ objectName, selector: null, properties: {
-                    show:           this.settings.panelTitle.show,
-                    position:       this.settings.panelTitle.position,
-                    fontSize:       this.settings.panelTitle.fontSize,
-                    titleStyle:      this.settings.panelTitle.titleStyle,
-                    backgroundColor: { solid: { color: this.settings.panelTitle.backgroundColor } },
-                    useSeriesColor: this.settings.panelTitle.useSeriesColor,
-                    customColor:    { solid: { color: this.settings.panelTitle.customColor } }
-                }});
-                break;
-            case "axisSettings":
-                instances.push({ objectName, selector: null, properties: {
-                    sortOrder:   this.settings.axisSettings.sortOrder,
-                    showXLabels: this.settings.axisSettings.showXLabels,
-                    xLabelAngle: this.settings.axisSettings.xLabelAngle,
-                    showYLabels: this.settings.axisSettings.showYLabels,
-                    xFontSize:   this.settings.axisSettings.xFontSize,
-                    yFontSize:   this.settings.axisSettings.yFontSize
-                }});
-                break;
-            case "panelStyle":
-                instances.push({ objectName, selector: null, properties: {
-                    showBackground: this.settings.panelStyle.showBackground,
-                    bgColor:        { solid: { color: this.settings.panelStyle.bgColor } },
-                    bgOpacity:      this.settings.panelStyle.bgOpacity
-                }});
-                break;
-            case "panelLayout":
-                instances.push({ objectName, selector: null, properties: {
-                    columns:         this.settings.panelLayout.columns,
-                    minPanelWidth:   this.settings.panelLayout.minPanelWidth,
-                    minPanelHeight:  this.settings.panelLayout.minPanelHeight,
-                    enableScroll:    this.settings.panelLayout.enableScroll,
-                    barBorderRadius: this.settings.panelLayout.barBorderRadius
-                }});
-                break;
-            case "analyticalLines":
-                instances.push({ objectName, selector: null, properties: {
-                    showAverage: this.settings.analyticalLines.showAverage,
-                    showMax:     this.settings.analyticalLines.showMax,
-                    showMin:     this.settings.analyticalLines.showMin,
-                    showMedian:  this.settings.analyticalLines.showMedian,
-                    showRef:     this.settings.analyticalLines.showRef,
-                    refValue:    this.settings.analyticalLines.refValue,
-                    lineColor:   { solid: { color: this.settings.analyticalLines.lineColor } },
-                    lineStyle:   this.settings.analyticalLines.lineStyle,
-                    showLabel:   this.settings.analyticalLines.showLabel,
-                    labelSize:   this.settings.analyticalLines.labelSize,
-                    showBand:    this.settings.analyticalLines.showBand,
-                    bandMin:     this.settings.analyticalLines.bandMin,
-                    bandMax:     this.settings.analyticalLines.bandMax,
-                    bandColor:   { solid: { color: this.settings.analyticalLines.bandColor } },
-                    bandOpacity: this.settings.analyticalLines.bandOpacity
-                }});
-                break;
-            case "legend":
-                instances.push({ objectName, selector: null, properties: {
-                    show:      this.settings.legend.show,
-                    position:  this.settings.legend.position,
-                    textColor: { solid: { color: this.settings.legend.textColor } }
-                }});
-                break;
-            case "accessibility":
-                instances.push({ objectName, selector: null, properties: {
-                    highContrastMode: this.settings.accessibility.highContrastMode
-                }});
-                break;
-            case "dataColors": {
-                if (!this.dataView?.categorical?.categories?.[0]) break;
-                const cats = this.dataView.categorical.categories[0];
-                cats.values.forEach((val: any, ci: number) => {
-                    const label = val?.toString() || String(ci);
-                    const catObjs: any = cats.objects?.[ci];
-                    const fc = catObjs?.dataColors?.fill?.solid?.color
-                        ?? this.settings.barSettings.barColor;
-                    instances.push({
-                        objectName, displayName: label,
-                        selector: cats.identity?.[ci]
-                            ? { data: [cats.identity[ci]] }
-                            : null,
-                        properties: { fill: { solid: { color: fc } } }
-                    });
-                });
-                break;
-            }
-            case "colorSelector": {
-                if (!this.dataView?.categorical?.values) break;
-                const values = this.dataView.categorical.values;
-                const sv = values.grouped ? values.grouped() : values;
-                sv.forEach((s: any) => {
-                    const dn  = s.name?.toString() || (s.source ? s.source.displayName : "Series");
-                    const objs: any = s.objects;
-                    // El selector tiene que ensenar lo que se PINTA. Sin color propio de
-                    // serie, la barra usa el color por defecto del ajuste general, no el
-                    // del tema: si aqui se mostrara el del tema, el panel volveria a decir
-                    // una cosa y el lienzo otra.
-                    const fc  = objs?.colorSelector?.fill
-                        ? objs.colorSelector.fill.solid.color
-                        : this.settings.barSettings.barColor;
-                    instances.push({
-                        objectName, displayName: dn,
-                        selector: s.identity ? s.identity.getSelector() : (s.source ? { metadata: s.source.queryName } : null),
-                        properties: { fill: { solid: { color: fc } } }
-                    });
-                });
-                break;
-            }
+        // Un color por barra (Pro) y uno por serie: instancias con su selector, como hacía el enumerado anterior.
+        const cat = this.dataView?.categorical?.categories?.[0];
+        if (cat) {
+            const slices = cat.values.map((val: any, ci: number) => {
+                const fc = (cat.objects?.[ci] as any)?.dataColors?.fill?.solid?.color ?? S.barSettings.barColor;
+                return { uid: `dataColors_${ci}`, displayName: val?.toString() || String(ci), control: { type: powerbi.visuals.FormattingComponent.ColorPicker, properties: {
+                    descriptor: { objectName: "dataColors", propertyName: "fill", selector: cat.identity?.[ci] ? { data: [cat.identity[ci]] } : null },
+                    value: { value: fc } } } };
+            });
+            cards.push({ uid: "dataColors_card", displayName: this.tr("Visual_BarColors", "Bar colors (Pro)"), groups: [{ uid: "dataColors_g", displayName: "", slices }] });
         }
-        return instances;
+        const values: any = this.dataView?.categorical?.values;
+        if (values) {
+            const sv = values.grouped ? values.grouped() : values;
+            const slices = sv.map((g: any, k: number) => {
+                const dn = g.name?.toString() || (g.source ? g.source.displayName : "Series");
+                const fc = g.objects?.colorSelector?.fill ? g.objects.colorSelector.fill.solid.color : S.barSettings.barColor;
+                // El identificador de grupo no tiene getSelector(): el selector de la serie sale del constructor de selecciones.
+                const selector = g.identity
+                    ? (this.host.createSelectionIdBuilder().withSeries(values, g).createSelectionId() as any).getSelector?.()
+                    : (g.source ? { metadata: g.source.queryName } : null);
+                return { uid: `colorSelector_${k}`, displayName: dn, control: { type: powerbi.visuals.FormattingComponent.ColorPicker, properties: {
+                    descriptor: { objectName: "colorSelector", propertyName: "fill", selector }, value: { value: fc } } } };
+            });
+            cards.push({ uid: "colorSelector_card", displayName: this.tr("Visual_SeriesColors", "Series colors"), groups: [{ uid: "colorSelector_g", displayName: "", slices }] });
+        }
+        return { cards } as any;
     }
 }
