@@ -1,132 +1,109 @@
-BAR CHART WITH VARIATION % v1.10.0.0 — YOUTUBE
-================================================================
+==========================================
+TITLE (pick one)
+==========================================
+
+1. Plan vs actual in Power BI: the variance on every bar, no DAX
+2. Power BI variance chart: actual against plan, budget or last year
+3. "Better than last month" is not "on plan" — fix it in Power BI
+4. Power BI bar chart with variance %, small multiples and IBCS style
+
+(Recommended: 1 for the release video, 3 for a short. Do not put "1.11" in the title: it says
+nothing to someone who does not know the visual and ages with every version.)
+
+Spanish, if the audio is in Spanish:
+   Real contra plan en Power BI: la desviación en cada barra, sin DAX
 
 
-TÍTULO (el 1 es el que recomiendo)
-----------------------------------------------------------------
-1. Actual vs Plan in one Power BI bar chart — no DAX
-2. Power BI bar chart with variation %, plan and forecast markers
-3. Stop comparing to last month: plan vs actual in Power BI
-4. Are we on plan? The Power BI bar chart that answers it
+==========================================
+YOUTUBE DESCRIPTION — FULL VIDEO
+==========================================
 
-Por qué el 1: nombra el trabajo que hace, no el producto. 50 caracteres,
-cabe entero en el listado, lleva "Power BI" —que es lo que la gente escribe
-al buscar— y cierra con el gancho. "no DAX" lo entiende en dos segundos
-quien ha escrito DATEADD tres veces esta semana.
+A bar chart that compares each month with the one before answers "is this month better than the last one". It does not answer the question the meeting is about: are we on plan. Bar Chart with Variation % writes the variance on every bar by itself and draws a marker where each bar should have been — your plan, budget, forecast or last year. No DATEADD, no variance column.
 
-El título de 1.9 vendía la variación automática. Ese ya no es el titular:
-lo tienen cuatro competidores. El titular de esta versión es que la
-comparación ya no es solo contra la barra anterior.
+Get it on Microsoft AppSource: https://marketplace.microsoft.com/en-us/product/tino_callarisa.bar-chart-variation
+Documentation and FAQ: https://tinocallarisa-web.github.io/bar-chart-variation/support.html
 
-No pongas "1.10" en el título: no le dice nada a quien no conoce el visual
-y envejece con cada versión.
-
-Versión en español, si el audio es en español:
-   Real contra plan en un gráfico de barras de Power BI, sin DAX
-
-
-DESCRIPCIÓN
-----------------------------------------------------------------
-Pégala tal cual. Los dos primeros párrafos son lo único que se ve sin
-desplegar, así que empiezan por el problema y no por el nombre.
-
->>> EMPIEZA AQUÍ >>>
-
-A bar chart that compares each month against the one before answers "is
-this month better than the last one". It does not answer the question the
-meeting is actually about: are we on plan.
-
-Bar Chart with Variation % now answers both. Bind Plan, Budget, Forecast or
-Previous Year, and every bar gets a horizontal marker at the reference
-level — the bar is the actual figure, the marker says where it should be.
-It is the IBCS reading, and it takes no measure of your own: no DATEADD, no
-date table, no variance column.
-
-WHAT IS NEW IN THIS VERSION
-• Three reference measures — Previous Year, Plan / Budget and Forecast —
-  each drawn as a marker on the bar, and included in the Y scale so a plan
-  above actual still fits in the panel.
-• Small multiples you control: set the number of columns instead of
-  accepting the automatic grid.
-• Panel titles with a filled header, not just a separator line. If your
-  title colour would not read against the band, it flips automatically.
-• Bar borders, with colour and width, drawn inside the bar so a zero value
-  still sits on the baseline.
-• Real high contrast: the visual now follows the Windows theme with nothing
-  to turn on, and the format pane is available in Spanish.
-
-FREE
-The whole chart: bars, automatic variation % with arrows and connectors,
-three panels of small multiples with a shared Y scale, bar and border
-colours, sort order, tooltips, cross-filtering, drill-down, keyboard
-navigation and high contrast.
-
-PRO
-The three reference measures, absolute variance, up to 100 panels,
-analytical lines and the reference band, value labels, and per-bar colours.
-
-Try it before you buy: while you edit without a licence, every Pro feature
-you turn on is drawn working under a "Pro preview" watermark that names it.
-Reading view shows the free result, so a published report never uses a
-feature you have not paid for.
-
-NO NETWORK ACCESS
-The visual makes no HTTP requests, stores nothing and needs no companion
-service. Your data never leaves the report.
-
+──────────────────────────────────────────
 CHAPTERS
-0:00 [ajustar] Better than last month is not the same as on plan
-0:00 [ajustar] Field wells in ninety seconds
-0:00 [ajustar] Plan, Budget, Forecast: the reference marker
-0:00 [ajustar] Small multiples, and choosing your own columns
-0:00 [ajustar] Analytical lines and value labels
-0:00 [ajustar] Pro preview, and what Free gives you
+──────────────────────────────────────────
+0:00 Better than last month is not the same as on plan
+0:00 Axis and Values: the variance % appears by itself
+0:00 Plan / Budget: a marker on every bar and the variance against it
+0:00 Variance as %, as a difference, or both
+0:00 Small multiples on a shared scale
+0:00 Vertical or horizontal bars
+0:00 Style templates, IBCS style and the setup guide
+0:00 Trend line and the typical-range band
+0:00 Format on the canvas
+0:00 Click a bar to filter the report
+0:00 Free and Pro
 
+(Fill in the timestamps from the final edit. YouTube only creates chapters when the first is 0:00 and there are
+three or more. Delete any chapter the video does not show.)
+
+──────────────────────────────────────────
+WHAT IT DOES
+──────────────────────────────────────────
+✅ The variance % between bars, calculated for you, with arrows and brackets
+✅ A reference marker for Plan / Budget, Forecast or Previous Year, with the variance on every bar
+✅ Bars below their reference in the negative colour
+✅ Small multiples on a shared scale, vertical or horizontal
+✅ Six style templates, including an IBCS style, and a setup guide
+✅ Labels that never overlap: on narrow bars they shrink or alternate heights
+✅ Date and number axes in time order; empty future months hidden on request
+✅ Click to filter, highlight, bookmarks, drilldown, keyboard navigation and high contrast
+✅ The measure's number format, dynamic format strings included; twelve languages
+✅ No network requests: everything is computed inside your report
+
+──────────────────────────────────────────
+FREE AND PRO
+──────────────────────────────────────────
+FREE — a complete chart:
+• Bars with the variance % against the previous bar
+• Up to 3 small multiple panels, vertical or horizontal
+• Templates, theme colours, axis titles, format on the canvas
+
+PRO — the controlling reading:
+• Previous Year, Plan / Budget and Forecast as references
+• Absolute variance, or difference and %
+• Up to 100 panels
+• Analytical lines, a trend line and a reference band
+• Value labels, per-bar colours and conditional formatting (fx)
+
+Turn on a Pro feature while editing without a licence and it is drawn working on your own data, under a "Pro preview" watermark.
+
+──────────────────────────────────────────
 LINKS
-Get it on AppSource: [pegar el enlace de la oferta]
-Documentation: https://tinocallarisa-web.github.io/bar-chart-variation/
+──────────────────────────────────────────
+Documentation: https://tinocallarisa-web.github.io/bar-chart-variation/support.html
+Questions: https://github.com/tinocallarisa-web/bar-chart-variation/discussions
+All TCViz visuals: https://tcviz.com
 Support: support@tcviz.com
 
-More Power BI custom visuals: https://tcviz.com
-
-<<< TERMINA AQUÍ <<<
-
-Los tiempos de CHAPTERS están a 0:00 a propósito: hay que ajustarlos al
-montaje. YouTube solo genera los marcadores si el primero es 0:00 y hay
-tres o más.
+#PowerBI #PlanVsActual #DataVisualization
 
 
-QUÉ GRABAR
-----------------------------------------------------------------
-El vídeo se graba con el paquete de PRODUCCIÓN, no con el _test. Con el de
-test todo sale desbloqueado y sin marca de agua, y el revisor de Microsoft
-compara el vídeo con lo que hace el visual que ha instalado.
+==========================================
+SHORT (under 60 s) — DESCRIPTION
+==========================================
 
-El momento que vende es uno solo: un gráfico comparando contra la barra
-anterior, y el mismo gráfico con Plan enlazado. Que se vea la barra por
-debajo del marcador. Todo lo demás es relleno alrededor de ese corte.
+"Better than last month" is not "on plan". One Power BI bar chart with the variance on every bar and a marker where it should have been.
+Bar Chart with Variation %: https://marketplace.microsoft.com/en-us/product/tino_callarisa.bar-chart-variation
 
-
-MINIATURA
-----------------------------------------------------------------
-Barras con el marcador de referencia por encima de dos de ellas, bien
-grande. Es lo único que distingue este visual del gráfico de barras nativo
-y de los otros cuatro del marketplace, y se tiene que entender a 300
-píxeles. Si la miniatura es el logo o una captura general de Power BI, el
-título da igual.
+#PowerBI #PlanVsActual #Shorts
 
 
-URL PARA PARTNER CENTER
-----------------------------------------------------------------
-Solo la forma canónica:
-   https://www.youtube.com/watch?v=<id>
+==========================================
+THUMBNAIL
+==========================================
+Bars with the plan marker above two of them, big. It is the one thing that tells this visual apart from the native
+bar chart, and it has to read at 300 pixels. Words, if any: "PLAN vs ACTUAL".
 
-youtu.be, /shorts/ y /embed/ son rechazo automático por la política
-100.3.3.3. Cuando tengas el id nuevo hay que cambiarlo en
-docs/APPSOURCE-LISTING.md, docs/CERTIFICATION-NOTES.md,
-docs/CERTIFICATION-NOTES-SHORT.txt, la infografía Y EN PARTNER CENTER.
-El único que Microsoft revisa es el último.
 
-El id de la 1.10.0.0 es vIszaUlC6G0, grabado el 23-09-2026, y ya está puesto
-en los siete ficheros del repo. Falta pegarlo en Partner Center, que es el
-único que Microsoft revisa.
+==========================================
+NOTE — after uploading
+==========================================
+Paste the canonical URL (https://www.youtube.com/watch?v=…) — never a short link, Shorts or embed URL (policy
+100.3.3.3) — in Partner Center (Offer listing → Videos). In the repo it goes in src/visual.ts (URL_VIDEO),
+tools/gen_docs.py (VIDEO, then regenerate), docs/APPSOURCE-LISTING.md and docs/CERTIFICATION-NOTES-SHORT.txt.
+The 1.10.0.0 video was vIszaUlC6G0.

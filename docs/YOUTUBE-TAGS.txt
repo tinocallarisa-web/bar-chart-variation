@@ -1,47 +1,28 @@
-BAR CHART WITH VARIATION % v1.10.0.0 — YOUTUBE TAGS
-====================================================
+==========================================
+YOUTUBE TAGS — PASTE THIS BLOCK (under 500 characters)
+==========================================
 
-YouTube corta el bloque de tags a 500 caracteres CONTANDO LAS COMAS. Pega
-solo el bloque principal: lo que pase de 500 se descarta en silencio, y lo
-que se descarta son los últimos, así que los importantes van primero.
-
-
-BLOQUE PRINCIPAL — pega este
-----------------------------------------------------------------
-plan vs actual Power BI,Power BI bar chart,variance Power BI,IBCS Power BI,Power BI custom visual,budget vs actual,forecast Power BI,variation percentage,no DAX Power BI,Power BI small multiples,period over period,TCViz,Power BI AppSource,pbiviz
-
-(245 caracteres, 14 tags — contado, queda sitio de sobra)
+plan vs actual Power BI,variance chart Power BI,budget vs actual,Power BI bar chart,Power BI custom visual,variance analysis,IBCS style,forecast vs actual,previous year comparison,variation percentage,Power BI small multiples,horizontal bar chart,no DAX Power BI,TCViz,Bar Chart with Variation %
 
 
-POR QUÉ ESTOS Y EN ESTE ORDEN
-----------------------------------------------------------------
-"plan vs actual" y "budget vs actual" van primero porque son lo nuevo y
-son lo que alguien busca con un problema concreto, no con curiosidad. Quien
-escribe "plan vs actual Power BI" tiene una reunión el jueves.
-
-"IBCS Power BI" es un nicho pequeño y muy cualificado: quien conoce el
-estándar sabe exactamente lo que es un marcador de referencia y no necesita
-que se lo expliquen. Convierte mucho mejor de lo que indica su volumen.
-
-"bar chart Power BI" a secas compite con el visual nativo y con medio
-YouTube. Está, pero no primero.
-
-Se ha quitado "business intelligence": trae volumen sin intención. Y
-"Power BI 2025", que envejece solo.
+==========================================
+WHY THESE, IN THIS ORDER
+==========================================
+YouTube drops whatever goes past 500 characters (commas included), and it drops the last ones, so the problem
+words go first: someone typing "plan vs actual Power BI" or "budget vs actual" has a review meeting coming, not
+curiosity. "variance chart" is what analysts call this chart. "Power BI bar chart" competes with the native visual
+and stays, but not first. "IBCS style", not "IBCS": the visual offers a style, it does not claim the standard.
 
 
-TAGS EXTRA — solo si sobra sitio
-----------------------------------------------------------------
-Power BI tutorial,Power BI dashboard,variance analysis,Power BI reporting,custom visual tutorial,Microsoft AppSource,Power BI drill down,Power BI data labels
+==========================================
+EXTRA TAGS (swap in by audience)
+==========================================
 
+Finance:
+financial reporting Power BI, management reporting, budget variance, forecast accuracy
 
-VARIANTES SEGÚN EL ENFOQUE DEL VÍDEO
-----------------------------------------------------------------
-Si el vídeo va de planificación y presupuesto:
-plan vs actual Power BI,budget variance,forecast accuracy,financial reporting Power BI,management reporting
+DAX savers:
+DATEADD alternative, automatic variance Power BI, Power BI without measures
 
-Si el vídeo va del ahorro de DAX:
-no DAX Power BI,Power BI without measures,automatic variance Power BI,DATEADD alternative,Power BI formula free
-
-Si el vídeo va de múltiplos:
-Power BI small multiples,trellis chart,panel chart Power BI,faceted bar chart,shared Y axis
+Power BI general:
+Power BI tutorial, Power BI tips, Power BI dashboard, AppSource, data visualization
