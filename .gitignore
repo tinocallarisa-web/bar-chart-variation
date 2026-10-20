@@ -5,3 +5,4 @@ webpack.statistics.*.html
 *.pbiviz
 *.pbix
 _releases/
+__pycache__/

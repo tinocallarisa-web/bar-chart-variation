@@ -7,6 +7,57 @@ export interface SpecProp { name: string; key: string; label: string; kind: "boo
 export interface SpecCard { obj: string; key: string; label: string; props: SpecProp[]; }
 export const FORMAT_SPEC: SpecCard[] = [
     {
+        "obj": "style",
+        "key": "Visual_StyleTemplate",
+        "label": "Style template",
+        "props": [
+            {
+                "name": "template",
+                "key": "Visual_Template",
+                "label": "Template",
+                "kind": "enum",
+                "items": [
+                    {
+                        "value": "clean",
+                        "key": "Visual_Enum_TplClean",
+                        "label": "Clean"
+                    },
+                    {
+                        "value": "classic",
+                        "key": "Visual_Enum_TplClassic",
+                        "label": "Classic"
+                    },
+                    {
+                        "value": "minimal",
+                        "key": "Visual_Enum_TplMinimal",
+                        "label": "Minimal"
+                    },
+                    {
+                        "value": "contrast",
+                        "key": "Visual_Enum_TplContrast",
+                        "label": "Contrast"
+                    },
+                    {
+                        "value": "compact",
+                        "key": "Visual_Enum_TplCompact",
+                        "label": "Compact"
+                    },
+                    {
+                        "value": "ibcs",
+                        "key": "Visual_Enum_TplIbcs",
+                        "label": "IBCS style"
+                    }
+                ]
+            },
+            {
+                "name": "guide",
+                "key": "Visual_SetupGuide",
+                "label": "Setup guide",
+                "kind": "bool"
+            }
+        ]
+    },
+    {
         "obj": "barSettings",
         "key": "Visual_BarSettings",
         "label": "Bar settings",

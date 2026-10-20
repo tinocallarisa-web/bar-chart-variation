@@ -117,6 +117,10 @@ interface VisualSettings {
     accessibility: {
         highContrastMode: boolean;
     };
+    style: {
+        template: string;
+        guide: boolean;
+    };
 }
 
 interface TooltipField {
@@ -182,6 +186,27 @@ const REF_LABELS: Record<string, string> = {
 };
 const PLAN_ID = "bar-chart-variation-pro-tcviz";
 
+/**
+ * Plantillas de estilo: un punto de partida. Solo rellenan lo que el usuario no ha tocado (un ajuste escrito en
+ * metadata.objects gana siempre). "clean" no cambia nada: es el aspecto de siempre, así ningún informe cambia.
+ */
+const TEMPLATES: Record<string, Record<string, Record<string, any>>> = {
+    clean: {},
+    classic: { panelTitle: { titleStyle: "line", useSeriesColor: false, customColor: "#333333" }, panelLayout: { barBorderRadius: 0 },
+        variationLabels: { showArrows: false } },
+    minimal: { variationLabels: { showConnectors: false, showArrows: false }, panelTitle: { titleStyle: "line" },
+        panelLayout: { barBorderRadius: 0 }, axisSettings: { showYLabels: false } },
+    contrast: { barSettings: { borderWidth: 1, borderColor: "#FFFFFF" }, variationLabels: { fontSize: 12 },
+        panelTitle: { titleStyle: "background", useSeriesColor: false, backgroundColor: "#252423", customColor: "#FFFFFF" } },
+    compact: { variationLabels: { fontSize: 9, showArrows: false }, axisSettings: { xFontSize: 8, yFontSize: 8 },
+        panelTitle: { fontSize: 9 }, panelLayout: { barBorderRadius: 1 } },
+    // Estética de IBCS (sobria, grises, variaciones en verde y rojo). Es un estilo: no afirma cumplimiento del estándar.
+    ibcs: { barSettings: { barColor: "#404040", negativeColor: "#404040", axisTextColor: "#262626", connectorColor: "#262626" },
+        variationLabels: { positiveColor: "#4F8A10", negativeColor: "#C00000", showArrows: false },
+        comparison: { markerColor: "#000000" }, panelLayout: { barBorderRadius: 0 },
+        panelTitle: { titleStyle: "line", useSeriesColor: false, customColor: "#262626" }, legend: { textColor: "#262626" } },
+};
+
 // ServicePlanState es un const enum: en runtime hacen falta los numeros.
 const STATE_ACTIVE = 1;
 /** Diagnóstico de colores: build-test.js --fxdiag lo pone a true. En producción, siempre false. */
@@ -220,6 +245,11 @@ export class Visual implements IVisual {
     /** Temporizador que deja la barra de Upgrade cuando termina el banner */
     private licenseIconTimer: number | null = null;
     private attemptedPro: string[] = [];
+    /** Plantilla de estilo vigente y asistente de configuración. */
+    private template = "clean";
+    private guideOn = true;
+    private guideStep = 2;
+    private guideEl: HTMLDivElement | null = null;
     /** Identidades que Power BI pasa al restaurar un marcador; getSelectionIds() puede no tenerlas todavía. */
     private restoredIds: powerbi.visuals.ISelectionId[] = [];
     private lastOptions: VisualUpdateOptions;
@@ -311,6 +341,10 @@ export class Visual implements IVisual {
         },
         accessibility: {
             highContrastMode: false
+        },
+        style: {
+            template: "clean",
+            guide: true
         }
     };
 
@@ -501,15 +535,22 @@ export class Visual implements IVisual {
 
     private updateSettings(dataView: DataView) {
         const objects = dataView.metadata.objects;
+        const tplName = String((objects as any)?.style?.template || "clean");
+        const tpl = TEMPLATES[tplName] || {};
+        this.template = tplName;
+        this.guideOn = (objects as any)?.style?.guide !== false;
+        const nombreDe = new Map<any, string>();
         const getValue = <T>(obj: any, prop: string, def: T): T => {
             if (obj && obj[prop] !== undefined) {
                 const val = obj[prop];
                 if (typeof val === "object" && val.solid) return val.solid.color;
                 return val;
             }
-            return def;
+            const t = tpl[nombreDe.get(obj) || ""]?.[prop];
+            return (t !== undefined ? t : def) as T;
         };
-        const bS = objects?.barSettings;
+        const bS = (objects?.barSettings ?? {}) as any;
+        nombreDe.set(bS, "barSettings");
         // Si el usuario ha puesto un color, sea cual sea, MANDA.
         //
         // Antes se comparaba el valor con el azul por defecto para decidir si estaba
@@ -534,13 +575,17 @@ export class Visual implements IVisual {
         this.settings.barSettings.borderWidth    = getValue(bS, "borderWidth",    0);
         this.settings.barSettings.connectorColor = getValue(bS, "connectorColor", "#333333");
 
-        const cmp = objects?.comparison;
+        const cmp = (objects?.comparison ?? {}) as any;
+
+        nombreDe.set(cmp, "comparison");
         this.settings.comparison.compareTo    = getValue(cmp, "compareTo",    "previous");
         this.settings.comparison.varianceMode = getValue(cmp, "varianceMode", "relative");
         this.settings.comparison.showMarker   = getValue(cmp, "showMarker",   true);
         this.settings.comparison.markerColor  = getValue(cmp, "markerColor",  "#333333");
 
-        const vL = objects?.variationLabels;
+        const vL = (objects?.variationLabels ?? {}) as any;
+
+        nombreDe.set(vL, "variationLabels");
         this.settings.variationLabels.show           = getValue(vL, "show",           true);
         this.settings.variationLabels.fontSize        = getValue(vL, "fontSize",        11);
         this.settings.variationLabels.positiveColor   = getValue(vL, "positiveColor",   temaBueno);
@@ -549,14 +594,18 @@ export class Visual implements IVisual {
         this.settings.variationLabels.showArrows      = getValue(vL, "showArrows",      true);
         this.settings.variationLabels.showConnectors  = getValue(vL, "showConnectors",  true);
 
-        const vLbl = objects?.valueLabels;
+        const vLbl = (objects?.valueLabels ?? {}) as any;
+
+        nombreDe.set(vLbl, "valueLabels");
         this.settings.valueLabels.show               = getValue(vLbl, "show",               false);
         this.settings.valueLabels.color              = getValue(vLbl, "color",              "#333333");
         this.settings.valueLabels.fontSize           = getValue(vLbl, "fontSize",           10);
         this.settings.valueLabels.displayUnits       = getValue(vLbl, "displayUnits",       0);
         this.settings.valueLabels.valueDecimalPlaces = getValue(vLbl, "valueDecimalPlaces", 1);
 
-        const pT = objects?.panelTitle;
+        const pT = (objects?.panelTitle ?? {}) as any;
+
+        nombreDe.set(pT, "panelTitle");
         this.settings.panelTitle.show           = getValue(pT, "show",           true);
         this.settings.panelTitle.position       = getValue(pT, "position",       "top");
         this.settings.panelTitle.fontSize       = getValue(pT, "fontSize",       11);
@@ -565,7 +614,9 @@ export class Visual implements IVisual {
         this.settings.panelTitle.useSeriesColor = getValue(pT, "useSeriesColor", true);
         this.settings.panelTitle.customColor    = getValue(pT, "customColor",    "#333333");
 
-        const ax = objects?.axisSettings;
+        const ax = (objects?.axisSettings ?? {}) as any;
+
+        nombreDe.set(ax, "axisSettings");
         this.settings.axisSettings.sortOrder   = getValue(ax, "sortOrder",   "auto");
         this.settings.axisSettings.showXLabels = getValue(ax, "showXLabels", true);
         this.settings.axisSettings.xLabelAngle = getValue(ax, "xLabelAngle", "auto");
@@ -573,19 +624,25 @@ export class Visual implements IVisual {
         this.settings.axisSettings.xFontSize   = getValue(ax, "xFontSize",   9);
         this.settings.axisSettings.yFontSize   = getValue(ax, "yFontSize",   9);
 
-        const ps = objects?.panelStyle;
+        const ps = (objects?.panelStyle ?? {}) as any;
+
+        nombreDe.set(ps, "panelStyle");
         this.settings.panelStyle.showBackground = getValue(ps, "showBackground", false);
         this.settings.panelStyle.bgColor        = getValue(ps, "bgColor",        "#F8F8F8");
         this.settings.panelStyle.bgOpacity      = getValue(ps, "bgOpacity",      30);
 
-        const pl = objects?.panelLayout;
+        const pl = (objects?.panelLayout ?? {}) as any;
+
+        nombreDe.set(pl, "panelLayout");
         this.settings.panelLayout.columns        = getValue(pl, "columns",        0);
         this.settings.panelLayout.minPanelWidth  = getValue(pl, "minPanelWidth",  120);
         this.settings.panelLayout.enableScroll   = getValue(pl, "enableScroll",   true);
         this.settings.panelLayout.minPanelHeight = getValue(pl, "minPanelHeight", 120);
         this.settings.panelLayout.barBorderRadius = getValue(pl, "barBorderRadius", 2);
 
-        const al = objects?.analyticalLines;
+        const al = (objects?.analyticalLines ?? {}) as any;
+
+        nombreDe.set(al, "analyticalLines");
         this.settings.analyticalLines.showAverage = getValue(al, "showAverage", false);
         this.settings.analyticalLines.showMax     = getValue(al, "showMax",     false);
         this.settings.analyticalLines.showMin     = getValue(al, "showMin",     false);
@@ -602,13 +659,18 @@ export class Visual implements IVisual {
         this.settings.analyticalLines.bandColor   = getValue(al, "bandColor",   "#C96442");
         this.settings.analyticalLines.bandOpacity = getValue(al, "bandOpacity", 15);
 
-        const leg = objects?.legend;
+        const leg = (objects?.legend ?? {}) as any;
+
+        nombreDe.set(leg, "legend");
         this.settings.legend.show     = getValue(leg, "show",     false);
         this.settings.legend.position = getValue(leg, "position", "bottom");
         this.settings.legend.textColor = getValue(leg, "textColor", "#444444");
 
-        const acc = objects?.accessibility;
+        const acc = (objects?.accessibility ?? {}) as any;
+
+        nombreDe.set(acc, "accessibility");
         this.settings.accessibility.highContrastMode = getValue(acc, "highContrastMode", false);
+        this.settings.style = { template: tplName, guide: this.guideOn };
 
         // Copia de lo que eligio el usuario, antes del gating del tier gratuito: es lo
         // que ve el panel de formato.
@@ -1688,6 +1750,7 @@ export class Visual implements IVisual {
 
         // ── Watermark & freemium message ───────────────────────────────────
         this.renderWatermark(svgWidth, svgHeight, preview && this.attemptedPro.length > 0);
+        this.renderGuide(editing);
         if (DEBUG_FX && (this as any).diagFx) {
             this.messageGroup.selectAll(".dbgfx").remove();
             this.messageGroup.append("text").classed("dbgfx", true).attr("x", 4).attr("y", svgHeight - 4)
@@ -1791,6 +1854,131 @@ export class Visual implements IVisual {
     private clear() {
         this.chartGroup.selectAll("*").remove();
         this.legendGroup.selectAll("*").remove();
+    }
+
+    /**
+     * Asistente de configuración: panel compacto en la esquina, solo editando. No toca los pozos (eso solo lo hace el
+     * usuario): enseña qué campos faltan y aplica una plantilla. Cerrar o terminar guarda style.guide = false; se
+     * reabre desde Formato → Plantilla de estilo. persistProperties sale de un clic, nunca del callback de selección.
+     */
+    private renderGuide(editing: boolean): void {
+        if (!this.guideEl) {
+            this.guideEl = document.createElement("div");
+            this.guideEl.className = "bcv-guide";
+            this.target.appendChild(this.guideEl);
+        }
+        const el = this.guideEl;
+        while (el.firstChild) { el.removeChild(el.firstChild); }
+        el.style.display = "none";
+        const formatMode = !!(this.lastOptions as any)?.formatMode;
+        if (!editing || formatMode || !this.guideOn || !this.interactive()) { return; }
+        const hc = this.hcActive();
+        const azul = hc ? "#FFFF00" : "#2B6CB0", fg = hc ? "#FFFFFF" : "#252423", muted = hc ? "#FFFFFF" : "#605E5C";
+        el.style.display = "block";
+        el.style.background = hc ? "#000000" : "#FFFFFF";
+        el.style.borderColor = azul;
+        el.style.color = fg;
+        el.setAttribute("role", "dialog");
+        el.setAttribute("aria-label", this.tr("UI_GuideTitle", "Setup guide"));
+        el.onclick = (e) => e.stopPropagation();
+        el.onkeydown = (e) => e.stopPropagation();
+        const terminar = () => {
+            this.guideStep = 2;
+            this.host.persistProperties({ merge: [{ objectName: "style", selector: null as any, properties: { guide: false } }] });
+        };
+        const mk = (tag: string, cls: string, text?: string) => { const n = document.createElement(tag); n.className = cls; if (text !== undefined) { n.textContent = text; } return n; };
+        const boton = (texto: string, principal: boolean, accion: () => void) => {
+            const b = mk("button", "bcv-g-btn", texto) as HTMLButtonElement;
+            b.type = "button";
+            b.style.borderColor = azul;
+            b.style.background = principal ? azul : "transparent";
+            b.style.color = principal ? (hc ? "#000000" : "#FFFFFF") : azul;
+            b.addEventListener("click", accion);
+            return b;
+        };
+        const cab = mk("div", "bcv-g-head");
+        const paso = mk("div", "", this.tr("UI_GuideStep", "Setup · step {0} of 3").replace("{0}", String(this.guideStep)));
+        paso.style.color = azul;
+        const cerrar = mk("button", "bcv-g-close", "✕") as HTMLButtonElement;
+        cerrar.type = "button";
+        cerrar.title = this.tr("UI_GuideClose", "Close the guide");
+        cerrar.setAttribute("aria-label", cerrar.title);
+        cerrar.style.color = muted;
+        cerrar.addEventListener("click", terminar);
+        cab.appendChild(paso); cab.appendChild(cerrar);
+        el.appendChild(cab);
+        const titulo = mk("div", "bcv-g-title");
+        el.appendChild(titulo);
+        const pie = mk("div", "bcv-g-foot");
+        if (this.guideStep !== 3) {
+            titulo.textContent = this.tr("UI_GuideCompare", "Compare and read");
+            const cols: any[] = (this.dataView?.metadata?.columns || []) as any[];
+            const tiene = (rol: string) => cols.some(c => c?.roles?.[rol]);
+            const items: [boolean, string, string][] = [
+                [tiene("series"), this.tr("Visual_SmallMultiple", "Small Multiple"), this.tr("UI_GuideSM", "one panel per region, product or team")],
+                [tiene("plan"), this.tr("Visual_Role_Plan", "Plan / Budget (Pro)"), this.tr("UI_GuidePlan", "actual against plan, with the variance on every bar")],
+                [tiene("previousYear"), this.tr("Visual_Role_PreviousYear", "Previous Year (Pro)"), this.tr("UI_GuidePY", "this year against last year")],
+                [tiene("forecast"), this.tr("Visual_Role_Forecast", "Forecast (Pro)"), this.tr("UI_GuideFC", "actual against forecast")],
+            ];
+            for (const [hecho, nombre, porque] of items) {
+                const f = mk("div", "bcv-g-item");
+                const marca = mk("span", "", hecho ? "✓" : "○");
+                marca.setAttribute("aria-label", hecho ? this.tr("UI_GuideDone", "added") : this.tr("UI_GuideTodo", "not added"));
+                marca.style.color = hecho ? (hc ? "#00FF00" : "#107C10") : muted;
+                const txt = mk("span", "");
+                const b = mk("b", "", nombre);
+                txt.appendChild(b); txt.appendChild(document.createTextNode(" — " + porque));
+                txt.style.color = hecho ? muted : fg;
+                f.appendChild(marca); f.appendChild(txt);
+                el.appendChild(f);
+            }
+            const nota = mk("div", "bcv-g-note", this.tr("UI_GuideWells", "Drag the fields into the field wells; this list updates by itself. All optional."));
+            nota.style.color = muted;
+            el.appendChild(nota);
+            pie.appendChild(boton(this.tr("UI_GuideNext", "Next"), true, () => { this.guideStep = 3; this.renderGuide(editing); }));
+        } else {
+            titulo.textContent = this.tr("UI_GuideStyle", "Pick a style");
+            const rejilla = mk("div", "bcv-g-grid");
+            const nombres: [string, string, string][] = [["clean", "Visual_Enum_TplClean", "Clean"], ["classic", "Visual_Enum_TplClassic", "Classic"],
+                ["minimal", "Visual_Enum_TplMinimal", "Minimal"], ["contrast", "Visual_Enum_TplContrast", "Contrast"],
+                ["compact", "Visual_Enum_TplCompact", "Compact"], ["ibcs", "Visual_Enum_TplIbcs", "IBCS style"]];
+            for (const [nombre, clave, def] of nombres) {
+                const chip = mk("button", "bcv-g-chip") as HTMLButtonElement;
+                chip.type = "button";
+                const actual = nombre === this.template;
+                chip.setAttribute("aria-pressed", String(actual));
+                chip.style.borderColor = actual ? azul : "#C8C6C4";
+                chip.style.borderWidth = actual ? "2px" : "1px";
+                chip.appendChild(this.miniBars(nombre, hc));
+                chip.appendChild(mk("div", "", this.tr(clave, def)));
+                chip.addEventListener("click", () => {
+                    this.host.persistProperties({ merge: [{ objectName: "style", selector: null as any, properties: { template: nombre } }] });
+                });
+                rejilla.appendChild(chip);
+            }
+            el.appendChild(rejilla);
+            pie.appendChild(boton(this.tr("UI_GuideBack", "Back"), false, () => { this.guideStep = 2; this.renderGuide(editing); }));
+            pie.appendChild(boton(this.tr("UI_GuideFinish", "Finish"), true, terminar));
+        }
+        el.appendChild(pie);
+    }
+
+    /** Miniatura de una plantilla: cuatro barras con la tercera negativa y su color de variación. */
+    private miniBars(nombre: string, hc: boolean): SVGSVGElement {
+        const t = TEMPLATES[nombre] || {};
+        const bar = hc ? "#FFFFFF" : (t.barSettings?.barColor || this.settings.barSettings.barColor);
+        const neg = hc ? "#FFFFFF" : (t.barSettings?.negativeColor || this.settings.barSettings.negativeColor);
+        const NS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(NS, "svg") as SVGSVGElement;
+        svg.setAttribute("width", "60"); svg.setAttribute("height", "40"); svg.setAttribute("aria-hidden", "true");
+        [[6, 22], [20, 14], [34, 18], [48, 8]].forEach(([x, y], i) => {
+            const r = document.createElementNS(NS, "rect");
+            r.setAttribute("x", String(x)); r.setAttribute("y", String(y)); r.setAttribute("width", "10"); r.setAttribute("height", String(36 - y));
+            r.setAttribute("rx", String(t.panelLayout?.barBorderRadius ?? 2));
+            r.setAttribute("fill", i === 2 ? neg : bar);
+            svg.appendChild(r);
+        });
+        return svg;
     }
 
     private keyOf(id: any): string {

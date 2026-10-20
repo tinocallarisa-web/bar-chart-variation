@@ -50,6 +50,57 @@
     }
   ],
   "objects": {
+    "style": {
+      "displayName": "Style template",
+      "displayNameKey": "Visual_StyleTemplate",
+      "properties": {
+        "template": {
+          "displayName": "Template",
+          "displayNameKey": "Visual_Template",
+          "type": {
+            "enumeration": [
+              {
+                "value": "clean",
+                "displayName": "Clean",
+                "displayNameKey": "Visual_Enum_TplClean"
+              },
+              {
+                "value": "classic",
+                "displayName": "Classic",
+                "displayNameKey": "Visual_Enum_TplClassic"
+              },
+              {
+                "value": "minimal",
+                "displayName": "Minimal",
+                "displayNameKey": "Visual_Enum_TplMinimal"
+              },
+              {
+                "value": "contrast",
+                "displayName": "Contrast",
+                "displayNameKey": "Visual_Enum_TplContrast"
+              },
+              {
+                "value": "compact",
+                "displayName": "Compact",
+                "displayNameKey": "Visual_Enum_TplCompact"
+              },
+              {
+                "value": "ibcs",
+                "displayName": "IBCS style",
+                "displayNameKey": "Visual_Enum_TplIbcs"
+              }
+            ]
+          }
+        },
+        "guide": {
+          "displayName": "Setup guide",
+          "displayNameKey": "Visual_SetupGuide",
+          "type": {
+            "bool": true
+          }
+        }
+      }
+    },
     "barSettings": {
       "displayName": "Bar settings",
       "displayNameKey": "Visual_BarSettings",
