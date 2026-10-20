@@ -21,6 +21,7 @@ import VisualTooltipDataItem = powerbi.extensibility.VisualTooltipDataItem;
 
 import { createTooltipServiceWrapper, ITooltipServiceWrapper } from "powerbi-visuals-utils-tooltiputils";
 import { FORMAT_SPEC } from "./formatSpec";
+import { dataViewWildcard } from "powerbi-visuals-utils-dataviewutils";
 import { STRINGS } from "./strings";
 
 type Selection<T extends d3.BaseType> = d3.Selection<T, any, any, any>;
@@ -866,6 +867,7 @@ export class Visual implements IVisual {
                     const grpObjs: any = mCol.objects?.[origCi];
                     return catObjs?.dataColors?.fill?.solid?.color
                         ?? grpObjs?.barSettings?.barColor?.solid?.color
+                        ?? catObjs?.barSettings?.barColor?.solid?.color
                         ?? null;
                 });
                 // Extra tooltip fields (role "tooltips")
@@ -1005,13 +1007,31 @@ export class Visual implements IVisual {
         const yDomain = [Math.min(0, minVal), (maxVal || 1) * 1.15];
 
         const fmtUnits = this.settings.valueLabels.displayUnits === 0 ? maxVal : this.settings.valueLabels.displayUnits;
+        // getFormatStringByColumn devuelve también la cadena de formato dinámica de la medida.
+        let measureFormat: string | undefined;
+        try { measureFormat = valueFormatter.getFormatStringByColumn(values[0].source as any) || values[0].source.format; }
+        catch (_) { measureFormat = values[0].source.format; }
         const fmt: IValueFormatter = valueFormatter.create({
-            format: values[0].source.format || "#,0",
+            format: measureFormat || "#,0",
             value:  fmtUnits,
             precision: this.settings.valueLabels.valueDecimalPlaces,
             cultureSelector: host.locale,
             displayUnitSystemType: 2
         });
+        // El eje lleva el formato de la medida tal cual: los decimales de "Etiquetas de valor" no son suyos
+        // (con formato #,0 salía "300.0").
+        const fmtAxis: IValueFormatter = valueFormatter.create({
+            format: measureFormat || "#,0",
+            value: fmtUnits,
+            cultureSelector: host.locale,
+            displayUnitSystemType: 2
+        });
+        // Porcentajes con la coma o el punto del idioma del informe.
+        const pctNf = (dp: number) => {
+            try { return new Intl.NumberFormat(host.locale, { minimumFractionDigits: dp, maximumFractionDigits: dp }); }
+            catch (_) { return new Intl.NumberFormat(undefined, { minimumFractionDigits: dp, maximumFractionDigits: dp }); }
+        };
+        const pct = (n: number, dp: number) => pctNf(dp).format(n);
 
         // ── Grid layout ────────────────────────────────────────────────────
         const numPanels = visible.length;
@@ -1163,7 +1183,7 @@ export class Visual implements IVisual {
                 const yOffsetForRow = oMT + r * cellH + cellPad + titleH + varH;
                 const yAxisG = this.chartGroup.append("g")
                     .attr("transform", `translate(${oML - 4},${yOffsetForRow})`);
-                d3.axisLeft(y).ticks(4).tickSize(0).tickFormat((d: any) => fmt.format(d))(yAxisG as any);
+                d3.axisLeft(y).ticks(4).tickSize(0).tickFormat((d: any) => fmtAxis.format(d))(yAxisG as any);
                 yAxisG.select(".domain").remove();
                 yAxisG.selectAll("text")
                     .style("fill", this.settings.barSettings.axisTextColor)
@@ -1331,8 +1351,9 @@ export class Visual implements IVisual {
                 // Aria label: panel, category, value, variation vs prior period
                 let ariaLabel = `${series.name}, ${cat}: ${fmt.format(v)}`;
                 if (base !== null && base !== undefined && base !== 0) {
-                    const varPct = ((v - base) / Math.abs(base) * 100).toFixed(dp);
-                    const sign   = Number(varPct) >= 0 ? "+" : "";
+                    const varN   = (v - base) / Math.abs(base) * 100;
+                    const varPct = pct(varN, dp);
+                    const sign   = varN >= 0 ? "+" : "";
                     ariaLabel   += ", " + this.tr("UI_AriaVariation", "variation from {0}").replace("{0}", useRef ? refLabel : this.tr("UI_PreviousLower", "previous")) + `: ${sign}${varPct}%`;
                 }
 
@@ -1359,7 +1380,7 @@ export class Visual implements IVisual {
                         });
                         tooltipItems.push({
                             displayName: this.tr("UI_VariationPct", "Variation %"),
-                            value: `${sign}${varPct.toFixed(dp)}%`,
+                            value: `${sign}${pct(varPct, dp)}%`,
                             color: isNeg
                                 ? this.settings.variationLabels.negativeColor
                                 : this.settings.variationLabels.positiveColor
@@ -1485,13 +1506,13 @@ export class Visual implements IVisual {
                     if (rv === null || rv === undefined || !isFinite(Number(rv)) || Number(rv) === 0) continue;
                     const vv     = series.values[i];
                     const delta  = vv - Number(rv);
-                    const pct    = (delta / Math.abs(Number(rv))) * 100;
+                    const pctV   = (delta / Math.abs(Number(rv))) * 100;
                     const isPos  = delta >= 0;
                     const vColor = isPos ? this.settings.variationLabels.positiveColor
                                          : this.settings.variationLabels.negativeColor;
                     const arrow  = this.settings.variationLabels.showArrows ? (isPos ? "▲ " : "▼ ") : "";
                     const sign   = isPos ? "+" : "";
-                    const rel    = `${sign}${pct.toFixed(dp)}%`;
+                    const rel    = `${sign}${pct(pctV, dp)}%`;
                     const abs    = `${sign}${fmt.format(delta)}`;
                     const txt    = mode === "absolute" ? abs
                                  : mode === "both"     ? `${abs} (${rel})`
@@ -1536,7 +1557,7 @@ export class Visual implements IVisual {
                         .attr("text-anchor", "middle")
                         .style("font-size", `${this.settings.variationLabels.fontSize}px`)
                         .style("font-weight", "bold").style("fill", vColor)
-                        .text(`${arrow}${sign}${diff.toFixed(this.settings.variationLabels.decimalPlaces)}%`);
+                        .text(`${arrow}${sign}${pct(diff, this.settings.variationLabels.decimalPlaces)}%`);
                 }
             }
         });
@@ -1794,7 +1815,14 @@ export class Visual implements IVisual {
                     case "bool": return { uid, displayName, control: { type: powerbi.visuals.FormattingComponent.ToggleSwitch, properties: { descriptor, value: !!v } } };
                     case "num": return { uid, displayName, control: { type: powerbi.visuals.FormattingComponent.NumUpDown, properties: { descriptor, value: Number(v) || 0 } } };
                     case "fontSize": return { uid, displayName, control: { type: powerbi.visuals.FormattingComponent.NumUpDown, properties: { descriptor, value: Number(v) || 0 } } };
-                    case "color": return { uid, displayName, control: { type: powerbi.visuals.FormattingComponent.ColorPicker, properties: { descriptor, value: { value: v || "" } } } };
+                    case "color": {
+                        // Color de barra con formato condicional (fx): la regla se evalúa por barra. Como en los gráficos
+                        // nativos con Leyenda, con Small Multiple (valores agrupados por serie) Power BI no la entrega.
+                        const fx = card.obj === "barSettings" && p.name === "barColor";
+                        const d2: any = fx ? { ...descriptor, instanceKind: powerbi.VisualEnumerationInstanceKinds.ConstantOrRule,
+                            selector: dataViewWildcard.createDataViewWildcardSelector(dataViewWildcard.DataViewWildcardMatchingOption.InstancesAndTotals) } : descriptor;
+                        return { uid, displayName, control: { type: powerbi.visuals.FormattingComponent.ColorPicker, properties: { descriptor: d2, value: { value: v || "" } } } };
+                    }
                     case "text": return { uid, displayName, control: { type: powerbi.visuals.FormattingComponent.TextInput, properties: { descriptor, value: v ?? "", placeholder: "" } } };
                     case "enum": {
                         const items = (p.items || []).map(it => ({ value: it.value, displayName: this.tr(it.key, it.label) }));
