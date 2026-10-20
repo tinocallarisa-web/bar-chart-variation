@@ -1436,7 +1436,7 @@ export class Visual implements IVisual {
         const hCatFs = Math.min(xFs, Math.max(6, hStep * 0.9));
         const hCatEvery = hStep < hCatFs ? Math.ceil(hCatFs / hStep) : 1;
         const hVarArrows = vlS.showArrows && maxLen * hVarFs * 0.6 < innerW * 0.25;
-        const hConn = vlS.showConnectors && this.settings.comparison.compareTo === "previous";
+        const hConn = vlS.showConnectors;
         let hCatW = horiz && axS.showXLabels ? Math.min(innerW * 0.4, estLblW + 8) : 0;
         let hVarW = horiz && vlS.show ? Math.min(innerW * 0.35, (maxLen + (hVarArrows ? 2 : 0)) * hVarFs * 0.6 + (hConn ? 16 : 8)) : 0;
         if (horiz && innerW - hCatW - hVarW < 40) { hVarW = 0; }
@@ -1594,6 +1594,14 @@ export class Visual implements IVisual {
                     const rv = refArr[i];
                     if (rv === null || rv === undefined || !isFinite(Number(rv)) || Number(rv) === 0) { continue; }
                     const delta = series.values[i] - Number(rv);
+                    if (vlS.showConnectors) {
+                        ca.append("line")
+                            .attr("x1", Math.max(xsH(Math.max(0, series.values[i])), xsH(Number(rv)))).attr("y1", centro(i))
+                            .attr("x2", hPlotW + 4).attr("y2", centro(i))
+                            .attr("stroke", this.settings.barSettings.connectorColor)
+                            .attr("stroke-width", 1).attr("stroke-dasharray", "2,2")
+                            .attr("pointer-events", "none").attr("aria-hidden", "true");
+                    }
                     etiqueta(hPlotW + 6, centro(i), delta, delta / Math.abs(Number(rv)) * 100);
                 }
                 return;
@@ -1857,6 +1865,16 @@ export class Visual implements IVisual {
                     const txt    = mode === "absolute" ? abs
                                  : mode === "both"     ? `${abs} (${rel})`
                                  :                       rel;
+                    // Conector: de la etiqueta a la cima de su barra, pasando por la marca de referencia.
+                    if (this.settings.variationLabels.showConnectors) {
+                        const xc = x(catValues[i]) + x.bandwidth() / 2;
+                        pg.append("line")
+                            .attr("x1", xc).attr("y1", titleH + varH - 2)
+                            .attr("x2", xc).attr("y2", titleH + varH + Math.min(y(Math.max(0, vv)), y(Number(rv))))
+                            .attr("stroke", this.settings.barSettings.connectorColor)
+                            .attr("stroke-width", 1).attr("stroke-dasharray", "2,2")
+                            .attr("pointer-events", "none").attr("aria-hidden", "true");
+                    }
                     pg.append("text").classed("var-label", true)
                         .attr("x", x(catValues[i]) + x.bandwidth() / 2)
                         .attr("y", titleH + varH - 8 - (varStagger && i % 2 === 1 ? varFs + 3 : 0))
