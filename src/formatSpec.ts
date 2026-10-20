@@ -370,6 +370,34 @@ export const FORMAT_SPEC: SpecCard[] = [
                 "kind": "bool"
             },
             {
+                "name": "xLabelAngle",
+                "key": "Visual_XLabelAngle",
+                "label": "X label angle",
+                "kind": "enum",
+                "items": [
+                    {
+                        "value": "auto",
+                        "key": "Visual_Enum_Auto2",
+                        "label": "Auto"
+                    },
+                    {
+                        "value": "0",
+                        "key": "Visual_Enum_Angle0",
+                        "label": "Horizontal"
+                    },
+                    {
+                        "value": "-45",
+                        "key": "Visual_Enum_Angle45",
+                        "label": "Diagonal (45°)"
+                    },
+                    {
+                        "value": "-90",
+                        "key": "Visual_Enum_Angle90",
+                        "label": "Vertical (90°)"
+                    }
+                ]
+            },
+            {
                 "name": "showYLabels",
                 "key": "Visual_ShowYLabels",
                 "label": "Show Y labels",
@@ -382,10 +410,46 @@ export const FORMAT_SPEC: SpecCard[] = [
                 "kind": "fontSize"
             },
             {
+                "name": "xColor",
+                "key": "Visual_XLabelColor",
+                "label": "X label color",
+                "kind": "color"
+            },
+            {
+                "name": "xBold",
+                "key": "Visual_XLabelBold",
+                "label": "X label bold",
+                "kind": "bool"
+            },
+            {
+                "name": "xItalic",
+                "key": "Visual_XLabelItalic",
+                "label": "X label italic",
+                "kind": "bool"
+            },
+            {
                 "name": "yFontSize",
                 "key": "Visual_YLabelSize",
                 "label": "Y label size",
                 "kind": "fontSize"
+            },
+            {
+                "name": "yColor",
+                "key": "Visual_YLabelColor",
+                "label": "Y label color",
+                "kind": "color"
+            },
+            {
+                "name": "yBold",
+                "key": "Visual_YLabelBold",
+                "label": "Y label bold",
+                "kind": "bool"
+            },
+            {
+                "name": "yItalic",
+                "key": "Visual_YLabelItalic",
+                "label": "Y label italic",
+                "kind": "bool"
             }
         ]
     },

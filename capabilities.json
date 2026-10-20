@@ -520,6 +520,34 @@
             "bool": true
           }
         },
+        "xLabelAngle": {
+          "displayName": "X label angle",
+          "displayNameKey": "Visual_XLabelAngle",
+          "type": {
+            "enumeration": [
+              {
+                "value": "auto",
+                "displayName": "Auto",
+                "displayNameKey": "Visual_Enum_Auto2"
+              },
+              {
+                "value": "0",
+                "displayName": "Horizontal",
+                "displayNameKey": "Visual_Enum_Angle0"
+              },
+              {
+                "value": "-45",
+                "displayName": "Diagonal (45°)",
+                "displayNameKey": "Visual_Enum_Angle45"
+              },
+              {
+                "value": "-90",
+                "displayName": "Vertical (90°)",
+                "displayNameKey": "Visual_Enum_Angle90"
+              }
+            ]
+          }
+        },
         "showYLabels": {
           "displayName": "Show Y labels",
           "displayNameKey": "Visual_ShowYLabels",
@@ -536,6 +564,31 @@
             }
           }
         },
+        "xColor": {
+          "displayName": "X label color",
+          "displayNameKey": "Visual_XLabelColor",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "xBold": {
+          "displayName": "X label bold",
+          "displayNameKey": "Visual_XLabelBold",
+          "type": {
+            "bool": true
+          }
+        },
+        "xItalic": {
+          "displayName": "X label italic",
+          "displayNameKey": "Visual_XLabelItalic",
+          "type": {
+            "bool": true
+          }
+        },
         "yFontSize": {
           "displayName": "Y label size",
           "displayNameKey": "Visual_YLabelSize",
@@ -543,6 +596,31 @@
             "formatting": {
               "fontSize": true
             }
+          }
+        },
+        "yColor": {
+          "displayName": "Y label color",
+          "displayNameKey": "Visual_YLabelColor",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "yBold": {
+          "displayName": "Y label bold",
+          "displayNameKey": "Visual_YLabelBold",
+          "type": {
+            "bool": true
+          }
+        },
+        "yItalic": {
+          "displayName": "Y label italic",
+          "displayNameKey": "Visual_YLabelItalic",
+          "type": {
+            "bool": true
           }
         }
       }

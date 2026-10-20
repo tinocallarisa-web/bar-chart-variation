@@ -79,6 +79,12 @@ interface VisualSettings {
         showYLabels: boolean;
         xFontSize: number;
         yFontSize: number;
+        xColor: string;
+        xBold: boolean;
+        xItalic: boolean;
+        yColor: string;
+        yBold: boolean;
+        yItalic: boolean;
     };
     panelStyle: {
         showBackground: boolean;
@@ -303,7 +309,13 @@ export class Visual implements IVisual {
             xLabelAngle: "auto",
             showYLabels: true,
             xFontSize:   9,
-            yFontSize:   9
+            yFontSize:   9,
+            xColor:      "#666666",
+            xBold:       false,
+            xItalic:     false,
+            yColor:      "#666666",
+            yBold:       false,
+            yItalic:     false
         },
         panelStyle: {
             showBackground: false,
@@ -623,6 +635,13 @@ export class Visual implements IVisual {
         this.settings.axisSettings.showYLabels = getValue(ax, "showYLabels", true);
         this.settings.axisSettings.xFontSize   = getValue(ax, "xFontSize",   9);
         this.settings.axisSettings.yFontSize   = getValue(ax, "yFontSize",   9);
+        // Sin color propio, cada eje sigue el "Color del texto de los ejes" de siempre: los informes no cambian.
+        this.settings.axisSettings.xColor      = getValue(ax, "xColor",      this.settings.barSettings.axisTextColor);
+        this.settings.axisSettings.yColor      = getValue(ax, "yColor",      this.settings.barSettings.axisTextColor);
+        this.settings.axisSettings.xBold       = getValue(ax, "xBold",       false);
+        this.settings.axisSettings.yBold       = getValue(ax, "yBold",       false);
+        this.settings.axisSettings.xItalic     = getValue(ax, "xItalic",     false);
+        this.settings.axisSettings.yItalic     = getValue(ax, "yItalic",     false);
 
         const ps = (objects?.panelStyle ?? {}) as any;
 
@@ -792,6 +811,8 @@ export class Visual implements IVisual {
         b.borderWidth   = Math.max(b.borderWidth, 2);
         b.barOpacity    = 100;
         b.axisTextColor = fg;
+        this.settings.axisSettings.xColor = fg;
+        this.settings.axisSettings.yColor = fg;
 
         // La trama diagonal es lo unico que distingue negativo de positivo cuando ambos
         // comparten relleno y contorno.
@@ -1139,7 +1160,7 @@ export class Visual implements IVisual {
         const yFs = this.settings.axisSettings.yFontSize;
         const anchoEtiquetaY = Math.max(
             fmt.format(yDomain[0]).length, fmt.format(yDomain[1]).length
-        ) * yFs * 0.60;
+        ) * yFs * (this.settings.axisSettings.yBold ? 0.66 : 0.60);
 
         const L = this.layoutFor(width, height, ncols, nrows, anchoEtiquetaY, {
             yLabels:   this.settings.axisSettings.showYLabels,
@@ -1189,7 +1210,7 @@ export class Visual implements IVisual {
         // (~0.60 em de media en Segoe UI), no con pixeles por caracter fijos.
         const xFs        = this.settings.axisSettings.xFontSize;
         const longestCat = catValues.reduce((a, b) => (b.length > a.length ? b : a), "");
-        const estLblW    = longestCat.length * xFs * 0.60;
+        const estLblW    = longestCat.length * xFs * (this.settings.axisSettings.xBold ? 0.66 : 0.60);
         const bandW      = innerW / Math.max(catValues.length, 1);
         let xAngle = 0;
         if (this.settings.axisSettings.showXLabels) {
@@ -1304,7 +1325,9 @@ export class Visual implements IVisual {
                 d3.axisLeft(y).ticks(4).tickSize(0).tickFormat((d: any) => fmtAxis.format(d))(yAxisG as any);
                 yAxisG.select(".domain").remove();
                 yAxisG.selectAll("text")
-                    .style("fill", this.settings.barSettings.axisTextColor)
+                    .style("fill", this.settings.axisSettings.yColor)
+                    .style("font-weight", this.settings.axisSettings.yBold ? "bold" : "normal")
+                    .style("font-style", this.settings.axisSettings.yItalic ? "italic" : "normal")
                     .style("font-size", `${this.settings.axisSettings.yFontSize}px`);
             }
         }
@@ -1593,7 +1616,9 @@ export class Visual implements IVisual {
                         .attr("x", lx).attr("y", ly)
                         .attr("text-anchor", xAngle !== 0 ? "end" : "middle")
                         .style("font-size", `${xFs}px`)
-                        .style("fill", this.settings.barSettings.axisTextColor)
+                        .style("fill", this.settings.axisSettings.xColor)
+                        .style("font-weight", this.settings.axisSettings.xBold ? "bold" : "normal")
+                        .style("font-style", this.settings.axisSettings.xItalic ? "italic" : "normal")
                         .text(cat);
                     if (xAngle !== 0) {
                         // Se rota alrededor del propio punto de anclaje, para que la
