@@ -517,8 +517,15 @@ export class Visual implements IVisual {
         // Un valor legitimo nunca puede servir de centinela: lo que hay que mirar es si
         // la propiedad EXISTE en metadata.objects.
         this.barColorSetByUser = (bS as any)?.barColor !== undefined;
-        this.settings.barSettings.barColor       = getValue(bS, "barColor",       "#378ADD");
-        this.settings.barSettings.negativeColor  = getValue(bS, "negativeColor",  "#E24B4A");
+        // Sin color elegido, los del tema del informe (como los nativos): el primer color de datos para la barra y los
+        // colores "malo"/"bueno" del tema si los define. El panel enseña estos mismos, así que no dice una cosa y pinta otra.
+        const pal: any = this.colorPalette;
+        const tema = (f: () => string | undefined, def: string) => { try { return f() || def; } catch (_) { return def; } };
+        const temaBarra = tema(() => pal?.getColor?.("tcviz-bar")?.value, "#378ADD");
+        const temaMalo  = tema(() => pal?.negative?.value, "#E24B4A");
+        const temaBueno = tema(() => pal?.positive?.value, "#00BFA5");
+        this.settings.barSettings.barColor       = getValue(bS, "barColor",       temaBarra);
+        this.settings.barSettings.negativeColor  = getValue(bS, "negativeColor",  temaMalo);
         this.settings.barSettings.barOpacity     = getValue(bS, "barOpacity",     100);
         this.settings.barSettings.axisTextColor  = getValue(bS, "axisTextColor",  "#666666");
         this.settings.barSettings.borderColor    = getValue(bS, "borderColor",    "#FFFFFF");
@@ -534,8 +541,8 @@ export class Visual implements IVisual {
         const vL = objects?.variationLabels;
         this.settings.variationLabels.show           = getValue(vL, "show",           true);
         this.settings.variationLabels.fontSize        = getValue(vL, "fontSize",        11);
-        this.settings.variationLabels.positiveColor   = getValue(vL, "positiveColor",   "#00BFA5");
-        this.settings.variationLabels.negativeColor   = getValue(vL, "negativeColor",   "#FF4081");
+        this.settings.variationLabels.positiveColor   = getValue(vL, "positiveColor",   temaBueno);
+        this.settings.variationLabels.negativeColor   = getValue(vL, "negativeColor",   temaMalo);
         this.settings.variationLabels.decimalPlaces   = getValue(vL, "decimalPlaces",   1);
         this.settings.variationLabels.showArrows      = getValue(vL, "showArrows",      true);
         this.settings.variationLabels.showConnectors  = getValue(vL, "showConnectors",  true);
@@ -739,6 +746,16 @@ export class Visual implements IVisual {
         this.settings.comparison.markerColor        = sel;
     }
 
+    /**
+     * Con el botón fx, Power BI guarda también el color FIJO por barra, con el mismo aspecto que una regla. Si todas
+     * las barras traen el color por defecto, no es una regla: se descartan para que el color negativo siga mandando.
+     */
+    private soloReglas(colors: (string | null)[]): (string | null)[] {
+        const def = String(this.settings.barSettings.barColor || "").toLowerCase();
+        const distintos = colors.some(c => c != null && c.toLowerCase() !== def);
+        return distintos ? colors : colors.map(() => null);
+    }
+
     /** Medidas de referencia (previousYear | plan | forecast) alineadas al orden de categorias. */
     private readRefValues(cols: any[], sortIndexMap: number[]): { [role: string]: (number | null)[] } {
         const out: { [role: string]: (number | null)[] } = {};
@@ -889,7 +906,7 @@ export class Visual implements IVisual {
                         format: gv.source.format || ""
                     }));
                 const refValues = this.readRefValues(group.values as any[], sortIndexMap);
-                seriesList.push({ name, values: sv, highlights: sh, color, cfColors, refValues, selectionId: sid, barSelectionIds: bsids, tooltipFields });
+                seriesList.push({ name, values: sv, highlights: sh, color, cfColors: this.soloReglas(cfColors), refValues, selectionId: sid, barSelectionIds: bsids, tooltipFields });
             }
         } else {
             // Solo las columnas del rol "measure" son barras. Las de referencia y las de
@@ -933,7 +950,7 @@ export class Visual implements IVisual {
                         format: v2.source.format || ""
                     }));
                 const refValues = this.readRefValues(values as any[], sortIndexMap);
-                seriesList.push({ name, values: sv, highlights: sh, color, cfColors, refValues, selectionId: sid, barSelectionIds: bsids, tooltipFields });
+                seriesList.push({ name, values: sv, highlights: sh, color, cfColors: this.soloReglas(cfColors), refValues, selectionId: sid, barSelectionIds: bsids, tooltipFields });
             }
         }
 
