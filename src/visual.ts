@@ -795,11 +795,21 @@ export class Visual implements IVisual {
         const sortOrder = this.settings.axisSettings.sortOrder;
         // sortIndexMap[newIndex] = originalIndex — keeps data aligned with labels
         let sortIndexMap: number[] = catValues.map((_, i) => i);
-        if (sortOrder !== "auto") {
-            sortIndexMap.sort((a, b) =>
-                catValues[a].localeCompare(catValues[b], undefined, { numeric: true })
-            );
-            if (sortOrder === "desc") sortIndexMap.reverse();
+        // Un eje de fechas o números (años, meses, fechas) es una serie temporal: la variación se lee de izquierda
+        // a derecha, así que en "Auto" va en orden cronológico. Sin esto, Power BI lo manda ordenado por la medida
+        // de mayor a menor y las variaciones salían al revés (2024, 2023, 2022...). Un eje de texto conserva el
+        // orden de Power BI (el del menú "Ordenar eje" del visual).
+        const rawCat: any[] = categories.values as any[];
+        const tipo: any = (categories.source as any)?.type || {};
+        const temporal = !!(tipo.dateTime || tipo.numeric || tipo.integer) || rawCat.every(v => v == null || v instanceof Date || typeof v === "number");
+        const valorDe = (i: number): number => { const v = rawCat[i]; return v instanceof Date ? v.getTime() : Number(v); };
+        const porValor = (a: number, b: number) => temporal
+            ? (valorDe(a) - valorDe(b)) || 0
+            : catValues[a].localeCompare(catValues[b], undefined, { numeric: true });
+        const ordenEje = sortOrder === "auto" ? (temporal ? "asc" : "auto") : sortOrder;
+        if (ordenEje !== "auto") {
+            sortIndexMap.sort(porValor);
+            if (ordenEje === "desc") sortIndexMap.reverse();
             catValues = sortIndexMap.map(i => catValues[i]);
         }
         const seriesList: SeriesData[] = [];

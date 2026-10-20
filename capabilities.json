@@ -833,5 +833,8 @@
     "roles": [
       "category"
     ]
+  },
+  "sorting": {
+    "default": {}
   }
 }
