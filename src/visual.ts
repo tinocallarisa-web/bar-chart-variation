@@ -2157,7 +2157,7 @@ export class Visual implements IVisual {
                 .style("font-size", "9px").style("fill", "#C00000").text((this as any).diagFx);
         }
         // Nota neutra, sin llamada a comprar: la ruta de compra es la notificacion de Power BI.
-        const msgData = isLimited ? [`Showing ${maxPanels} of ${seriesList.length} panels`] : [];
+        const msgData = isLimited ? [this.tr("UI_ShowingPanels", "Showing {0} of {1} panels").replace("{0}", String(maxPanels)).replace("{1}", String(seriesList.length))] : [];
         this.messageGroup.selectAll(".freemium-msg").data(msgData)
             .join("text").classed("freemium-msg", true)
             .attr("x", svgWidth / 2).attr("y", svgHeight - 6)

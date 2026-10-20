@@ -178,4 +178,5 @@ B = {
 'Trend line': ['Línea de tendencia', 'Linha de tendência', 'Ligne de tendance', 'Trendlinie', 'Linea di tendenza', 'Trendlijn', 'Linia trendu', '傾向線', '趋势线', '추세선'],
 'Trend color': ['Color de la tendencia', 'Cor da tendência', 'Couleur de la tendance', 'Trendfarbe', 'Colore della tendenza', 'Kleur trend', 'Kolor trendu', '傾向線の色', '趋势线颜色', '추세선 색'],
 'the trend line': ['la línea de tendencia', 'a linha de tendência', 'la ligne de tendance', 'die Trendlinie', 'la linea di tendenza', 'de trendlijn', 'linię trendu', '傾向線', '趋势线', '추세선'],
+'Showing {0} of {1} panels': ['Mostrando {0} de {1} paneles', 'Mostrando {0} de {1} painéis', '{0} panneaux affichés sur {1}', '{0} von {1} Feldern angezeigt', '{0} pannelli di {1} visualizzati', '{0} van {1} panelen weergegeven', 'Wyświetlono {0} z {1} paneli', '{1} 個中 {0} 個のパネルを表示', '显示 {1} 个面板中的 {0} 个', '패널 {1}개 중 {0}개 표시'],
 }

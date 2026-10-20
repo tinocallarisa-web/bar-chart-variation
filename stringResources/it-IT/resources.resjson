@@ -148,6 +148,7 @@
   "UI_Median": "Mediana",
   "UI_Positive": "Positivo",
   "UI_Negative": "Negativo",
+  "UI_ShowingPanels": "{0} pannelli di {1} visualizzati",
   "UI_Landing1": "1. Trascina un campo data o categoria in Asse.",
   "UI_Landing2": "2. Trascina una misura numerica in Valori: la variazione % compare tra le barre.",
   "UI_Landing3": "3. Facoltativo: Multiplo piccolo divide il grafico in pannelli; Descrizioni comandi aggiunge campi.",

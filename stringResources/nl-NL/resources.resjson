@@ -148,6 +148,7 @@
   "UI_Median": "Mediaan",
   "UI_Positive": "Positief",
   "UI_Negative": "Negatief",
+  "UI_ShowingPanels": "{0} van {1} panelen weergegeven",
   "UI_Landing1": "1. Sleep een datum- of categorieveld naar As.",
   "UI_Landing2": "2. Sleep een numerieke meting naar Waarden: de verandering % verschijnt tussen de balken.",
   "UI_Landing3": "3. Optioneel: Klein veelvoud splitst de grafiek in panelen; Knopinfo voegt velden toe.",

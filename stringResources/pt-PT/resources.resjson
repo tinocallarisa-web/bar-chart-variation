@@ -148,6 +148,7 @@
   "UI_Median": "Mediana",
   "UI_Positive": "Positivo",
   "UI_Negative": "Negativo",
+  "UI_ShowingPanels": "Mostrando {0} de {1} painéis",
   "UI_Landing1": "1. Arraste um campo de data ou categoria para Eixo.",
   "UI_Landing2": "2. Arraste uma medida numérica para Valores: a variação % aparece entre as barras.",
   "UI_Landing3": "3. Opcional: Múltiplo pequeno divide o gráfico em painéis; Dicas de ferramenta adiciona campos.",

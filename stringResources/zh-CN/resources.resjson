@@ -148,6 +148,7 @@
   "UI_Median": "中位数",
   "UI_Positive": "正值",
   "UI_Negative": "负值",
+  "UI_ShowingPanels": "显示 {1} 个面板中的 {0} 个",
   "UI_Landing1": "1. 将日期或类别字段拖到轴。",
   "UI_Landing2": "2. 将数值度量值拖到值：条形之间会显示变化 %。",
   "UI_Landing3": "3. 可选：小型序列图将图表拆分为面板；工具提示可添加字段。",

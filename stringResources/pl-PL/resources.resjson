@@ -148,6 +148,7 @@
   "UI_Median": "Mediana",
   "UI_Positive": "Dodatnie",
   "UI_Negative": "Ujemne",
+  "UI_ShowingPanels": "Wyświetlono {0} z {1} paneli",
   "UI_Landing1": "1. Przeciągnij pole daty lub kategorii do Osi.",
   "UI_Landing2": "2. Przeciągnij miarę liczbową do Wartości: zmiana % pojawia się między słupkami.",
   "UI_Landing3": "3. Opcjonalnie: Mała wielokrotność dzieli wykres na panele; Etykietki narzędzi dodają pola.",

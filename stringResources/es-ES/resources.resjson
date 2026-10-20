@@ -148,6 +148,7 @@
   "UI_Median": "Mediana",
   "UI_Positive": "Positivo",
   "UI_Negative": "Negativo",
+  "UI_ShowingPanels": "Mostrando {0} de {1} paneles",
   "UI_Landing1": "1. Arrastra un campo de fecha o categoría a Eje.",
   "UI_Landing2": "2. Arrastra una medida numérica a Valores: la variación % aparece entre las barras.",
   "UI_Landing3": "3. Opcional: Múltiplo pequeño divide el gráfico en paneles; Información sobre herramientas añade campos.",

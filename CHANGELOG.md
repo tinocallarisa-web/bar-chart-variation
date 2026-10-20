@@ -4,6 +4,36 @@ All notable changes to this visual are documented here.
 
 ---
 
+## [1.11.0.0] — 2026-10-21
+
+### Added
+- **Horizontal orientation.** Panel layout → Orientation → Horizontal (bars): categories on the left, bars to the right, the variation in its own column, and the bracket turned on its side. Everything else works the same way in both orientations: references, selection, bookmarks, tooltips, small multiples, analytical lines. Free.
+- **Style templates, including an IBCS style.** Clean, Classic, Minimal, Contrast, Compact and IBCS style, under Format → Style template. A template only fills what you have not set yourself, and Clean is exactly the look of 1.10, so existing reports do not change. "IBCS style" is a sober look inspired by IBCS notation; it does not claim compliance with the standard. Free.
+- **Setup guide.** While you edit, a small panel in the corner lists the optional fields (Small Multiple, Plan / Budget, Previous Year, Forecast) with a tick when each is in place, and then offers the templates with a preview. Close it once and it stays closed; turn it back on under Style template. Free.
+- **Format on the canvas (on-object formatting).** In format mode, click the bars, the variation labels, a panel title, either axis or the legend to format it where it is, with shortcuts to the matching card. A click in format mode never filters the page. Free.
+- **Trend line.** A least-squares trend line per panel, in both orientations, with its own colour. Pro.
+- **Axis titles and axis label styling.** A title for each axis (the field name, or your own text); colour, bold and italic for the labels of each axis; and the X label angle (Auto, horizontal, 45°, 90°), which existed in code but could not be set from the pane. Free.
+- **Hide empty categories.** Removes from the axis the categories that are 0 or blank in every panel — typically the months that have not happened yet, which otherwise show as a −100% drop that never occurred. Off by default. Free.
+- **Conditional formatting (fx) on the bar colour.** A rule colours each bar by its value, field or gradient. As with native charts that have a Legend, Power BI does not evaluate rules per bar when Small Multiple splits the measure by series. Pro (per-bar colours).
+- **Dynamic format strings.** Values, axis and differences use the number format of the measure, including dynamic format strings; the axis no longer forces the decimals of the value labels ("300.0" on a whole-number measure).
+- **12 languages.** English, Spanish, Portuguese (Brazil and Portugal), French, German, Italian, Dutch, Polish, Japanese, Chinese (Simplified) and Korean — the format pane and every text drawn by the visual. Percentages use the decimal separator of the report language.
+
+### Changed
+- **Auto sort is chronological on date and number axes.** Power BI sends categories sorted by the measure, largest first, so a year axis came out 2024, 2023, 2022 and every variation read backwards. On a date or number axis, Auto now sorts by the axis itself; Ascending and Descending sort by the real value. *Reports with a date or number axis set to Auto will show their bars in time order after the update.*
+- **Colours follow the report theme when you have not chosen one.** Bars take the first data colour of the theme, and negative and positive take the theme's bad and good colours. *Reports that never set a colour will pick up their theme colours.* Colours you have chosen are kept.
+- **Variance format works against the previous bar too.** "Variance format (Pro)" — formerly "Variance (Pro)" — did nothing unless a reference measure was bound. Relative (%), Absolute and Both now apply in both modes, and the difference uses the format of the measure.
+- **Connectors in reference mode.** With Plan / Budget, Previous Year or Forecast, "Show connectors" did nothing. It now joins each variation label to its bar, through the reference marker.
+- **The reference band is visible when you turn it on.** Its limits started at 0 and 0, so Show band drew nothing — while still triggering the Pro preview. With no limits typed, the band now marks the typical range (25th to 75th percentile of the values); typed limits are used in whichever order they come.
+- **Selection is visible and reversible.** The other bars dim; clicking the only selected bar again clears it; bookmarks restore the selection; Enter or Space selects the focused bar and Esc clears.
+- **Drilldown in the visual header and expanded hierarchies.** With several levels expanded, each bar is labelled with all of them ("Q1 · Jan") and selects with the identity of each level.
+- **Modern format pane.** Rebuilt on the current Power BI formatting model, with "Reset to default" on every card. Every setting saved in an existing report is kept.
+
+### Fixed
+- **Variation labels overlapped on narrow bars** (many categories or several panels). They now drop the arrows, shrink by up to 2 px and, if they still do not fit, alternate between two heights. None is hidden.
+- **The connector looked like a solid line on some bars.** Each middle bar is the end of two brackets, and both drew their own dashed vertical; with the dashes out of step they read as one solid line. Each vertical is now drawn once.
+- **With the panel title at the bottom,** the Y axis, the analytical lines, the variation labels and the connectors were drawn as if the title were at the top, so the brackets dropped into the bars.
+- **The reference band was misplaced with more than one row of panels:** it was one rectangle stretched down from the first row. There is now one band per row.
+
 ## [1.10.0.0] — 2026-09-22
 
 ### Added

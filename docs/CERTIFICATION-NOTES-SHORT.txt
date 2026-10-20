@@ -1,44 +1,41 @@
-Bar Chart with Variation % 1.10.0.0 - GUID barChartVariation98877665544332211
+Bar Chart with Variation % 1.11.0.0 - GUID barChartVariation98877665544332211
 
 SOURCE CODE
 github.com/tinocallarisa-web/bar-chart-variation, branch "certification".
 PUBLIC: no credentials needed, none included here.
 
 TESTING THE PREMIUM FEATURES - NO KEY NEEDED
-There is no activation key: Pro is granted by the AppSource plan through
-IVisualLicenseManager, so none exists outside the marketplace. You do not need one.
-The submitted package already renders every premium feature: import this .pbiviz and
-open a report in EDIT mode without a licence. Turn on any Pro setting and it is drawn
-WORKING under a "Pro preview" watermark naming it - same code, same data, nothing
-hidden or stubbed. Reading view, and anywhere the licence cannot be read, shows the
-free result with no watermark.
-Without the watermark: npm install, then node build-test.js (isPro forced true, GUID +
-"_test"), never submitted.
+Pro is granted by the AppSource plan through IVisualLicenseManager; no activation key
+exists. Import this .pbiviz and open a report in EDIT mode without a licence: turn on
+any Pro setting and it is drawn WORKING under a "Pro preview" watermark naming it -
+same code, nothing stubbed. Reading view, and anywhere the licence cannot be read,
+shows the free result with no watermark.
 
-WHAT CHANGED IN 1.10.0.0
-Three reference measures (Pro): Previous Year, Plan / Budget, Forecast. Bind one, pick
-it in Format > Comparison > Compare to, and every bar gets a horizontal marker at that
-level; free keeps comparing against the previous category. Accessibility and
-localization were claimed before and were not really there: the visual now reads
-colorPalette.isHighContrast, and the format pane is localized with displayNameKey, 95 keys in
-en-US and es-ES - there was not one before, so the files were dead.
-host.allowInteractions is respected. See CHANGELOG.md.
+WHAT CHANGED IN 1.11.0.0
+Modern format pane (getFormattingModel), every saved setting kept. On-object
+formatting. Horizontal orientation. Style templates and a setup guide (edit mode
+only). Trend line (Pro). Conditional formatting (fx) on the bar colour. Dynamic
+format strings. 12 languages. Visible selection, second click clears, bookmarks via
+registerOnSelectCallback, keyboard (Enter/Space/Esc). Drilldown declared. Axis
+titles, label styling, hide empty categories. Fixes: overlapping labels, connectors,
+reference band, bottom panel title. See CHANGELOG.md.
 
 PRIVACY: no network calls, no telemetry, no storage. Only the dataView. privileges [].
 
 FREE VS PRO
-Free: bars, variation %, 3 panels, bar and border colours, sort, tooltips,
-cross-filtering, legend, high contrast, es-ES.
-Pro: the three reference measures, absolute variance, 100 panels, analytical lines and
-band, value labels, per-bar colours.
+Free: bars, variation %, both orientations, 3 panels, templates, colours, sort,
+tooltips, cross-filtering, bookmarks, drilldown, high contrast, 12 languages.
+Pro: Previous Year / Plan / Forecast references, absolute variance, 100 panels,
+analytical lines, trend line and band, value labels, per-bar colours and fx rules.
 
 WHAT TO CHECK
-No fields: landing page. Axis + Values: variation % appears. Small Multiple with 4+
-values while editing: all panels watermarked; reading view shows 3. Bind Plan / Budget
-and set Compare to = Plan: a marker on every bar, under the watermark. Windows high
-contrast on: bars take the theme colours, negatives keep the pattern. Sort Ascending:
-bars reorder. Click a bar: cross-filtering. With a licence: no watermark, no notice.
+No fields: landing page. Axis + Values: variation % appears; setup guide in the
+corner while editing. Small Multiple with 4+ values while editing: watermark; reading
+view shows 3. Bind Plan / Budget, Compare to = Plan: a marker on every bar. Click a
+bar: others dim, page filters; click again: clears. Format mode: click a bar or an
+axis to format it. Panel layout > Orientation > Horizontal. Windows high contrast:
+theme colours, negatives patterned. With a licence: no watermark, no notice.
 
-Rendering events on every update() path. Known gap: Format Pane (classic API).
+Rendering events on every update() path. allowInteractions from hostCapabilities.
 Video https://www.youtube.com/watch?v=vIszaUlC6G0
 Support: tinocallarisa-web.github.io/bar-chart-variation/

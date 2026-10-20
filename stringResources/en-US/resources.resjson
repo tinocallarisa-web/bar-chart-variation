@@ -148,6 +148,7 @@
   "UI_Median": "Median",
   "UI_Positive": "Positive",
   "UI_Negative": "Negative",
+  "UI_ShowingPanels": "Showing {0} of {1} panels",
   "UI_Landing1": "1. Drag a date or category field to Axis.",
   "UI_Landing2": "2. Drag a numeric measure to Values: variation % appears between bars.",
   "UI_Landing3": "3. Optional: Small Multiple splits the chart into panels; Tooltips adds fields.",

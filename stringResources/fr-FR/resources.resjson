@@ -148,6 +148,7 @@
   "UI_Median": "Médiane",
   "UI_Positive": "Positif",
   "UI_Negative": "Négatif",
+  "UI_ShowingPanels": "{0} panneaux affichés sur {1}",
   "UI_Landing1": "1. Faites glisser un champ de date ou de catégorie vers Axe.",
   "UI_Landing2": "2. Faites glisser une mesure numérique vers Valeurs : la variation % apparaît entre les barres.",
   "UI_Landing3": "3. Facultatif : Multiple petit divise le graphique en panneaux ; Info-bulles ajoute des champs.",

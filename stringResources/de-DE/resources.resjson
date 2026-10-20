@@ -148,6 +148,7 @@
   "UI_Median": "Median",
   "UI_Positive": "Positiv",
   "UI_Negative": "Negativ",
+  "UI_ShowingPanels": "{0} von {1} Feldern angezeigt",
   "UI_Landing1": "1. Ziehen Sie ein Datums- oder Kategoriefeld auf Achse.",
   "UI_Landing2": "2. Ziehen Sie ein numerisches Measure auf Werte: Die Veränderung % erscheint zwischen den Balken.",
   "UI_Landing3": "3. Optional: Kleines Vielfaches teilt das Diagramm in Felder; QuickInfos fügt Felder hinzu.",
