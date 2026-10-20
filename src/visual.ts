@@ -1405,10 +1405,13 @@ export class Visual implements IVisual {
                 .attr("stroke", "#c9cdd4").attr("stroke-width", 1);
         }
 
+        // Inicio del área de barras dentro de la celda (el título solo se salta si va arriba).
+        const chartTop = (showTitle && titlePos === "top") ? titleH + varH : varH;
+
         // ── Y axis — one per ROW on the left side of the grid ─────────────
         if (this.settings.axisSettings.showYLabels && !horiz) {
             for (let r = 0; r < nrows; r++) {
-                const yOffsetForRow = oMT + r * cellH + cellPad + titleH + varH;
+                const yOffsetForRow = oMT + r * cellH + cellPad + chartTop;
                 const yAxisG = this.chartGroup.append("g").classed("y-axis", true)
                     .attr("transform", `translate(${oML - 4},${yOffsetForRow})`);
                 d3.axisLeft(y).ticks(4).tickSize(0).tickFormat((d: any) => fmtAxis.format(d))(yAxisG as any);
@@ -1905,15 +1908,15 @@ export class Visual implements IVisual {
                     if (this.settings.variationLabels.showConnectors) {
                         const xc = x(catValues[i]) + x.bandwidth() / 2;
                         pg.append("line")
-                            .attr("x1", xc).attr("y1", titleH + varH - 2)
-                            .attr("x2", xc).attr("y2", titleH + varH + Math.min(y(Math.max(0, vv)), y(Number(rv))))
+                            .attr("x1", xc).attr("y1", chartTop - 2)
+                            .attr("x2", xc).attr("y2", chartTop + Math.min(y(Math.max(0, vv)), y(Number(rv))))
                             .attr("stroke", this.settings.barSettings.connectorColor)
                             .attr("stroke-width", 1).attr("stroke-dasharray", "2,2")
                             .attr("pointer-events", "none").attr("aria-hidden", "true");
                     }
                     pg.append("text").classed("var-label", true)
                         .attr("x", x(catValues[i]) + x.bandwidth() / 2)
-                        .attr("y", titleH + varH - 8 - (varStagger && i % 2 === 1 ? varFs + 3 : 0))
+                        .attr("y", chartTop - 8 - (varStagger && i % 2 === 1 ? varFs + 3 : 0))
                         .attr("text-anchor", "middle")
                         .style("font-size", `${varFs}px`)
                         .style("font-weight", "bold").style("fill", vColor)
@@ -1933,7 +1936,7 @@ export class Visual implements IVisual {
                     const abs = `${sg}${fmtAxis.format(delta)}`;
                     return modoPrev === "absolute" ? abs : modoPrev === "both" ? `${abs} (${rel})` : rel;
                 };
-                const bktY = titleH + varH - 2;
+                const bktY = chartTop - 2;
                 for (let i = 1; i < catValues.length; i++) {
                     const v1 = series.values[i - 1];
                     const v2 = series.values[i];
@@ -1957,7 +1960,7 @@ export class Visual implements IVisual {
                     }
 
                     pg.append("text").classed("var-label", true)
-                        .attr("x", (xc1 + xc2) / 2).attr("y", titleH + varH - 8 - (varStagger && i % 2 === 0 ? varFs + 3 : 0))
+                        .attr("x", (xc1 + xc2) / 2).attr("y", chartTop - 8 - (varStagger && i % 2 === 0 ? varFs + 3 : 0))
                         .attr("text-anchor", "middle")
                         .style("font-size", `${varFs}px`)
                         .style("font-weight", "bold").style("fill", vColor)
@@ -1966,7 +1969,7 @@ export class Visual implements IVisual {
                 conVertical.forEach(i => {
                     const xc = x(catValues[i]) + x.bandwidth() / 2;
                     pg.append("line")
-                        .attr("x1", xc).attr("y1", bktY).attr("x2", xc).attr("y2", titleH + varH + y(series.values[i]))
+                        .attr("x1", xc).attr("y1", bktY).attr("x2", xc).attr("y2", chartTop + y(series.values[i]))
                         .attr("stroke", this.settings.barSettings.connectorColor)
                         .attr("stroke-width", 1).attr("stroke-dasharray", "2,2")
                         .attr("aria-hidden", "true");
@@ -1977,6 +1980,19 @@ export class Visual implements IVisual {
         // ── Analytical Lines + Bands ───────────────────────────────────────
         const al    = this.settings.analyticalLines;
         const allValsFlat = visible.flatMap(s => s.values);
+
+        // Banda de referencia: los límites escritos, en el orden que vengan; sin límites (los dos a 0), el rango típico,
+        // del percentil 25 al 75 de todos los valores. Antes, con los límites a 0, activarla no dibujaba nada.
+        let banda: [number, number] | null = null;
+        if (al.showBand) {
+            if (al.bandMin !== 0 || al.bandMax !== 0) {
+                banda = [Math.min(al.bandMin, al.bandMax), Math.max(al.bandMin, al.bandMax)];
+            } else {
+                const ord = allValsFlat.slice().sort((a, b) => a - b);
+                banda = [d3.quantileSorted(ord, 0.25) || 0, d3.quantileSorted(ord, 0.75) || 0];
+            }
+            if (!(banda[1] > banda[0])) { banda = null; }
+        }
 
         // Horizontal: un eje de valores bajo cada columna de paneles.
         if (horiz && valAxisH > 0) {
@@ -2006,10 +2022,11 @@ export class Visual implements IVisual {
             for (let pi = 0; pi < numPanels; pi++) {
                 const x0 = oML + (pi % ncols) * cellW + cellPad + hCatW;
                 const y0 = oMT + Math.floor(pi / ncols) * cellH + cellPad + hTop;
-                if (al.showBand && al.bandMax > al.bandMin) {
+                if (banda) {
+                    const bx0 = xsH(Math.max(banda[0], xsH.domain()[0])), bx1 = xsH(Math.min(banda[1], xsH.domain()[1]));
                     this.chartGroup.append("rect")
-                        .attr("x", x0 + xsH(al.bandMin)).attr("y", y0)
-                        .attr("width", Math.abs(xsH(al.bandMax) - xsH(al.bandMin))).attr("height", innerH)
+                        .attr("x", x0 + bx0).attr("y", y0)
+                        .attr("width", Math.max(0, bx1 - bx0)).attr("height", innerH)
                         .attr("fill", al.bandColor).attr("opacity", al.bandOpacity / 100)
                         .attr("pointer-events", "none").attr("aria-hidden", "true");
                 }
@@ -2031,17 +2048,20 @@ export class Visual implements IVisual {
             }
         }
 
-        if (!horiz && al.showBand && al.bandMax > al.bandMin) {
-            const bandY1 = y(al.bandMax);
-            const bandY2 = y(al.bandMin);
-            const bandH  = Math.abs(bandY2 - bandY1);
-            gridG.append("rect")
-                .attr("x", 0).attr("y", bandY1 + (nrows > 1 ? cellPad + titleH + varH : cellPad + titleH + varH))
-                .attr("width", gridW).attr("height", bandH * nrows)
-                .attr("fill", al.bandColor)
-                .attr("opacity", al.bandOpacity / 100)
-                .attr("pointer-events", "none")
-                .attr("aria-hidden", "true");
+        if (!horiz && banda) {
+            // Una banda por fila, recortada al área del gráfico (antes era un solo rectángulo estirado desde la fila 1).
+            const yTop = y(Math.min(banda[1], y.domain()[1])), yBot = y(Math.max(banda[0], y.domain()[0]));
+            if (yBot > yTop) {
+                for (let r = 0; r < nrows; r++) {
+                    gridG.append("rect")
+                        .attr("x", 0).attr("y", r * cellH + cellPad + chartTop + yTop)
+                        .attr("width", gridW).attr("height", yBot - yTop)
+                        .attr("fill", al.bandColor)
+                        .attr("opacity", al.bandOpacity / 100)
+                        .attr("pointer-events", "none")
+                        .attr("aria-hidden", "true");
+                }
+            }
         }
 
         const lineConfigs: { show: boolean; value: number; label: string }[] = [
@@ -2060,7 +2080,7 @@ export class Visual implements IVisual {
             if (!lc.show || horiz) continue;
             // Draw one line per row, at the correct y position inside each row's chart area
             for (let r = 0; r < nrows; r++) {
-                const lineY = oMT + r * cellH + cellPad + titleH + varH + y(lc.value);
+                const lineY = oMT + r * cellH + cellPad + chartTop + y(lc.value);
                 const lineEl = this.chartGroup.append("line")
                     .attr("x1", oML).attr("x2", oML + gridW)
                     .attr("y1", lineY).attr("y2", lineY)
