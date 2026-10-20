@@ -161,5 +161,7 @@
   "UI_GuideNext": "Próximo",
   "UI_GuideStyle": "Escolha um estilo",
   "UI_GuideBack": "Voltar",
-  "UI_GuideFinish": "Concluir"
+  "UI_GuideFinish": "Concluir",
+  "UI_ObjXAxis": "Eixo X",
+  "UI_ObjYAxis": "Eixo Y"
 }

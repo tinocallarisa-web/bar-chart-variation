@@ -161,5 +161,7 @@
   "UI_GuideNext": "次へ",
   "UI_GuideStyle": "スタイルを選択",
   "UI_GuideBack": "戻る",
-  "UI_GuideFinish": "完了"
+  "UI_GuideFinish": "完了",
+  "UI_ObjXAxis": "X 軸",
+  "UI_ObjYAxis": "Y 軸"
 }

@@ -161,5 +161,7 @@
   "UI_GuideNext": "Volgende",
   "UI_GuideStyle": "Kies een stijl",
   "UI_GuideBack": "Terug",
-  "UI_GuideFinish": "Voltooien"
+  "UI_GuideFinish": "Voltooien",
+  "UI_ObjXAxis": "X-as",
+  "UI_ObjYAxis": "Y-as"
 }

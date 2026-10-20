@@ -161,5 +161,7 @@
   "UI_GuideNext": "다음",
   "UI_GuideStyle": "스타일 선택",
   "UI_GuideBack": "뒤로",
-  "UI_GuideFinish": "완료"
+  "UI_GuideFinish": "완료",
+  "UI_ObjXAxis": "X축",
+  "UI_ObjYAxis": "Y축"
 }

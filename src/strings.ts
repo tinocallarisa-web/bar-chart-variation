@@ -46,7 +46,9 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideNext": "Siguiente",
         "UI_GuideStyle": "Elige un estilo",
         "UI_GuideBack": "Atrás",
-        "UI_GuideFinish": "Terminar"
+        "UI_GuideFinish": "Terminar",
+        "UI_ObjXAxis": "Eje X",
+        "UI_ObjYAxis": "Eje Y"
     },
     "pt-BR": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} faz parte do plano Pro e é mostrado como prévia com marca d’água.",
@@ -90,7 +92,9 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideNext": "Próximo",
         "UI_GuideStyle": "Escolha um estilo",
         "UI_GuideBack": "Voltar",
-        "UI_GuideFinish": "Concluir"
+        "UI_GuideFinish": "Concluir",
+        "UI_ObjXAxis": "Eixo X",
+        "UI_ObjYAxis": "Eixo Y"
     },
     "fr-FR": {
         "UI_NoticePreview": "Bar Chart with Variation % : {0} fait partie du plan Pro et s’affiche en aperçu avec filigrane.",
@@ -131,7 +135,9 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideNext": "Suivant",
         "UI_GuideStyle": "Choisissez un style",
         "UI_GuideBack": "Retour",
-        "UI_GuideFinish": "Terminer"
+        "UI_GuideFinish": "Terminer",
+        "UI_ObjXAxis": "Axe X",
+        "UI_ObjYAxis": "Axe Y"
     },
     "de-DE": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} gehört zum Pro-Plan und wird als Vorschau mit Wasserzeichen gezeigt.",
@@ -172,7 +178,9 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideNext": "Weiter",
         "UI_GuideStyle": "Stil wählen",
         "UI_GuideBack": "Zurück",
-        "UI_GuideFinish": "Fertig"
+        "UI_GuideFinish": "Fertig",
+        "UI_ObjXAxis": "X-Achse",
+        "UI_ObjYAxis": "Y-Achse"
     },
     "it-IT": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} fa parte del piano Pro ed è mostrato come anteprima con filigrana.",
@@ -214,7 +222,9 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideNext": "Avanti",
         "UI_GuideStyle": "Scegli uno stile",
         "UI_GuideBack": "Indietro",
-        "UI_GuideFinish": "Fine"
+        "UI_GuideFinish": "Fine",
+        "UI_ObjXAxis": "Asse X",
+        "UI_ObjYAxis": "Asse Y"
     },
     "nl-NL": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} hoort bij het Pro-abonnement en wordt als voorbeeld met watermerk getoond.",
@@ -256,7 +266,9 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideNext": "Volgende",
         "UI_GuideStyle": "Kies een stijl",
         "UI_GuideBack": "Terug",
-        "UI_GuideFinish": "Voltooien"
+        "UI_GuideFinish": "Voltooien",
+        "UI_ObjXAxis": "X-as",
+        "UI_ObjYAxis": "Y-as"
     },
     "pl-PL": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} należy do planu Pro i jest pokazane jako podgląd ze znakiem wodnym.",
@@ -299,7 +311,9 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideNext": "Dalej",
         "UI_GuideStyle": "Wybierz styl",
         "UI_GuideBack": "Wstecz",
-        "UI_GuideFinish": "Zakończ"
+        "UI_GuideFinish": "Zakończ",
+        "UI_ObjXAxis": "Oś X",
+        "UI_ObjYAxis": "Oś Y"
     },
     "ja-JP": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} は Pro プランの機能で、透かし付きのプレビューとして表示されます。",
@@ -343,7 +357,9 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideNext": "次へ",
         "UI_GuideStyle": "スタイルを選択",
         "UI_GuideBack": "戻る",
-        "UI_GuideFinish": "完了"
+        "UI_GuideFinish": "完了",
+        "UI_ObjXAxis": "X 軸",
+        "UI_ObjYAxis": "Y 軸"
     },
     "zh-CN": {
         "UI_NoticePreview": "Bar Chart with Variation %：{0} 属于 Pro 计划，以带水印的预览显示。",
@@ -387,7 +403,9 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideNext": "下一步",
         "UI_GuideStyle": "选择样式",
         "UI_GuideBack": "上一步",
-        "UI_GuideFinish": "完成"
+        "UI_GuideFinish": "完成",
+        "UI_ObjXAxis": "X 轴",
+        "UI_ObjYAxis": "Y 轴"
     },
     "ko-KR": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0}은(는) Pro 플랜 기능이며 워터마크가 있는 미리 보기로 표시됩니다.",
@@ -431,7 +449,9 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideNext": "다음",
         "UI_GuideStyle": "스타일 선택",
         "UI_GuideBack": "뒤로",
-        "UI_GuideFinish": "완료"
+        "UI_GuideFinish": "완료",
+        "UI_ObjXAxis": "X축",
+        "UI_ObjYAxis": "Y축"
     },
     "pt-PT": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} faz parte do plano Pro e é mostrado como prévia com marca d’água.",
@@ -475,6 +495,8 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideNext": "Próximo",
         "UI_GuideStyle": "Escolha um estilo",
         "UI_GuideBack": "Voltar",
-        "UI_GuideFinish": "Concluir"
+        "UI_GuideFinish": "Concluir",
+        "UI_ObjXAxis": "Eixo X",
+        "UI_ObjYAxis": "Eixo Y"
     }
 };

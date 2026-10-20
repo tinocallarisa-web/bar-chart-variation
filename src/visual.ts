@@ -21,6 +21,10 @@ import VisualTooltipDataItem = powerbi.extensibility.VisualTooltipDataItem;
 
 import { createTooltipServiceWrapper, ITooltipServiceWrapper } from "powerbi-visuals-utils-tooltiputils";
 import { FORMAT_SPEC } from "./formatSpec";
+import {
+    HtmlSubSelectableClass, HtmlSubSelectionHelper, SubSelectableDisplayNameAttribute,
+    SubSelectableObjectNameAttribute, SubSelectableTypeAttribute,
+} from "powerbi-visuals-utils-onobjectutils";
 import { dataViewWildcard } from "powerbi-visuals-utils-dataviewutils";
 import { STRINGS } from "./strings";
 
@@ -256,6 +260,10 @@ export class Visual implements IVisual {
     /** Temporizador que deja la barra de Upgrade cuando termina el banner */
     private licenseIconTimer: number | null = null;
     private attemptedPro: string[] = [];
+    /** Formato desde el lienzo (on-object). */
+    public visualOnObjectFormatting: powerbi.extensibility.visual.VisualOnObjectFormatting;
+    private subSelectionHelper: HtmlSubSelectionHelper;
+    private formatMode = false;
     /** Plantilla de estilo vigente y asistente de configuración. */
     private template = "clean";
     private guideOn = true;
@@ -390,6 +398,17 @@ export class Visual implements IVisual {
         this.watermarkGroup= this.svg.append("g").classed("watermark-group",true);
         this.messageGroup = this.svg.append("g").classed("message-group",  true);
 
+        this.subSelectionHelper = HtmlSubSelectionHelper.createHtmlSubselectionHelper({
+            hostElement: options.element,
+            subSelectionService: options.host.subSelectionService,
+            selectionIdCallback: () => undefined,
+        });
+        this.visualOnObjectFormatting = {
+            getSubSelectionStyles: (subs) => this.getSubSelectionStyles(subs),
+            getSubSelectionShortcuts: (subs) => this.getSubSelectionShortcuts(subs),
+            getSubSelectables: (filter) => this.subSelectionHelper.getAllSubSelectables(filter),
+        };
+
         // Context menu + background click — registered ONCE on SVG root.
         const selMgr = this.selectionManager;
         this.svg.on("contextmenu", (event: MouseEvent) => {
@@ -423,6 +442,8 @@ export class Visual implements IVisual {
     public update(options: VisualUpdateOptions) {
         this.events.renderingStarted(options);
         this.lastOptions = options;
+        this.formatMode = !!(options as any).formatMode;
+        this.subSelectionHelper.setFormatMode(this.formatMode);
         try {
             this.dataView = options.dataViews[0];
             if (!this.dataView || !this.dataView.categorical ||
@@ -436,6 +457,10 @@ export class Visual implements IVisual {
             this.updateSettings(this.dataView);
             this.render(options);
             this.paintSelection();
+            this.markSubSelectables();
+            if (this.formatMode) {
+                this.subSelectionHelper.updateOutlinesFromSubSelections((options as any).subSelections ?? [], true);
+            }
             this.events.renderingFinished(options);
         } catch (e) {
             this.events.renderingFailed(options, String(e));
@@ -757,6 +782,7 @@ export class Visual implements IVisual {
      * visual. Indefinido significa permitido: solo false bloquea.
      */
     private interactive(): boolean {
+        if (this.formatMode) { return false; }
         // hostCapabilities es donde la API 5.x lo pone; host.allowInteractions solo existía en versiones antiguas.
         const h: any = this.host;
         return (h?.hostCapabilities?.allowInteractions ?? h?.allowInteractions) !== false;
@@ -1361,7 +1387,7 @@ export class Visual implements IVisual {
         if (this.settings.axisSettings.showYLabels) {
             for (let r = 0; r < nrows; r++) {
                 const yOffsetForRow = oMT + r * cellH + cellPad + titleH + varH;
-                const yAxisG = this.chartGroup.append("g")
+                const yAxisG = this.chartGroup.append("g").classed("y-axis", true)
                     .attr("transform", `translate(${oML - 4},${yOffsetForRow})`);
                 d3.axisLeft(y).ticks(4).tickSize(0).tickFormat((d: any) => fmtAxis.format(d))(yAxisG as any);
                 yAxisG.select(".domain").remove();
@@ -1479,7 +1505,7 @@ export class Visual implements IVisual {
                         .attr("stroke-width", 1.5).attr("opacity", 0.35);
                 }
 
-                pg.append("text")
+                pg.append("text").classed("panel-title", true)
                     .attr("x", innerW / 2)
                     .attr("y", conFondo ? (isBottom ? titleLineY + titleH / 2 : titleH / 2) : titleTextY)
                     .attr("text-anchor", "middle")
@@ -1653,7 +1679,7 @@ export class Visual implements IVisual {
                 if (this.settings.axisSettings.showXLabels) {
                     const lx = bx + bw / 2;
                     const ly = innerH + (xAngle !== 0 ? 12 : 14);
-                    const lbl = ca.append("text")
+                    const lbl = ca.append("text").classed("x-label", true)
                         .attr("x", lx).attr("y", ly)
                         .attr("text-anchor", xAngle !== 0 ? "end" : "middle")
                         .style("font-size", `${xFs}px`)
@@ -1701,7 +1727,7 @@ export class Visual implements IVisual {
                     const txt    = mode === "absolute" ? abs
                                  : mode === "both"     ? `${abs} (${rel})`
                                  :                       rel;
-                    pg.append("text")
+                    pg.append("text").classed("var-label", true)
                         .attr("x", x(catValues[i]) + x.bandwidth() / 2)
                         .attr("y", titleH + varH - 8 - (varStagger && i % 2 === 1 ? varFs + 3 : 0))
                         .attr("text-anchor", "middle")
@@ -1746,7 +1772,7 @@ export class Visual implements IVisual {
                             .attr("aria-hidden", "true");
                     }
 
-                    pg.append("text")
+                    pg.append("text").classed("var-label", true)
                         .attr("x", (xc1 + xc2) / 2).attr("y", titleH + varH - 8 - (varStagger && i % 2 === 0 ? varFs + 3 : 0))
                         .attr("text-anchor", "middle")
                         .style("font-size", `${varFs}px`)
@@ -2078,13 +2104,95 @@ export class Visual implements IVisual {
         el.appendChild(pie);
     }
 
+    // ── Formato desde el lienzo (on-object) ───────────────────────────────────
+
+    /** Nombre traducido de una tarjeta o de una propiedad, sacado de la misma tabla que el panel. */
+    private specLabel(obj: string, prop?: string): string {
+        const card = FORMAT_SPEC.find(cd => cd.obj === obj);
+        if (!card) { return obj; }
+        if (!prop) { return this.tr(card.key, card.label); }
+        const pr = card.props.find(x => x.name === prop);
+        return pr ? this.tr(pr.key, pr.label) : prop;
+    }
+
+    /** Marca los elementos que se pueden elegir en modo formato. Fuera de él, no deja rastro. */
+    private markSubSelectables(): void {
+        const marcar = (sel: string, objeto: string, nombre: string, tipo: powerbi.visuals.SubSelectionStylesType) => {
+            this.target.querySelectorAll(sel).forEach(el => {
+                if (!this.formatMode) { el.classList.remove(HtmlSubSelectableClass); return; }
+                el.classList.add(HtmlSubSelectableClass);
+                el.setAttribute(SubSelectableObjectNameAttribute, objeto);
+                el.setAttribute(SubSelectableDisplayNameAttribute, nombre);
+                el.setAttribute(SubSelectableTypeAttribute, String(tipo));
+            });
+        };
+        marcar(".bar-rect", "bars", this.specLabel("barSettings"), powerbi.visuals.SubSelectionStylesType.Shape);
+        marcar(".var-label", "variationLabels", this.specLabel("variationLabels"), powerbi.visuals.SubSelectionStylesType.Text);
+        marcar(".panel-title", "panelTitle", this.specLabel("panelTitle"), powerbi.visuals.SubSelectionStylesType.Text);
+        marcar(".x-label, .x-title", "xAxis", this.tr("UI_ObjXAxis", "X axis"), powerbi.visuals.SubSelectionStylesType.Text);
+        marcar(".y-axis, .y-title", "yAxis", this.tr("UI_ObjYAxis", "Y axis"), powerbi.visuals.SubSelectionStylesType.Text);
+        marcar(".legend-group", "legend", this.specLabel("legend"), powerbi.visuals.SubSelectionStylesType.Text);
+    }
+
+    private getSubSelectionStyles(subs: powerbi.visuals.CustomVisualSubSelection[]): powerbi.visuals.SubSelectionStyles | undefined {
+        const name = subs[0]?.customVisualObjects[0]?.objectName;
+        const ref = (objectName: string, propertyName: string) => ({ reference: { objectName, propertyName }, label: this.specLabel(objectName, propertyName) });
+        switch (name) {
+            case "bars":
+                return { type: powerbi.visuals.SubSelectionStylesType.Shape, fill: ref("barSettings", "barColor"), stroke: ref("barSettings", "borderColor") } as any;
+            case "variationLabels":
+                return { type: powerbi.visuals.SubSelectionStylesType.Text, fontSize: ref("variationLabels", "fontSize"), fontColor: ref("variationLabels", "positiveColor") } as any;
+            case "panelTitle":
+                return { type: powerbi.visuals.SubSelectionStylesType.Text, fontSize: ref("panelTitle", "fontSize"), fontColor: ref("panelTitle", "customColor") } as any;
+            case "xAxis":
+                return { type: powerbi.visuals.SubSelectionStylesType.Text, fontSize: ref("axisSettings", "xFontSize"), fontColor: ref("axisSettings", "xColor"),
+                    bold: ref("axisSettings", "xBold"), italic: ref("axisSettings", "xItalic") } as any;
+            case "yAxis":
+                return { type: powerbi.visuals.SubSelectionStylesType.Text, fontSize: ref("axisSettings", "yFontSize"), fontColor: ref("axisSettings", "yColor"),
+                    bold: ref("axisSettings", "yBold"), italic: ref("axisSettings", "yItalic") } as any;
+            case "legend":
+                return { type: powerbi.visuals.SubSelectionStylesType.Text, fontColor: ref("legend", "textColor") } as any;
+        }
+        return undefined;
+    }
+
+    private getSubSelectionShortcuts(subs: powerbi.visuals.CustomVisualSubSelection[]): powerbi.visuals.VisualSubSelectionShortcuts | undefined {
+        const name = subs[0]?.customVisualObjects[0]?.objectName;
+        const id = (objectName: string, propertyName: string) => ({ objectName, propertyName });
+        const toggle = (o: string, pr: string) => ({ type: powerbi.visuals.VisualShortcutType.Toggle, ...id(o, pr), relatedToggledFormattingIds: [id(o, pr)],
+            disabledLabel: this.specLabel(o, pr), enabledLabel: this.specLabel(o, pr) });
+        const picker = (o: string, pr: string) => ({ type: powerbi.visuals.VisualShortcutType.Picker, ...id(o, pr), label: this.specLabel(o, pr) });
+        const reset = (o: string, props: string[]) => ({ type: powerbi.visuals.VisualShortcutType.Reset, relatedResetFormattingIds: props.map(pr => id(o, pr)) });
+        const nav = (o: string, label?: string) => ({ type: powerbi.visuals.VisualShortcutType.Navigate, destinationInfo: { cardUid: "Visual-" + o + "_card" }, label: label || this.specLabel(o) });
+        switch (name) {
+            case "bars":
+                return [picker("comparison", "compareTo"), toggle("valueLabels", "show"), { type: powerbi.visuals.VisualShortcutType.Divider },
+                    reset("barSettings", ["barColor", "negativeColor", "borderColor", "borderWidth", "barOpacity"]), nav("barSettings")] as any;
+            case "variationLabels":
+                return [picker("comparison", "varianceMode"), toggle("variationLabels", "showArrows"), toggle("variationLabels", "showConnectors"),
+                    { type: powerbi.visuals.VisualShortcutType.Divider }, reset("variationLabels", ["fontSize", "positiveColor", "negativeColor", "decimalPlaces"]), nav("variationLabels")] as any;
+            case "panelTitle":
+                return [picker("panelTitle", "titleStyle"), picker("panelTitle", "position"), toggle("panelTitle", "useSeriesColor"),
+                    { type: powerbi.visuals.VisualShortcutType.Divider }, reset("panelTitle", ["fontSize", "customColor", "backgroundColor"]), nav("panelTitle")] as any;
+            case "xAxis":
+                return [picker("axisSettings", "xLabelAngle"), toggle("axisSettings", "showXTitle"), toggle("axisSettings", "hideEmpty"),
+                    { type: powerbi.visuals.VisualShortcutType.Divider }, reset("axisSettings", ["xFontSize", "xColor", "xBold", "xItalic"]), nav("axisSettings")] as any;
+            case "yAxis":
+                return [toggle("axisSettings", "showYTitle"), { type: powerbi.visuals.VisualShortcutType.Divider },
+                    reset("axisSettings", ["yFontSize", "yColor", "yBold", "yItalic"]), nav("axisSettings")] as any;
+            case "legend":
+                return [picker("legend", "position"), { type: powerbi.visuals.VisualShortcutType.Divider }, reset("legend", ["textColor"]), nav("legend")] as any;
+        }
+        return undefined;
+    }
+
     /** Títulos de eje, uno por visual (no por panel): X centrado abajo, Y girado a la izquierda. */
     private renderAxisTitles(tx: string, ty: string, fs: number, oML: number, oMT: number, oMR: number, oMB: number,
         legendH: number, w: number, h: number): void {
         const axS = this.settings.axisSettings;
         const legAbajo = this.settings.legend.show && this.settings.legend.position === "bottom" ? legendH : 0;
         if (tx) {
-            this.chartGroup.append("text").classed("axis-title", true)
+            this.chartGroup.append("text").classed("axis-title x-title", true)
                 .attr("x", oML + (w - oML - oMR) / 2).attr("y", h - legAbajo - 6)
                 .attr("text-anchor", "middle")
                 .style("font-size", `${fs}px`).style("fill", axS.xColor)
@@ -2093,7 +2201,7 @@ export class Visual implements IVisual {
         }
         if (ty) {
             const cy = oMT + (h - oMT - oMB) / 2;
-            this.chartGroup.append("text").classed("axis-title", true)
+            this.chartGroup.append("text").classed("axis-title y-title", true)
                 .attr("x", fs + 2).attr("y", cy)
                 .attr("text-anchor", "middle")
                 .attr("transform", `rotate(-90,${fs + 2},${cy})`)

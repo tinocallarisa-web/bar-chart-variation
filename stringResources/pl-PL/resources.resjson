@@ -161,5 +161,7 @@
   "UI_GuideNext": "Dalej",
   "UI_GuideStyle": "Wybierz styl",
   "UI_GuideBack": "Wstecz",
-  "UI_GuideFinish": "Zakończ"
+  "UI_GuideFinish": "Zakończ",
+  "UI_ObjXAxis": "Oś X",
+  "UI_ObjYAxis": "Oś Y"
 }

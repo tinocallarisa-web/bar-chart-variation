@@ -170,4 +170,6 @@ B = {
 'X title text': ['Texto del título X', 'Texto do título X', 'Texte du titre X', 'Text des X-Titels', 'Testo titolo X', 'Tekst X-titel', 'Tekst tytułu X', 'X タイトルのテキスト', 'X 标题文本', 'X 제목 텍스트'],
 'Y axis title': ['Título del eje Y', 'Título do eixo Y', 'Titre de l’axe Y', 'Titel der Y-Achse', 'Titolo asse Y', 'Titel Y-as', 'Tytuł osi Y', 'Y 軸のタイトル', 'Y 轴标题', 'Y축 제목'],
 'Y title text': ['Texto del título Y', 'Texto do título Y', 'Texte du titre Y', 'Text des Y-Titels', 'Testo titolo Y', 'Tekst Y-titel', 'Tekst tytułu Y', 'Y タイトルのテキスト', 'Y 标题文本', 'Y 제목 텍스트'],
+'X axis': ['Eje X', 'Eixo X', 'Axe X', 'X-Achse', 'Asse X', 'X-as', 'Oś X', 'X 軸', 'X 轴', 'X축'],
+'Y axis': ['Eje Y', 'Eixo Y', 'Axe Y', 'Y-Achse', 'Asse Y', 'Y-as', 'Oś Y', 'Y 軸', 'Y 轴', 'Y축'],
 }

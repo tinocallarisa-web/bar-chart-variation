@@ -161,5 +161,7 @@
   "UI_GuideNext": "Avanti",
   "UI_GuideStyle": "Scegli uno stile",
   "UI_GuideBack": "Indietro",
-  "UI_GuideFinish": "Fine"
+  "UI_GuideFinish": "Fine",
+  "UI_ObjXAxis": "Asse X",
+  "UI_ObjYAxis": "Asse Y"
 }

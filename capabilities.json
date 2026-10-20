@@ -1000,5 +1000,7 @@
   },
   "sorting": {
     "default": {}
-  }
+  },
+  "supportsOnObjectFormatting": true,
+  "enablePointerEventsFormatMode": true
 }

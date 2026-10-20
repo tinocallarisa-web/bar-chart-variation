@@ -161,5 +161,7 @@
   "UI_GuideNext": "Siguiente",
   "UI_GuideStyle": "Elige un estilo",
   "UI_GuideBack": "Atrás",
-  "UI_GuideFinish": "Terminar"
+  "UI_GuideFinish": "Terminar",
+  "UI_ObjXAxis": "Eje X",
+  "UI_ObjYAxis": "Eje Y"
 }

@@ -161,5 +161,7 @@
   "UI_GuideNext": "下一步",
   "UI_GuideStyle": "选择样式",
   "UI_GuideBack": "上一步",
-  "UI_GuideFinish": "完成"
+  "UI_GuideFinish": "完成",
+  "UI_ObjXAxis": "X 轴",
+  "UI_ObjYAxis": "Y 轴"
 }
