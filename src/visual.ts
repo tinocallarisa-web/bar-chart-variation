@@ -748,21 +748,6 @@ export class Visual implements IVisual {
         this.settings.comparison.markerColor        = sel;
     }
 
-    /**
-     * Con el botón fx, Power BI guarda también el color FIJO por barra, con el mismo aspecto que una regla. Si todas
-     * las barras traen el color por defecto, no es una regla: se descartan para que el color negativo siga mandando.
-     */
-    private soloReglas(colors: (string | null)[]): (string | null)[] {
-        return this.colorFijo(colors) !== null ? colors.map(() => null) : colors;
-    }
-
-    /** Todas las barras con el mismo color: es un color fijo guardado barra a barra, no una regla. */
-    private colorFijo(colors: (string | null)[]): string | null {
-        const vistos = colors.filter(c => c != null).map(c => String(c).toLowerCase());
-        if (!vistos.length || vistos.length < colors.length) { return null; }
-        return vistos.every(c => c === vistos[0]) ? colors[0] : null;
-    }
-
     /** Medidas de referencia (previousYear | plan | forecast) alineadas al orden de categorias. */
     private readRefValues(cols: any[], sortIndexMap: number[]): { [role: string]: (number | null)[] } {
         const out: { [role: string]: (number | null)[] } = {};
@@ -913,7 +898,7 @@ export class Visual implements IVisual {
                         format: gv.source.format || ""
                     }));
                 const refValues = this.readRefValues(group.values as any[], sortIndexMap);
-                seriesList.push({ name, values: sv, highlights: sh, color: (color === barColorSetting && this.colorFijo(cfColors)) || color, cfColors: this.soloReglas(cfColors), refValues, selectionId: sid, barSelectionIds: bsids, tooltipFields });
+                seriesList.push({ name, values: sv, highlights: sh, color, cfColors, refValues, selectionId: sid, barSelectionIds: bsids, tooltipFields });
             }
         } else {
             // Solo las columnas del rol "measure" son barras. Las de referencia y las de
@@ -957,7 +942,7 @@ export class Visual implements IVisual {
                         format: v2.source.format || ""
                     }));
                 const refValues = this.readRefValues(values as any[], sortIndexMap);
-                seriesList.push({ name, values: sv, highlights: sh, color: (color === barColorSetting && this.colorFijo(cfColors)) || color, cfColors: this.soloReglas(cfColors), refValues, selectionId: sid, barSelectionIds: bsids, tooltipFields });
+                seriesList.push({ name, values: sv, highlights: sh, color, cfColors, refValues, selectionId: sid, barSelectionIds: bsids, tooltipFields });
             }
         }
 
