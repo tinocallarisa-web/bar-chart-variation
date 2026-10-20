@@ -1071,9 +1071,7 @@ export class Visual implements IVisual {
                 ? this.tr("UI_FeatOneRef", "the {0} reference").replace("{0}", this.refLabel(refBound[0]))
                 : this.tr("UI_FeatRefs", "the reference measures"));
         }
-        const usesRefAny = cmpRoleSel !== "previous"
-            && seriesList.some(s => !!s.refValues[cmpRoleSel]);
-        if (usesRefAny && this.settings.comparison.varianceMode !== "relative") {
+        if (this.settings.variationLabels.show && this.settings.comparison.varianceMode !== "relative") {
             attempted.push(this.tr("UI_FeatAbsolute", "absolute variance"));
         }
         this.attemptedPro = this.isPro ? [] : attempted;
@@ -1246,8 +1244,8 @@ export class Visual implements IVisual {
                     if (!base || !isFinite(base)) { continue; }
                     const d = sr.values[i] - base;
                     const rel = pct(d / Math.abs(base) * 100, vlS.decimalPlaces).length + 2;
-                    const len = !ref || (modeV !== "absolute" && modeV !== "both") ? rel
-                              : modeV === "absolute" ? fmt.format(d).length + 1 : fmt.format(d).length + rel + 3;
+                    const len = modeV !== "absolute" && modeV !== "both" ? rel
+                              : modeV === "absolute" ? fmtAxis.format(d).length + 1 : fmtAxis.format(d).length + rel + 3;
                     maxLen = Math.max(maxLen, len);
                 }
             }
@@ -1656,7 +1654,7 @@ export class Visual implements IVisual {
                     const arrow  = varArrows ? (isPos ? "▲ " : "▼ ") : "";
                     const sign   = isPos ? "+" : "";
                     const rel    = `${sign}${pct(pctV, dp)}%`;
-                    const abs    = `${sign}${fmt.format(delta)}`;
+                    const abs    = `${sign}${fmtAxis.format(delta)}`;
                     const txt    = mode === "absolute" ? abs
                                  : mode === "both"     ? `${abs} (${rel})`
                                  :                       rel;
@@ -1674,6 +1672,14 @@ export class Visual implements IVisual {
                 // barra tendría dos líneas discontinuas superpuestas con los guiones desfasados, que se leen como una
                 // línea continua. Por eso los corchetes solo dibujan su tramo horizontal y cada vertical se pinta una vez.
                 const conVertical = new Set<number>();
+                // Mismo formato que con referencia: % (gratis), diferencia en unidades o las dos (Pro).
+                const modoPrev = this.settings.comparison.varianceMode;
+                const fmtVar = (delta: number, pc: number): string => {
+                    const sg  = delta >= 0 ? "+" : "";
+                    const rel = `${sg}${pct(pc, this.settings.variationLabels.decimalPlaces)}%`;
+                    const abs = `${sg}${fmtAxis.format(delta)}`;
+                    return modoPrev === "absolute" ? abs : modoPrev === "both" ? `${abs} (${rel})` : rel;
+                };
                 const bktY = titleH + varH - 2;
                 for (let i = 1; i < catValues.length; i++) {
                     const v1 = series.values[i - 1];
@@ -1686,7 +1692,6 @@ export class Visual implements IVisual {
                     const vColor = isPos ? this.settings.variationLabels.positiveColor
                                         : this.settings.variationLabels.negativeColor;
                     const arrow  = varArrows ? (isPos ? "▲ " : "▼ ") : "";
-                    const sign   = isPos ? "+" : "";
 
                     // Bracket connector in pg coords (spans from bar tops up into varH zone)
                     if (this.settings.variationLabels.showConnectors) {
@@ -1703,7 +1708,7 @@ export class Visual implements IVisual {
                         .attr("text-anchor", "middle")
                         .style("font-size", `${varFs}px`)
                         .style("font-weight", "bold").style("fill", vColor)
-                        .text(`${arrow}${sign}${pct(diff, this.settings.variationLabels.decimalPlaces)}%`);
+                        .text(`${arrow}${fmtVar(v2 - v1, diff)}`);
                 }
                 conVertical.forEach(i => {
                     const xc = x(catValues[i]) + x.bandwidth() / 2;

@@ -142,7 +142,7 @@ export const FORMAT_SPEC: SpecCard[] = [
             {
                 "name": "varianceMode",
                 "key": "Visual_Variance",
-                "label": "Variance (Pro)",
+                "label": "Variance format (Pro)",
                 "kind": "enum",
                 "items": [
                     {

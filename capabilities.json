@@ -211,7 +211,7 @@
           }
         },
         "varianceMode": {
-          "displayName": "Variance (Pro)",
+          "displayName": "Variance format (Pro)",
           "displayNameKey": "Visual_Variance",
           "type": {
             "enumeration": [

@@ -91,7 +91,7 @@ B = {
 "Sort order": ["Orden", "Ordem de classificação", "Ordre de tri", "Sortierreihenfolge", "Ordinamento", "Sorteervolgorde", "Kolejność sortowania", "並べ替え順序", "排序顺序", "정렬 순서"],
 "Style": ["Estilo", "Estilo", "Style", "Stil", "Stile", "Stijl", "Styl", "スタイル", "样式", "스타일"],
 "Use series color": ["Usar el color de la serie", "Usar a cor da série", "Utiliser la couleur de la série", "Reihenfarbe verwenden", "Usa il colore della serie", "Reekskleur gebruiken", "Użyj koloru serii", "系列の色を使用", "使用系列颜色", "계열 색 사용"],
-"Variance (Pro)": ["Desviación (Pro)", "Desvio (Pro)", "Écart (Pro)", "Abweichung (Pro)", "Scostamento (Pro)", "Afwijking (Pro)", "Odchylenie (Pro)", "差異 (Pro)", "差异 (Pro)", "차이(Pro)"],
+"Variance format (Pro)": ["Formato de la desviación (Pro)", "Formato do desvio (Pro)", "Format de l’écart (Pro)", "Format der Abweichung (Pro)", "Formato dello scostamento (Pro)", "Notatie afwijking (Pro)", "Format odchylenia (Pro)", "差異の表示形式 (Pro)", "差异格式 (Pro)", "차이 형식(Pro)"],
 "Variation labels": ["Etiquetas de variación", "Rótulos de variação", "Étiquettes de variation", "Veränderungsbeschriftungen", "Etichette di variazione", "Variatielabels", "Etykiety zmiany", "変化率のラベル", "变化标签", "변화 레이블"],
 "X label size": ["Tamaño de etiqueta X", "Tamanho do rótulo X", "Taille des étiquettes X", "Größe der X-Beschriftung", "Dimensione etichetta X", "Grootte X-label", "Rozmiar etykiety X", "X ラベルのサイズ", "X 标签大小", "X 레이블 크기"],
 "Y label size": ["Tamaño de etiqueta Y", "Tamanho do rótulo Y", "Taille des étiquettes Y", "Größe der Y-Beschriftung", "Dimensione etichetta Y", "Grootte Y-label", "Rozmiar etykiety Y", "Y ラベルのサイズ", "Y 标签大小", "Y 레이블 크기"],
