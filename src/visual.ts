@@ -202,7 +202,9 @@ const REF_LABELS: Record<string, string> = {
     plan: "Plan / Budget",
     forecast: "Forecast"
 };
-const PLAN_ID = "bar-chart-variation-pro-tcviz";
+// Planes que dan Pro. El de 2,99 (…-pro-tcviz) se detiene en 1.11 pero sus suscriptores siguen activos hasta que
+// cancelen; el nuevo, a 0,99, tiene que crearse en Partner Center con este Plan ID exacto.
+const PLAN_IDS = ["bar-chart-variation-pro-tcviz", "bar-chart-variation-pro"];
 
 /**
  * Plantillas de estilo: un punto de partida. Solo rellenan lo que el usuario no ha tocado (un ajuste escrito en
@@ -497,7 +499,7 @@ export class Visual implements IVisual {
                         const plans: any[] = result?.plans ?? [];
                         // Warning es periodo de gracia por un problema de pago: sigue siendo usable.
                         this.applyLicense(plans.some(p =>
-                            matchesPlan(p.spIdentifier, PLAN_ID) &&
+                            PLAN_IDS.some(id => matchesPlan(p.spIdentifier, id)) &&
                             (p.state === STATE_ACTIVE || p.state === STATE_WARNING)));
                         // Free confirmado: repinta para pasar a la vista previa Pro si toca.
                         if (!this.isPro) this.repaint();
