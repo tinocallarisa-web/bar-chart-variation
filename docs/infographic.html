@@ -180,18 +180,18 @@ body{background:#888;font-family:'Segoe UI',system-ui,sans-serif;color:var(--t1)
       <ul>
         <li class="free-check">Automatic variation % between bars</li>
         <li class="free-check">Up to 3 Small Multiple panels</li>
+        <li class="free-check">Vertical or horizontal bars</li>
+        <li class="free-check">Style templates, including an IBCS style</li>
+        <li class="free-check">Setup guide · format on the canvas</li>
+        <li class="free-check">Variation labels that never overlap</li>
+        <li class="free-check">Time order on date axes · hide empty months</li>
+        <li class="free-check">Axis titles and label styling</li>
         <li class="free-check">Variation arrows &amp; connector lines</li>
-        <li class="free-check">Positive / negative bar colors</li>
-        <li class="free-check">Bar borders: colour and width</li>
-        <li class="free-check">Sort order: Ascending / Descending</li>
-        <li class="free-check">X &amp; Y axis labels (show/hide, size)</li>
-        <li class="free-check">Panel title: separator line or filled header</li>
-        <li class="free-check">Small Multiple column count</li>
-        <li class="free-check">Panel background color &amp; opacity</li>
+        <li class="free-check">Bar borders · panel titles · column count</li>
+        <li class="free-check">The measure's format, dynamic strings too</li>
         <li class="free-check">Rich tooltips + custom tooltip fields</li>
-        <li class="free-check">Cross-filtering, multi-select &amp; drill-down</li>
-        <li class="free-check">Legend (show/hide, position)</li>
-        <li class="free-check">Windows high contrast · Spanish pane</li>
+        <li class="free-check">Cross-filtering, bookmarks &amp; drill-down</li>
+        <li class="free-check">12 languages · Windows high contrast</li>
       </ul>
       <p class="tier-limit">Small Multiples limited to 3 panels</p>
     </div>
@@ -199,12 +199,12 @@ body{background:#888;font-family:'Segoe UI',system-ui,sans-serif;color:var(--t1)
     <div class="center-col">
       <div class="circle-main">
         <span>VERSION</span>
-        <span class="big-num">1.10</span>
+        <span class="big-num">1.11</span>
         <span>AppSource</span>
       </div>
       <div class="stat-pill"><span>0</span> DAX formulas needed</div>
       <div class="stat-pill">Shared <span>Y scale</span> across panels</div>
-      <div class="stat-pill"><span>API</span> 5.11 · D3 v7</div>
+      <div class="stat-pill"><span>6</span> style templates</div>
       <div class="stat-pill"><span>Zero</span> network calls</div>
       <div class="stat-pill">Power BI <span>certified</span></div>
     </div>
@@ -217,11 +217,11 @@ body{background:#888;font-family:'Segoe UI',system-ui,sans-serif;color:var(--t1)
         <li class="pro-check">Reference measures: Previous Year, Plan, Forecast</li>
         <li class="pro-check">A marker on each bar at the reference level</li>
         <li class="pro-check">Absolute variance (the % stays free)</li>
-        <li class="pro-check">Up to 100 Small Multiple panels</li>
-        <li class="pro-check">Analytical lines: Avg, Max, Min, Median</li>
-        <li class="pro-check">Custom reference line &amp; target value</li>
-        <li class="pro-check">Reference band (min/max corridor)</li>
-        <li class="pro-check">Per-bar colours</li>
+        <li class="pro-check">More than 3 Small Multiple panels</li>
+        <li class="pro-check">Trend line per panel</li>
+        <li class="pro-check">Analytical lines: Avg, Max, Min, Median, custom</li>
+        <li class="pro-check">Reference band (typical range or your limits)</li>
+        <li class="pro-check">Per-bar colours with conditional formatting (fx)</li>
         <li class="pro-check">Value labels on bars (data labels)</li>
       </ul>
       <p class="tier-limit">License via Microsoft AppSource</p>
@@ -250,7 +250,7 @@ body{background:#888;font-family:'Segoe UI',system-ui,sans-serif;color:var(--t1)
         <div class="gb-item"><i class="ti ti-sparkles"></i><p><strong>No formulas.</strong> The variation is computed inside the visual, and the reference is the measure you already have — no DATEADD, no date table.</p></div>
         <div class="gb-item"><i class="ti ti-layout-grid"></i><p><strong>Shared scale.</strong> All Small Multiple panels share the same Y axis for honest comparison.</p></div>
         <div class="gb-item"><i class="ti ti-filter"></i><p><strong>Native integration.</strong> Cross-filtering, drill-down, slicers, and bookmarks all work out of the box.</p></div>
-        <div class="gb-item"><i class="ti ti-accessible"></i><p><strong>Accessible.</strong> Follows the Windows high contrast theme, with keyboard navigation and screen reader labels. Pane in English and Spanish.</p></div>
+        <div class="gb-item"><i class="ti ti-accessible"></i><p><strong>Accessible.</strong> Follows the Windows high contrast theme, with keyboard navigation and screen reader labels. Pane and labels in 12 languages.</p></div>
       </div>
     </div>
 
@@ -258,8 +258,8 @@ body{background:#888;font-family:'Segoe UI',system-ui,sans-serif;color:var(--t1)
       <p class="gb-title">Tips</p>
       <div class="gb-items">
         <div class="gb-item"><i class="ti ti-bulb"></i><p>Use <strong>Decimal Places = 0</strong> for executive dashboards — clean numbers, no noise.</p></div>
-        <div class="gb-item"><i class="ti ti-target"></i><p>Set a <strong>Reference Line</strong> to your budget target. Bars above it are green, below are red.</p></div>
-        <div class="gb-item"><i class="ti ti-arrows-sort"></i><p>Use <strong>Sort: Descending</strong> to instantly rank categories from best to worst.</p></div>
+        <div class="gb-item"><i class="ti ti-target"></i><p>Bind <strong>Plan / Budget</strong>: each bar gets a marker at its plan, and the % is against the plan [Pro].</p></div>
+        <div class="gb-item"><i class="ti ti-arrows-sort"></i><p>Pick the <strong>IBCS style</strong> template for a sober finance look, or <strong>Horizontal</strong> for long names.</p></div>
         <div class="gb-item"><i class="ti ti-tooltip"></i><p>Drag <strong>extra fields to Tooltips</strong> — add context like units or region without cluttering the chart.</p></div>
       </div>
     </div>
@@ -269,8 +269,8 @@ body{background:#888;font-family:'Segoe UI',system-ui,sans-serif;color:var(--t1)
       <div class="gb-items">
         <div class="gb-item"><i class="ti ti-palette"></i><p><strong>Bar Settings</strong> — default color, negative color, opacity, axis text & grid line colors</p></div>
         <div class="gb-item"><i class="ti ti-percentage"></i><p><strong>Variation Labels</strong> — show/hide, font size, positive/negative colors, arrows, connectors</p></div>
-        <div class="gb-item"><i class="ti ti-chart-line"></i><p><strong>Analytical Lines</strong> — Avg, Max, Min, Median, Reference, Band, color, style [Pro]</p></div>
-        <div class="gb-item"><i class="ti ti-layout-columns"></i><p><strong>Panel Layout</strong> — min panel width, scroll, bar corner radius</p></div>
+        <div class="gb-item"><i class="ti ti-chart-line"></i><p><strong>Analytical Lines</strong> — Avg, Max, Min, Median, Reference, Band, Trend, color, style [Pro]</p></div>
+        <div class="gb-item"><i class="ti ti-layout-columns"></i><p><strong>Style template &amp; Panel Layout</strong> — Clean, Classic, Minimal, Contrast, Compact, IBCS style; orientation, columns</p></div>
       </div>
     </div>
   </div>
