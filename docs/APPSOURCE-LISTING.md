@@ -31,10 +31,19 @@ Plan vs actual bar chart: variance % between bars and a marker for plan, budget 
 
 ## Description
 
+Revised 17-11-2026 after App Advisor (4/5): BEST FOR, jargon explained, what you need before starting.
+
 ```
 A bar chart that compares each month against the one before answers "is this month better than the last one". It does not answer the question the meeting is actually about: are we on plan.
 
-Bar Chart with Variation % answers both. It writes the variance % between bars by itself, and it draws a marker where each bar should have been — your plan, your budget, your forecast or last year. No DATEADD, no variance column, no helper measures.
+Bar Chart with Variation % answers both. It writes the variance % (the percentage difference) between bars by itself, and it draws a marker where each bar should have been — your plan, your budget, your forecast or last year. No DATEADD, no variance column, no helper measures: you bring the actual and, in Pro, the plan.
+
+BEST FOR
+
+• Monthly reviews: actual against plan or budget, region by region
+• Finance and controlling: budget, forecast and last year against actual in one chart
+• Sales operations: targets by team or product, with the gap on every bar
+• Any series where the change between periods matters more than the level
 
 PLAN VS ACTUAL
 
@@ -52,18 +61,18 @@ SMALL MULTIPLES
 
 LOOKS RIGHT FROM THE FIRST CLICK
 
-• Colours from your report theme; six style templates, including an IBCS style
+• Colours from your report theme; six style templates, including an IBCS style (the international standard for business charts)
 • A setup guide in the corner while you edit, listing the optional fields
 • Format on the canvas: click a bar, a label or an axis to format it
 • Labels that never overlap: on narrow bars they shrink or alternate heights instead of colliding
 • Date and number axes in time order, and empty future months hidden on request
-• The number format of your measure, dynamic format strings included, in 12 languages
+• The number format of your measure, dynamic format strings included, so labels match the rest of your report; 12 languages
 
 NATIVE INTEGRATION
 
 • Click a bar to cross-filter the report; the other bars dim; bookmarks keep the selection
 • Highlighting from other visuals, report tooltips, drilldown and the context menu
-• Conditional formatting (fx) on the bar colour
+• Conditional formatting (fx) on the bar colour: rules that colour each bar by its result
 • Keyboard navigation, screen reader labels and the Windows high contrast theme
 
 PRO
@@ -87,6 +96,8 @@ The visual makes no network requests of any kind: no analytics, no telemetry, no
 
 GETTING STARTED
 
+You need a date or category field and a measure; for Pro, also a plan or budget measure.
+
 1. Drag a date or category field into Axis and a measure into Values. The variance % appears.
 2. Add a field to Small Multiple for one panel per value.
 3. Pro: add your plan or budget measure to Plan / Budget and set Comparison → Compare to → Plan / Budget.
@@ -94,9 +105,6 @@ GETTING STARTED
 Documentation, FAQ and sample data: https://tinocallarisa-web.github.io/bar-chart-variation/support.html
 Support: support@tcviz.com
 
-WHAT'S NEW IN 1.11.0.0
-
-Horizontal bars. Six style templates and a setup guide. Format on the canvas. A trend line. Conditional formatting (fx) on the bar colour and dynamic format strings. Axis titles and label styling. 12 languages. Visible selection with bookmarks. Labels that no longer overlap on narrow bars, and a reference band that shows the typical range of your data.
 ```
 
 ---
