@@ -14,7 +14,7 @@ NAME = "Bar Chart with Variation %"
 BASE = "https://tinocallarisa-web.github.io/bar-chart-variation/"
 REPO = "https://github.com/tinocallarisa-web/bar-chart-variation"
 # La versión de las páginas: la que se va a enviar (pbiviz.json se sube en la etapa de versión del pipeline).
-VERSION = "1.12.0.0"
+VERSION = "1.12.0.1"
 FECHA = "22 November 2026"
 VIDEO = "https://www.youtube.com/watch?v=tkDmc8s1zmE"
 SAMPLE = REPO + "/raw/main/SampleData_BarChartVariation.xlsx"

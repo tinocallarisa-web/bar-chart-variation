@@ -283,7 +283,7 @@ const PLANTILLAS_PANEL: [string, string, string][] = [
 // Enlaces de la pantalla de inicio: solo se abren con un clic, a través de host.launchUrl.
 const URL_GUIDE = "https://tinocallarisa-web.github.io/bar-chart-variation/support.html";
 const URL_PRODUCT = "https://tcviz.com/product/chart-variation-pro/?ref=visual-bar-chart-variation";
-const URL_VIDEO = "https://www.youtube.com/watch?v=RljhNfnuMuM";
+const URL_VIDEO = "https://www.youtube.com/watch?v=tkDmc8s1zmE";
 
 // ServicePlanState es un const enum: en runtime hacen falta los numeros.
 const STATE_ACTIVE = 1;

@@ -4,7 +4,7 @@ All notable changes to this visual are documented here.
 
 ---
 
-## [1.12.0.0] — 2026-11-22
+## [1.12.0.1] — 2026-11-22
 
 ### Added
 - **Actual and reference side by side (Pro).** Comparison → Show reference as → *Bar beside the actual*: the plan, budget, forecast or last year is drawn as a bar next to each actual bar, in the same slot, instead of a marker. Its colour is set under Reference bar color (by default a neutral grey, or the second colour of the collection style). Works in both orientations and with small multiples; the variation label stays above each pair.

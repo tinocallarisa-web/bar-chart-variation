@@ -1,4 +1,4 @@
-# Certification Notes — Bar Chart with Variation % v1.12.0.0
+# Certification Notes — Bar Chart with Variation % v1.12.0.1
 
 The text to paste into Partner Center is [`CERTIFICATION-NOTES-SHORT.txt`](./CERTIFICATION-NOTES-SHORT.txt)
 (2,313 characters counting CRLF; the field truncates at 2,500 without warning and is emptied on every resubmission).
@@ -10,7 +10,7 @@ It is reproduced below. The full list of changes is in [`CHANGELOG.md`](../CHANG
 |---|---|
 | Display name | Bar Chart with Variation % |
 | GUID | barChartVariation98877665544332211 |
-| Version | 1.12.0.0 |
+| Version | 1.12.0.1 |
 | Author | TCViz |
 | Support URL | https://tinocallarisa-web.github.io/bar-chart-variation/support.html |
 | Privacy URL | https://tinocallarisa-web.github.io/bar-chart-variation/privacy.html |
@@ -20,7 +20,7 @@ It is reproduced below. The full list of changes is in [`CHANGELOG.md`](../CHANG
 ## Notes as submitted
 
 ```
-Bar Chart with Variation % 1.12.0.0 - GUID barChartVariation98877665544332211
+Bar Chart with Variation % 1.12.0.1 - GUID barChartVariation98877665544332211
 
 SOURCE CODE
 github.com/tinocallarisa-web/bar-chart-variation, branch "certification".
@@ -33,7 +33,7 @@ any Pro setting and it is drawn WORKING under a "Pro preview" watermark naming i
 same code, nothing stubbed. Reading view, and anywhere the licence cannot be read,
 shows the free result with no watermark.
 
-WHAT CHANGED IN 1.12.0.0
+WHAT CHANGED IN 1.12.0.1
 Reference as a bar beside the actual (Pro). Six collection styles (Pro), Report
 theme by default (formerly Clean, same look). Text scales with the visual (min 8 px).
 Accessibility card: high contrast Auto/On, focus colour/width, minimum text size.

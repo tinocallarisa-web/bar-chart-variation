@@ -1,4 +1,4 @@
-# AppSource listing copy — Bar Chart with Variation % v1.12.0.0
+# AppSource listing copy — Bar Chart with Variation % v1.12.0.1
 
 Copy ready to paste into Partner Center, English only. **The marketplace description is the
 documentation most people read** — update it on every release.
@@ -123,7 +123,7 @@ Support: support@tcviz.com
 | Video | https://www.youtube.com/watch?v=tkDmc8s1zmE |
 
 Canonical YouTube URL only (policy 100.3.3.3). Shortened links, Shorts and embed URLs are
-rejected automatically. The id above is the 1.12.0.0 video (1.11 was the RljhNfnuMuM id, 1.10 vIszaUlC6G0; the visual's start screen keeps the 1.11 link until the next version). If it is ever replaced, change
+rejected automatically. The id above is the 1.12 video (the 1.11 video was deleted on 22-11-2026, so 1.12.0.0 was rebuilt as 1.12.0.1 with the new link on the start screen; 1.10 was vIszaUlC6G0). If it is ever replaced, change
 it here, in `CERTIFICATION-NOTES-SHORT.txt`, in `tools/gen_docs.py` (then regenerate), in the
 infographic **and in Partner Center** — the console is the only one Microsoft reviews.
 
