@@ -5,9 +5,9 @@ TITLE (pick one)
 1. Plan vs actual in Power BI: the variance on every bar, no DAX
 2. Power BI variance chart: actual against plan, budget or last year
 3. "Better than last month" is not "on plan" — fix it in Power BI
-4. Power BI bar chart with variance %, small multiples and IBCS style
+4. Plan vs actual in Power BI: the plan as a marker or as a bar beside the actual
 
-(Recommended: 1 for the release video, 3 for a short. Do not put "1.11" in the title: it says
+(Recommended: 1 for the release video, 3 for a short. Do not put "1.12" in the title: it says
 nothing to someone who does not know the visual and ages with every version.)
 
 Spanish, if the audio is in Spanish:
@@ -18,7 +18,7 @@ Spanish, if the audio is in Spanish:
 YOUTUBE DESCRIPTION — FULL VIDEO
 ==========================================
 
-A bar chart that compares each month with the one before answers "is this month better than the last one". It does not answer the question the meeting is about: are we on plan. Bar Chart with Variation % writes the variance on every bar by itself and draws a marker where each bar should have been — your plan, budget, forecast or last year. No DATEADD, no variance column.
+A bar chart that compares each month with the one before answers "is this month better than the last one". It does not answer the question the meeting is about: are we on plan. Bar Chart with Variation % writes the variance on every bar by itself and shows your plan, budget, forecast or last year — as a marker where each bar should have been, or as a bar beside the actual. No DATEADD, no variance column.
 
 Get it on Microsoft AppSource: https://marketplace.microsoft.com/en-us/product/tino_callarisa.bar-chart-variation
 Documentation and FAQ: https://tinocallarisa-web.github.io/bar-chart-variation/support.html
@@ -26,32 +26,35 @@ Documentation and FAQ: https://tinocallarisa-web.github.io/bar-chart-variation/s
 ──────────────────────────────────────────
 CHAPTERS
 ──────────────────────────────────────────
-0:00 Better than last month is not the same as on plan
-0:00 Axis and Values: the variance % appears by itself
-0:00 Plan / Budget: a marker on every bar and the variance against it
-0:00 Variance as %, as a difference, or both
-0:00 Small multiples on a shared scale
-0:00 Vertical or horizontal bars
-0:00 Style templates, IBCS style and the setup guide
-0:00 Trend line and the typical-range band
-0:00 Format on the canvas
-0:00 Click a bar to filter the report
-0:00 Free and Pro
+0:00 Bar Chart with Variation %
+0:05 Is this month better than the last? The variance % by itself
+0:15 Are we on plan? A marker for the plan on every bar
+0:23 The plan as a bar beside the actual (new in 1.12)
+0:30 Variance as %, in euros, or both
+0:38 Last year or forecast: one setting
+0:46 Average and trend lines
+0:51 Report theme or a style from the TCViz collection
+1:02 Try Pro before you buy: the Pro preview
+1:13 Vertical or horizontal bars
+1:18 Small multiples on a shared scale
+1:25 Sized for a real report page: text that scales
+1:35 Free and Pro
+1:48 Get it on Microsoft AppSource
 
-(Fill in the timestamps from the final edit. YouTube only creates chapters when the first is 0:00 and there are
-three or more. Delete any chapter the video does not show.)
+(Timestamps from the generated video, 1.12.0.0. YouTube creates chapters when the first is 0:00 and there are
+three or more.)
 
 ──────────────────────────────────────────
 WHAT IT DOES
 ──────────────────────────────────────────
 ✅ The variance % between bars, calculated for you, with arrows and brackets
-✅ A reference marker for Plan / Budget, Forecast or Previous Year, with the variance on every bar
+✅ Plan / Budget, Forecast or Previous Year as a marker or as a bar beside the actual, with the variance on every bar
 ✅ Bars below their reference in the negative colour
 ✅ Small multiples on a shared scale, vertical or horizontal
-✅ Six style templates, including an IBCS style, and a setup guide
-✅ Labels that never overlap: on narrow bars they shrink or alternate heights
+✅ Report theme, Classic and an IBCS-inspired style; the six TCViz collection styles in Pro; a setup guide
+✅ Labels that never overlap, and text that scales with the visual (never under 8 px)
 ✅ Date and number axes in time order; empty future months hidden on request
-✅ Click to filter, highlight, bookmarks, drilldown, keyboard navigation and high contrast
+✅ Click to filter, highlight, bookmarks, drilldown; keyboard with focus outline, high contrast and a minimum text size
 ✅ The measure's number format, dynamic format strings included; twelve languages
 ✅ No network requests: everything is computed inside your report
 
@@ -61,10 +64,11 @@ FREE AND PRO
 FREE — a complete chart:
 • Bars with the variance % against the previous bar
 • Up to 3 small multiple panels, vertical or horizontal
-• Templates, theme colours, axis titles, format on the canvas
+• Report theme, Classic and IBCS style, axis titles, format on the canvas
 
 PRO — the controlling reading:
-• Previous Year, Plan / Budget and Forecast as references
+• Previous Year, Plan / Budget and Forecast as references, as a marker or a bar
+• The six collection styles: Boardroom, Ledger, Editorial, Signal, Aurora, Terrace
 • Absolute variance, or difference and %
 • Up to 100 panels
 • Analytical lines, a trend line and a reference band
@@ -96,8 +100,8 @@ Bar Chart with Variation %: https://marketplace.microsoft.com/en-us/product/tino
 ==========================================
 THUMBNAIL
 ==========================================
-Bars with the plan marker above two of them, big. It is the one thing that tells this visual apart from the native
-bar chart, and it has to read at 300 pixels. Words, if any: "PLAN vs ACTUAL".
+Pairs of bars — plan in grey, actual in colour, one pair red — with the variance % above, big. It tells this visual
+apart from the native bar chart and reads at 300 pixels. Words, if any: "PLAN vs ACTUAL".
 
 
 ==========================================
@@ -106,4 +110,5 @@ NOTE — after uploading
 Paste the canonical URL (https://www.youtube.com/watch?v=…) — never a short link, Shorts or embed URL (policy
 100.3.3.3) — in Partner Center (Offer listing → Videos). In the repo it goes in src/visual.ts (URL_VIDEO),
 tools/gen_docs.py (VIDEO, then regenerate), docs/APPSOURCE-LISTING.md and docs/CERTIFICATION-NOTES-SHORT.txt.
-The 1.10.0.0 video was vIszaUlC6G0.
+Earlier videos: 1.11.0.0 RljhNfnuMuM, 1.10.0.0 vIszaUlC6G0. In 1.12 src/visual.ts (URL_VIDEO) still points to the
+1.11 video: change it in the next version.

@@ -2,7 +2,7 @@
 YOUTUBE TAGS — PASTE THIS BLOCK (under 500 characters)
 ==========================================
 
-plan vs actual Power BI,variance chart Power BI,budget vs actual,Power BI bar chart,Power BI custom visual,variance analysis,IBCS style,forecast vs actual,previous year comparison,variation percentage,Power BI small multiples,horizontal bar chart,no DAX Power BI,TCViz,Bar Chart with Variation %
+plan vs actual Power BI,variance chart Power BI,budget vs actual,actual vs plan bar chart,Power BI bar chart,Power BI custom visual,variance analysis,IBCS style,forecast vs actual,previous year comparison,clustered bar chart Power BI,Power BI small multiples,no DAX Power BI,TCViz,Bar Chart with Variation %
 
 
 ==========================================
