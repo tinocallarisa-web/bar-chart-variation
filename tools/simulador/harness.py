@@ -164,6 +164,28 @@ async def main():
         await eventos(pg, "minimal")
         await pg.close()
 
+        print("Texto que encoge con el visual")
+        o = json.loads(json.dumps(base)); o["legend"] = {"show": True}
+        medir = """() => { const h = document.getElementById('host');
+            const fs = sel => Array.from(h.querySelectorAll(sel)).map(e => parseFloat(e.style.fontSize || getComputedStyle(e).fontSize));
+            const t = Array.from(h.querySelectorAll('svg text')).filter(e => e.textContent.trim() && e.getBBox().width > 0);
+            return { n: t.length, fs: t.map(e => parseFloat(e.style.fontSize || getComputedStyle(e).fontSize)) }; }"""
+        grande = await page(b, dataview(o), W=760, H=420, name="tamano_760x420")
+        g = await grande.evaluate(medir)
+        await grande.close()
+        peq = await page(b, dataview(o), W=456, H=252, name="tamano_456x252")
+        q = await peq.evaluate(medir)
+        await eventos(peq, "pequeño")
+        await peq.close()
+        check("al 60 %: el mayor texto encoge", max(q["fs"]) < max(g["fs"]), f"{max(g['fs'])} -> {max(q['fs'])}")
+        check("al 60 %: nada por debajo de 8 px", min(q["fs"]) >= 8, str(min(q["fs"])))
+        check("al 60 %: no se quita ningún texto", q["n"] >= g["n"], f"{g['n']} -> {q['n']}")
+        mini = await page(b, dataview(o), W=300, H=170, name="tamano_300x170")
+        m = await mini.evaluate(medir)
+        await eventos(mini, "mosaico 300x170")
+        await mini.close()
+        check("mosaico 300x170: suelo de 8 px", min(m["fs"]) >= 8, str(min(m["fs"])))
+
         await b.close()
     print()
     print("TODO OK" if not FALLOS else f"{len(FALLOS)} FALLO(S): " + "; ".join(FALLOS))

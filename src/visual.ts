@@ -299,6 +299,10 @@ export class Visual implements IVisual {
     private estiloPedido: string | null = null;
     /** Modo edición en la actualización en curso (la vista previa Pro solo existe editando). */
     private editandoAhora = false;
+    /** Factor de tamaño del visual (0,6–1): el texto y las franjas que dependen de él encogen con el visual. */
+    private escala = 1;
+    /** Tamaño mínimo de texto de la tarjeta Accesibilidad (0 = sin mínimo). */
+    private minTexto = 0;
     private messageGroup: Selection<SVGGElement>;
     private licenseManager: IVisualLicenseManager;
     private colorPalette: powerbi.extensibility.IColorPalette;
@@ -894,8 +898,9 @@ export class Visual implements IVisual {
     ) {
         // La leyenda es lo primero que sobra: repite lo que ya dice el color de la barra.
         // 24 px sobre un visual de 150 es el 16% del alto para dos palabras.
-        const legend = quiere.legend && LEGEND_H <= height * 0.15;
-        const legendH = legend ? LEGEND_H : 0;
+        const legH = Math.round(LEGEND_H * this.escala);
+        const legend = quiere.legend && legH <= height * 0.15;
+        const legendH = legend ? legH : 0;
 
         const oMT = 8 + (legend && quiere.legendPos === "top"    ? legendH : 0);
         // Títulos de eje: solo si queda sitio para el gráfico (por debajo de ~150 px se quitan, no se encogen).
@@ -916,6 +921,12 @@ export class Visual implements IVisual {
         const cellPad = (cellW < 120 || cellH < 100) ? 4 : 10;
 
         return { legend, legendH, yLabels, oML, oMT, oMR, oMB, cellPad, xTitleH, yTitleW };
+    }
+
+    /** Tamaño de letra escalado: encoge con el visual, nunca por debajo de 8 px (salvo que se eligiera menos) ni del mínimo. */
+    private fz(px: number): number {
+        const v = Number(px) || 0;
+        return Math.round(Math.max(this.minTexto, Math.min(v, 8), v * this.escala) * 2) / 2;
     }
 
     /** Alto contraste real: el que activa Windows, no el interruptor del panel. */
@@ -995,6 +1006,20 @@ export class Visual implements IVisual {
         const look = this.hcActive() ? null : this.look;
         this.target.style.background = look ? (look.grad || look.bg) : "";
         this.svg.style("font-family", look?.font || null);
+
+        // Texto que encoge con el visual (norma de la cartera, 1.12): a tamaño de informe (760×420 o más) el texto es el
+        // elegido; por debajo, todo encoge a la vez hasta el 60 %, con suelo de 8 px y el mínimo de Accesibilidad. Se
+        // escala lo que se pinta, no lo guardado: el panel sigue enseñando el tamaño elegido (rawSettings).
+        this.escala = Math.min(1, Math.max(0.6, Math.min(width / 760, height / 420)));
+        {
+            const S = this.settings;
+            S.axisSettings.xFontSize = this.fz(S.axisSettings.xFontSize);
+            S.axisSettings.yFontSize = this.fz(S.axisSettings.yFontSize);
+            S.variationLabels.fontSize = this.fz(S.variationLabels.fontSize);
+            S.valueLabels.fontSize = this.fz(S.valueLabels.fontSize);
+            S.panelTitle.fontSize = this.fz(S.panelTitle.fontSize);
+            S.analyticalLines.labelSize = this.fz(S.analyticalLines.labelSize);
+        }
 
         this.svg
             .attr("width", width)
@@ -1373,8 +1398,9 @@ export class Visual implements IVisual {
         const cellPad   = L.cellPad;
         let showTitle = this.settings.panelTitle.show;
         const titlePos  = this.settings.panelTitle.position; // "top" | "bottom"
-        let titleH    = showTitle ? TITLE_H : 0;
-        let varH      = this.settings.variationLabels.show ? VAR_H : 0;
+        // Las franjas fijas encogen con el texto que contienen.
+        let titleH    = showTitle ? Math.round(TITLE_H * this.escala) : 0;
+        let varH      = this.settings.variationLabels.show ? Math.round(VAR_H * this.escala) : 0;
         const innerW  = Math.max(cellW  - 2 * cellPad, 10);
 
         // ── Etiquetas del eje X: angulo y espacio reservado ────────────────
@@ -1401,7 +1427,7 @@ export class Visual implements IVisual {
             : 0;
         // El tope es imprescindible: sin el, una etiqueta larga rotada se come el panel.
         let xLblH = this.settings.axisSettings.showXLabels
-            ? Math.min(cellH * 0.45, Math.max(20, rise))
+            ? Math.min(cellH * 0.45, Math.max(Math.round(20 * this.escala), rise))
             : 0;
 
         // ── Etiquetas de variación: que no se pisen ──────────────────────
@@ -1792,7 +1818,7 @@ export class Visual implements IVisual {
                     upBtn.append("rect").attr("width", 14).attr("height", 14).attr("rx", 2)
                         .attr("fill", titleColor).attr("opacity", 0.15);
                     upBtn.append("text").attr("x", 7).attr("y", 11)
-                        .attr("text-anchor", "middle").style("font-size", "10px")
+                        .attr("text-anchor", "middle").style("font-size", `${this.fz(10)}px`)
                         .style("fill", titleColor).style("font-weight", "700")
                         .style("pointer-events", "none").text("↑");
                 }
@@ -1808,7 +1834,7 @@ export class Visual implements IVisual {
                     dnBtn.append("rect").attr("width", 14).attr("height", 14).attr("rx", 2)
                         .attr("fill", titleColor).attr("opacity", 0.15);
                     dnBtn.append("text").attr("x", 7).attr("y", 11)
-                        .attr("text-anchor", "middle").style("font-size", "10px")
+                        .attr("text-anchor", "middle").style("font-size", `${this.fz(10)}px`)
                         .style("fill", titleColor).style("font-weight", "700")
                         .style("pointer-events", "none").text("↓");
                 }
@@ -2195,13 +2221,15 @@ export class Visual implements IVisual {
 
         // ── Legend ────────────────────────────────────────────────────────
         if (this.settings.legend.show) {
+            // La leyenda encoge con su franja (legendH ya viene escalada): muestra, separación y margen, a la vez.
+            const kL = this.escala;
             const ly = legendPos === "top"
-                ? 4
-                : svgHeight - legendH + 4;
+                ? Math.round(4 * kL)
+                : svgHeight - legendH + Math.round(4 * kL);
             const posColor = this.settings.variationLabels.positiveColor;
             const negColorLeg = this.settings.variationLabels.negativeColor;
-            const swatchSize  = 10;
-            const itemSpacing = 80;
+            const swatchSize  = Math.max(6, Math.round(10 * kL));
+            const itemSpacing = Math.round(80 * kL);
             const startX      = width / 2 - itemSpacing / 2;
 
             this.legendGroup.selectAll("*").remove();
@@ -2213,7 +2241,7 @@ export class Visual implements IVisual {
                 .attr("rx", 2).attr("fill", posColor);
             this.legendGroup.append("text")
                 .attr("x", startX + swatchSize + 4).attr("y", ly + swatchSize)
-                .style("font-size", "10px").style("fill", this.settings.legend.textColor)
+                .style("font-size", `${this.fz(10)}px`).style("fill", this.settings.legend.textColor)
                 .text(this.tr("UI_Positive", "Positive"));
 
             // Negative item
@@ -2230,7 +2258,7 @@ export class Visual implements IVisual {
             }
             this.legendGroup.append("text")
                 .attr("x", startX + itemSpacing + swatchSize + 4).attr("y", ly + swatchSize)
-                .style("font-size", "10px").style("fill", this.settings.legend.textColor)
+                .style("font-size", `${this.fz(10)}px`).style("fill", this.settings.legend.textColor)
                 .text(this.tr("UI_Negative", "Negative"));
         }
 
@@ -2250,7 +2278,7 @@ export class Visual implements IVisual {
             .join("text").classed("freemium-msg", true)
             .attr("x", svgWidth / 2).attr("y", svgHeight - 6)
             .attr("text-anchor", "middle")
-            .style("font-size", "11px").style("font-weight", "normal")
+            .style("font-size", `${this.fz(11)}px`).style("font-weight", "normal")
             .style("fill", this.hcActive() ? ((this.colorPalette as any).foreground?.value || "#000000") : "#83827D")
             .text(d => d);
 
