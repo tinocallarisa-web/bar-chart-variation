@@ -135,7 +135,11 @@ interface VisualSettings {
         textColor: string;
     };
     accessibility: {
+        highContrast: string;
         highContrastMode: boolean;
+        focusColor: string;
+        focusWidth: number;
+        minTextSize: number;
     };
     style: {
         template: string;
@@ -303,6 +307,8 @@ export class Visual implements IVisual {
     private escala = 1;
     /** Tamaño mínimo de texto de la tarjeta Accesibilidad (0 = sin mínimo). */
     private minTexto = 0;
+    /** Alto contraste "On" en la tarjeta Accesibilidad. */
+    private hcForzado = false;
     private messageGroup: Selection<SVGGElement>;
     private licenseManager: IVisualLicenseManager;
     private colorPalette: powerbi.extensibility.IColorPalette;
@@ -438,7 +444,11 @@ export class Visual implements IVisual {
             textColor: "#444444"
         },
         accessibility: {
-            highContrastMode: false
+            highContrast: "auto",
+            highContrastMode: false,
+            focusColor: "#005A9E",
+            focusWidth: 2,
+            minTextSize: 8
         },
         style: {
             template: "clean",
@@ -816,6 +826,13 @@ export class Visual implements IVisual {
 
         nombreDe.set(acc, "accessibility");
         this.settings.accessibility.highContrastMode = getValue(acc, "highContrastMode", false);
+        this.settings.accessibility.highContrast = getValue(acc, "highContrast", "auto");
+        this.settings.accessibility.focusColor = getValue(acc, "focusColor", "#005A9E");
+        this.settings.accessibility.focusWidth = Math.min(6, Math.max(1, Math.round(Number(getValue(acc, "focusWidth", 2)) || 2)));
+        this.settings.accessibility.minTextSize = Math.min(24, Math.max(6, Number(getValue(acc, "minTextSize", 8)) || 8));
+        // Mínimo de texto: solo sube lo que quede por debajo (6-8 no cambia nada: el suelo al encoger ya es 8 px).
+        this.minTexto = this.settings.accessibility.minTextSize;
+        this.hcForzado = this.settings.accessibility.highContrast === "on";
         this.settings.style = { template: tplName, guide: this.guideOn };
 
         // Copia de lo que eligio el usuario, antes del gating del tier gratuito: es lo
@@ -929,9 +946,12 @@ export class Visual implements IVisual {
         return Math.round(Math.max(this.minTexto, Math.min(v, 8), v * this.escala) * 2) / 2;
     }
 
-    /** Alto contraste real: el que activa Windows, no el interruptor del panel. */
+    /**
+     * Alto contraste: el que activa Windows, o "On" en la tarjeta Accesibilidad (1.12) para quien lo necesita sin cambiar
+     * el tema del sistema. Forzado, se pinta con el primer plano y el fondo del tema del informe.
+     */
     private hcActive(): boolean {
-        return !!(this.colorPalette as any)?.isHighContrast;
+        return !!(this.colorPalette as any)?.isHighContrast || this.hcForzado;
     }
 
     /**
@@ -1011,6 +1031,13 @@ export class Visual implements IVisual {
         // elegido; por debajo, todo encoge a la vez hasta el 60 %, con suelo de 8 px y el mínimo de Accesibilidad. Se
         // escala lo que se pinta, no lo guardado: el panel sigue enseñando el tamaño elegido (rawSettings).
         this.escala = Math.min(1, Math.max(0.6, Math.min(width / 760, height / 420)));
+        // Foco del teclado (tarjeta Accesibilidad): color y grosor; en alto contraste, el color de selección del tema.
+        {
+            const pal: any = this.colorPalette;
+            const accS = this.settings.accessibility;
+            this.target.style.setProperty("--bcv-focus", this.hcActive() ? (pal?.foregroundSelected?.value || pal?.foreground?.value || "#000000") : accS.focusColor);
+            this.target.style.setProperty("--bcv-focus-w", accS.focusWidth + "px");
+        }
         {
             const S = this.settings;
             S.axisSettings.xFontSize = this.fz(S.axisSettings.xFontSize);
@@ -1458,7 +1485,7 @@ export class Visual implements IVisual {
             const ancho = () => (maxLen + (varArrows ? 2 : 0)) * varFs * 0.6;
             const hueco = bandW * 0.95;
             if (ancho() > hueco) { varArrows = false; }
-            const minFs = Math.max(8, vlS.fontSize - 2);
+            const minFs = Math.max(8, this.minTexto, vlS.fontSize - 2);
             while (ancho() > hueco && varFs > minFs) { varFs--; }
             if (ancho() > hueco) { varStagger = true; varH += varFs + 3; }
         }
@@ -1559,8 +1586,8 @@ export class Visual implements IVisual {
         // La letra sigue al alto de la fila (mínimo 6 px). Las categorías que aun así no caben se aclaran (una de cada k);
         // los porcentajes no se quitan nunca.
         const hStep  = innerH / Math.max(catValues.length, 1);
-        const hVarFs = Math.min(vlS.fontSize, Math.max(6, hStep * 0.9));
-        const hCatFs = Math.min(xFs, Math.max(6, hStep * 0.9));
+        const hVarFs = Math.max(this.minTexto, Math.min(vlS.fontSize, Math.max(6, hStep * 0.9)));
+        const hCatFs = Math.max(this.minTexto, Math.min(xFs, Math.max(6, hStep * 0.9)));
         const hCatEvery = hStep < hCatFs ? Math.ceil(hCatFs / hStep) : 1;
         const hVarArrows = vlS.showArrows && maxLen * hVarFs * 0.6 < innerW * 0.25;
         const hConn = vlS.showConnectors;

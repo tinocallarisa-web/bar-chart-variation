@@ -981,11 +981,54 @@
       "displayName": "Accessibility",
       "displayNameKey": "Visual_Accessibility",
       "properties": {
+        "highContrast": {
+          "displayName": "High contrast",
+          "displayNameKey": "Visual_HcMode",
+          "type": {
+            "enumeration": [
+              {
+                "value": "auto",
+                "displayName": "Automatic (Windows setting)",
+                "displayNameKey": "Visual_Enum_HcAuto"
+              },
+              {
+                "value": "on",
+                "displayName": "On",
+                "displayNameKey": "Visual_Enum_HcOn"
+              }
+            ]
+          }
+        },
         "highContrastMode": {
-          "displayName": "High contrast (pattern for negatives)",
+          "displayName": "Patterns on negative bars",
           "displayNameKey": "Visual_HighContrast",
           "type": {
             "bool": true
+          }
+        },
+        "focusColor": {
+          "displayName": "Focus color",
+          "displayNameKey": "Visual_FocusColor",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "focusWidth": {
+          "displayName": "Focus width",
+          "displayNameKey": "Visual_FocusWidth",
+          "type": {
+            "numeric": true
+          }
+        },
+        "minTextSize": {
+          "displayName": "Minimum text size",
+          "displayNameKey": "Visual_MinTextSize",
+          "type": {
+            "numeric": true
           }
         }
       }

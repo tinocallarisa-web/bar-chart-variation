@@ -4,6 +4,13 @@ Orden de cada fila: es, pt (BR y PT), fr, de, it, nl, pl, ja, zh, ko.
 El español de las claves de capabilities NO sale de aquí: se conserva el de stringResources/es-ES (ya publicado)."""
 
 B = {
+"Patterns on negative bars": ["Tramas en las barras negativas", "Padrões nas barras negativas", "Motifs sur les barres négatives", "Muster auf negativen Balken", "Motivi sulle barre negative", "Patronen op negatieve balken", "Wzory na ujemnych słupkach", "負の棒にパターン", "负值条形图案", "음수 막대 패턴"],
+"High contrast": ["Alto contraste", "Alto contraste", "Contraste élevé", "Hoher Kontrast", "Contrasto elevato", "Hoog contrast", "Wysoki kontrast", "ハイ コントラスト", "高对比度", "고대비"],
+"Automatic (Windows setting)": ["Automático (ajuste de Windows)", "Automático (configuração do Windows)", "Automatique (paramètre Windows)", "Automatisch (Windows-Einstellung)", "Automatico (impostazione di Windows)", "Automatisch (Windows-instelling)", "Automatycznie (ustawienie Windows)", "自動 (Windows の設定)", "自动 (Windows 设置)", "자동(Windows 설정)"],
+"On": ["Activado", "Ativado", "Activé", "Ein", "Attivo", "Aan", "Włączone", "オン", "开", "켜기"],
+"Focus color": ["Color del foco", "Cor do foco", "Couleur du focus", "Fokusfarbe", "Colore dello stato attivo", "Focuskleur", "Kolor fokusu", "フォーカスの色", "焦点颜色", "포커스 색"],
+"Focus width": ["Grosor del foco", "Espessura do foco", "Épaisseur du focus", "Fokusbreite", "Spessore dello stato attivo", "Focusbreedte", "Grubość fokusu", "フォーカスの幅", "焦点宽度", "포커스 두께"],
+"Minimum text size": ["Tamaño mínimo del texto", "Tamanho mínimo do texto", "Taille de texte minimale", "Minimale Textgröße", "Dimensione minima del testo", "Minimale tekstgrootte", "Minimalny rozmiar tekstu", "最小テキスト サイズ", "最小文本大小", "최소 텍스트 크기"],
 "Report theme": ["Tema del informe", "Tema do relatório", "Thème du rapport", "Berichtsdesign", "Tema del report", "Rapportthema", "Motyw raportu", "レポートのテーマ", "报表主题", "보고서 테마"],
 "Boardroom (Pro)": ["Boardroom (Pro)"] * 10, "Ledger (Pro)": ["Ledger (Pro)"] * 10, "Editorial (Pro)": ["Editorial (Pro)"] * 10,
 "Signal (Pro)": ["Signal (Pro)"] * 10, "Aurora (Pro)": ["Aurora (Pro)"] * 10, "Terrace (Pro)": ["Terrace (Pro)"] * 10,

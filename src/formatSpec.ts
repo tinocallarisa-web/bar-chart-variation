@@ -762,10 +762,46 @@ export const FORMAT_SPEC: SpecCard[] = [
         "label": "Accessibility",
         "props": [
             {
+                "name": "highContrast",
+                "key": "Visual_HcMode",
+                "label": "High contrast",
+                "kind": "enum",
+                "items": [
+                    {
+                        "value": "auto",
+                        "key": "Visual_Enum_HcAuto",
+                        "label": "Automatic (Windows setting)"
+                    },
+                    {
+                        "value": "on",
+                        "key": "Visual_Enum_HcOn",
+                        "label": "On"
+                    }
+                ]
+            },
+            {
                 "name": "highContrastMode",
                 "key": "Visual_HighContrast",
-                "label": "High contrast (pattern for negatives)",
+                "label": "Patterns on negative bars",
                 "kind": "bool"
+            },
+            {
+                "name": "focusColor",
+                "key": "Visual_FocusColor",
+                "label": "Focus color",
+                "kind": "color"
+            },
+            {
+                "name": "focusWidth",
+                "key": "Visual_FocusWidth",
+                "label": "Focus width",
+                "kind": "num"
+            },
+            {
+                "name": "minTextSize",
+                "key": "Visual_MinTextSize",
+                "label": "Minimum text size",
+                "kind": "num"
             }
         ]
     }

@@ -186,6 +186,25 @@ async def main():
         await mini.close()
         check("mosaico 300x170: suelo de 8 px", min(m["fs"]) >= 8, str(min(m["fs"])))
 
+        print("Accesibilidad")
+        o = json.loads(json.dumps(base)); o["accessibility"] = {"highContrast": "on"}; o["style"]["template"] = "aurora"
+        pg = await page(b, dataview(o), name="hc_forzado")
+        i = await info(pg)
+        check("alto contraste On: barras con el fondo del tema y sin estilo", i["bar"] in ("#FFFFFF", "#ffffff") and not i["bg"], f"{i}")
+        await eventos(pg, "hc on")
+        await pg.close()
+        o = json.loads(json.dumps(base)); o["accessibility"] = {"focusColor": {"solid": {"color": "#FF00AA"}}, "focusWidth": 4}
+        pg = await page(b, dataview(o))
+        f = await pg.evaluate("() => { const h = document.getElementById('host'); return [h.style.getPropertyValue('--bcv-focus'), h.style.getPropertyValue('--bcv-focus-w')]; }")
+        check("foco: color y grosor de la tarjeta", f == ["#FF00AA", "4px"], str(f))
+        await pg.close()
+        o = json.loads(json.dumps(base)); o["accessibility"] = {"minTextSize": 12}
+        pg = await page(b, dataview(o), W=456, H=252, name="min_texto_12")
+        q = await pg.evaluate(medir)
+        check("tamaño mínimo 12: ningún texto por debajo", min(q["fs"]) >= 12, str(min(q["fs"])))
+        await eventos(pg, "min texto")
+        await pg.close()
+
         await b.close()
     print()
     print("TODO OK" if not FALLOS else f"{len(FALLOS)} FALLO(S): " + "; ".join(FALLOS))

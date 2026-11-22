@@ -124,3 +124,7 @@
     .bcv-l-title { font-size: 14px; }
     .bcv-l-inline { font-size: 12px; }
 }
+
+// Foco del teclado en barras (tarjeta Accesibilidad, 1.12).
+.bar-rect:focus { outline: none; }
+.bar-rect:focus-visible { outline: var(--bcv-focus-w, 2px) solid var(--bcv-focus, #005A9E); outline-offset: 1px; }
