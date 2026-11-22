@@ -227,6 +227,26 @@ async def main():
         await eventos(pg, "small multiples")
         await pg.close()
 
+        print("Barras agrupadas real/plan (Pro)")
+        for ori in ("vertical", "horizontal"):
+            o = json.loads(json.dumps(base)); o["comparison"]["referenceAs"] = "bar"; o["panelLayout"] = {"orientation": ori}
+            pg = await page(b, dataview(o), W=760, H=420, name=f"agrupadas_{ori}")
+            n = await pg.evaluate("() => [document.querySelectorAll('#host .ref-bar').length, document.querySelectorAll('#host .ref-marker').length, document.querySelectorAll('#host .bar-rect').length]")
+            check(f"{ori}: una barra de referencia por mes y sin marcador", n == [12, 0, 12], str(n))
+            await eventos(pg, f"agrupadas {ori}")
+            await pg.close()
+        o = json.loads(json.dumps(base)); o["comparison"]["referenceAs"] = "bar"; o["style"]["template"] = "boardroom"
+        pg = await page(b, dataview(o), W=760, H=420, name="agrupadas_boardroom")
+        await pg.close()
+        pg = await page(b, dataview(o), W=760, H=420, pro=False, edit=True)
+        i = await info(pg)
+        check("sin licencia editando: vista previa que nombra la barra de referencia", i["wm"] and "reference bar" in i["wm"] or (i["wm"] and "+" in i["wm"]), str(i["wm"]))
+        await pg.close()
+        pg = await page(b, dataview(o), W=760, H=420, pro=False, edit=False)
+        n = await pg.evaluate("() => document.querySelectorAll('#host .ref-bar').length")
+        check("sin licencia en lectura: sin barras de referencia", n == 0, str(n))
+        await pg.close()
+
         await b.close()
     print()
     print("TODO OK" if not FALLOS else f"{len(FALLOS)} FALLO(S): " + "; ".join(FALLOS))

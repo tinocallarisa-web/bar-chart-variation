@@ -203,6 +203,30 @@ export const FORMAT_SPEC: SpecCard[] = [
                 "key": "Visual_MarkerColor",
                 "label": "Marker color",
                 "kind": "color"
+            },
+            {
+                "name": "referenceAs",
+                "key": "Visual_RefAs",
+                "label": "Show reference as",
+                "kind": "enum",
+                "items": [
+                    {
+                        "value": "marker",
+                        "key": "Visual_Enum_RefMarker",
+                        "label": "Marker"
+                    },
+                    {
+                        "value": "bar",
+                        "key": "Visual_Enum_RefBar",
+                        "label": "Bar beside the actual (Pro)"
+                    }
+                ]
+            },
+            {
+                "name": "refBarColor",
+                "key": "Visual_RefBarColor",
+                "label": "Reference bar color",
+                "kind": "color"
             }
         ]
     },

@@ -4,6 +4,11 @@ Orden de cada fila: es, pt (BR y PT), fr, de, it, nl, pl, ja, zh, ko.
 El español de las claves de capabilities NO sale de aquí: se conserva el de stringResources/es-ES (ya publicado)."""
 
 B = {
+"Show reference as": ["Mostrar la referencia como", "Mostrar a referência como", "Afficher la référence comme", "Referenz anzeigen als", "Mostra il riferimento come", "Referentie tonen als", "Pokaż odniesienie jako", "参照の表示方法", "参考显示为", "참조 표시 방식"],
+"Marker": ["Marcador", "Marcador", "Marqueur", "Markierung", "Indicatore", "Markering", "Znacznik", "マーカー", "标记", "표식"],
+"Bar beside the actual (Pro)": ["Barra junto a la real (Pro)", "Barra ao lado da real (Pro)", "Barre à côté du réel (Pro)", "Balken neben dem Ist (Pro)", "Barra accanto al reale (Pro)", "Balk naast de werkelijke (Pro)", "Słupek obok rzeczywistego (Pro)", "実績の横に棒 (Pro)", "实际值旁的条形 (Pro)", "실적 옆 막대(Pro)"],
+"Reference bar color": ["Color de la barra de referencia", "Cor da barra de referência", "Couleur de la barre de référence", "Farbe des Referenzbalkens", "Colore barra di riferimento", "Kleur referentiebalk", "Kolor słupka odniesienia", "参照の棒の色", "参考条形颜色", "참조 막대 색"],
+"the reference bar": ["la barra de referencia", "a barra de referência", "la barre de référence", "den Referenzbalken", "la barra di riferimento", "de referentiebalk", "słupek odniesienia", "参照の棒", "参考条形", "참조 막대"],
 "Space between panels": ["Espacio entre paneles", "Espaço entre painéis", "Espace entre les panneaux", "Abstand zwischen Feldern", "Spazio tra i pannelli", "Ruimte tussen panelen", "Odstęp między panelami", "パネル間の間隔", "面板间距", "패널 간격"],
 "Bold title": ["Título en negrita", "Título em negrito", "Titre en gras", "Fetter Titel", "Titolo in grassetto", "Vette titel", "Pogrubiony tytuł", "タイトルを太字", "标题加粗", "굵은 제목"],
 "Title alignment": ["Alineación del título", "Alinhamento do título", "Alignement du titre", "Titelausrichtung", "Allineamento del titolo", "Uitlijning titel", "Wyrównanie tytułu", "タイトルの配置", "标题对齐", "제목 맞춤"],

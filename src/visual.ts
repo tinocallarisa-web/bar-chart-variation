@@ -22,6 +22,7 @@ import VisualTooltipDataItem = powerbi.extensibility.VisualTooltipDataItem;
 import { createTooltipServiceWrapper, ITooltipServiceWrapper } from "powerbi-visuals-utils-tooltiputils";
 import { FORMAT_SPEC } from "./formatSpec";
 import { createProWatermark, renderProWatermark } from "./comun/watermark";
+import { styleSeriesColor } from "./comun/paleta";
 import { LANDING_ICON } from "./landingIcon";
 import {
     HtmlSubSelectableClass, HtmlSubSelectionHelper, SubSelectableDisplayNameAttribute,
@@ -51,6 +52,8 @@ interface VisualSettings {
         compareTo: string;      // previous | previousYear | plan | forecast
         varianceMode: string;   // relative | absolute | both   (absolute/both = Pro)
         showMarker: boolean;
+        referenceAs: string;    // marker | bar (barras agrupadas real/referencia, Pro, 1.12)
+        refBarColor: string;
         markerColor: string;
     };
     variationLabels: {
@@ -365,6 +368,8 @@ export class Visual implements IVisual {
             compareTo: "previous",
             varianceMode: "relative",
             showMarker: true,
+            referenceAs: "marker",
+            refBarColor: "",
             markerColor: "#333333"
         },
         variationLabels: {
@@ -732,6 +737,8 @@ export class Visual implements IVisual {
         this.settings.comparison.compareTo    = getValue(cmp, "compareTo",    "previous");
         this.settings.comparison.varianceMode = getValue(cmp, "varianceMode", "relative");
         this.settings.comparison.showMarker   = getValue(cmp, "showMarker",   true);
+        this.settings.comparison.referenceAs  = getValue(cmp, "referenceAs",  "marker");
+        this.settings.comparison.refBarColor  = getValue(cmp, "refBarColor",  "");
         this.settings.comparison.markerColor  = getValue(cmp, "markerColor",  "#333333");
 
         const vL = (objects?.variationLabels ?? {}) as any;
@@ -955,6 +962,24 @@ export class Visual implements IVisual {
         const cellPad = (cellW < 120 || cellH < 100) ? 4 : 10;
 
         return { legend, legendH, yLabels, oML, oMT, oMR, oMB, cellPad, xTitleH, yTitleW };
+    }
+
+    /**
+     * Barra de la referencia en el modo agrupado: color propio, el segundo de la paleta del estilo o un gris neutro; en
+     * alto contraste, solo contorno. Es decorativa para el lector de pantalla: el valor ya va en la etiqueta de la barra real.
+     */
+    private barraReferencia(g: any, x: number, y: number, w: number, h: number): void {
+        const pal: any = this.colorPalette;
+        const hc = this.hcActive();
+        const color = this.settings.comparison.refBarColor
+            || (this.look ? styleSeriesColor(this.look.series, 1) : "#B3B0AD");
+        g.append("rect").classed("ref-bar", true)
+            .attr("x", x).attr("y", y).attr("width", w).attr("height", h)
+            .attr("rx", this.settings.panelLayout.barBorderRadius)
+            .attr("fill", hc ? (pal?.background?.value || "#FFFFFF") : color)
+            .attr("stroke", hc ? (pal?.foreground?.value || "#000000") : "none")
+            .attr("stroke-width", hc ? 1.5 : 0)
+            .attr("pointer-events", "none").attr("aria-hidden", "true");
     }
 
     /** Tamaño de letra escalado: encoge con el visual, nunca por debajo de 8 px (salvo que se eligiera menos) ni del mínimo. */
@@ -1300,6 +1325,9 @@ export class Visual implements IVisual {
         }
         if (this.settings.variationLabels.show && this.settings.comparison.varianceMode !== "relative") {
             attempted.push(this.tr("UI_FeatAbsolute", "absolute variance"));
+        }
+        if (this.settings.comparison.referenceAs === "bar" && refBound.length > 0) {
+            attempted.push(this.tr("UI_FeatRefBar", "the reference bar"));
         }
         if (this.estiloPedido) {
             attempted.push(this.tr("UI_FeatStyle", "the {0} style").replace("{0}", this.nombrePlantilla(this.estiloPedido).replace(/\s*\(Pro\)\s*$/, "")));
@@ -1714,7 +1742,8 @@ export class Visual implements IVisual {
             const useRef   = !!refArr;
             const refLabel = this.refLabel(cmpRole);
             const ys = d3.scaleBand().domain(catValues).rangeRound([0, innerH]).paddingInner(0.35);
-            const bh = ys.bandwidth();
+            const bhBanda = ys.bandwidth();
+            const bh = bhBanda;
             const ca = pg.append("g").attr("transform", `translate(${hCatW},${hTop})`);
             ca.append("line")
                 .attr("x1", xsH(0)).attr("y1", 0).attr("x2", xsH(0)).attr("y2", innerH)
@@ -1723,7 +1752,14 @@ export class Visual implements IVisual {
             const centro = (ci: number) => ys(catValues[ci]) + bh / 2;
             catValues.forEach((cat, ci) => {
                 const b = barInfo(series, ci, useRef, refArr, refLabel, dp);
-                const by = ys(cat);
+                let by = ys(cat);
+                let bh = bhBanda;
+                const agrupadaH = useRef && this.settings.comparison.referenceAs === "bar" && b.base !== null && b.base !== undefined && isFinite(Number(b.base));
+                if (agrupadaH) {
+                    const bv = Number(b.base), hR = Math.max(1, bh * 0.46);
+                    this.barraReferencia(ca, xsH(Math.min(0, bv)), by, Math.max(Math.abs(xsH(bv) - xsH(0)), 1), hR);
+                    by = by + bh - hR; bh = hR;
+                }
                 const bx = xsH(Math.min(0, b.v));
                 const bw = Math.max(Math.abs(xsH(b.v) - xsH(0)), 1);
                 const bw2 = Math.max(0, Math.min(this.settings.barSettings.borderWidth, bw / 2, bh / 2));
@@ -1746,7 +1782,7 @@ export class Visual implements IVisual {
                     .attr("tabindex", "0").attr("data-opac", b.opac);
                 barEvents(rect, b.selId);
                 // Marca de referencia: vertical, al nivel del plan, cruzando la barra.
-                if (useRef && this.settings.comparison.showMarker && b.base !== null && b.base !== undefined && isFinite(Number(b.base))) {
+                if (useRef && this.settings.comparison.showMarker && !agrupadaH && b.base !== null && b.base !== undefined && isFinite(Number(b.base))) {
                     const rx = xsH(Number(b.base));
                     ca.append("line").classed("ref-marker", true)
                         .attr("x1", rx).attr("x2", rx).attr("y1", by - 1).attr("y2", by + bh + 1)
@@ -1965,8 +2001,15 @@ export class Visual implements IVisual {
             const refLabel  = this.refLabel(cmpRole);
             catValues.forEach((cat, ci) => {
                 const { v, base, fill, opac, ariaLabel, tooltipItems, selId } = barInfo(series, ci, useRef, refArr, refLabel, dp);
-                const bx     = x(cat);
-                const bw     = x.bandwidth();
+                let bx       = x(cat);
+                let bw       = x.bandwidth();
+                // Barras agrupadas (Pro, 1.12): la referencia a la izquierda y el real a la derecha, en el mismo hueco.
+                const agrupada = useRef && this.settings.comparison.referenceAs === "bar" && base !== null && base !== undefined && isFinite(Number(base));
+                if (agrupada) {
+                    const bv = Number(base), wR = Math.max(1, bw * 0.46);
+                    this.barraReferencia(ca, bx, y(Math.max(0, bv)), wR, Math.max(Math.abs(y(bv) - y(0)), 1));
+                    bx = bx + bw - wR; bw = wR;
+                }
                 const by     = y(Math.max(0, v));
                 const bh     = Math.max(Math.abs(y(v) - y(0)), 1);
 
@@ -2004,7 +2047,7 @@ export class Visual implements IVisual {
                 // Marca horizontal al nivel de la referencia, al estilo IBCS: la barra es
                 // el valor real y la marca dice donde deberia estar. Es lo que hace que la
                 // desviacion se lea sin tener que mirar la etiqueta.
-                if (useRef && this.settings.comparison.showMarker
+                if (useRef && this.settings.comparison.showMarker && !agrupada
                     && base !== null && base !== undefined && isFinite(Number(base))) {
                     const ry = y(Number(base));
                     ca.append("line")

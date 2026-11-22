@@ -291,6 +291,35 @@
               }
             }
           }
+        },
+        "referenceAs": {
+          "displayName": "Show reference as",
+          "displayNameKey": "Visual_RefAs",
+          "type": {
+            "enumeration": [
+              {
+                "value": "marker",
+                "displayName": "Marker",
+                "displayNameKey": "Visual_Enum_RefMarker"
+              },
+              {
+                "value": "bar",
+                "displayName": "Bar beside the actual (Pro)",
+                "displayNameKey": "Visual_Enum_RefBar"
+              }
+            ]
+          }
+        },
+        "refBarColor": {
+          "displayName": "Reference bar color",
+          "displayNameKey": "Visual_RefBarColor",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
         }
       }
     },
