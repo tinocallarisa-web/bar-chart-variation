@@ -50,6 +50,17 @@
     }
   ],
   "objects": {
+    "general": {
+      "properties": {
+        "formatString": {
+          "type": {
+            "formatting": {
+              "formatString": true
+            }
+          }
+        }
+      }
+    },
     "style": {
       "displayName": "Style template",
       "displayNameKey": "Visual_StyleTemplate",

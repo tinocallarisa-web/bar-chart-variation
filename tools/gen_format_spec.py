@@ -8,7 +8,7 @@ Ejecutar desde la raíz:  python tools/gen_format_spec.py
 import io, json, os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-POR_INSTANCIA = {"dataColors", "colorSelector"}
+POR_INSTANCIA = {"dataColors", "colorSelector", "general"}   # general.formatString: formato dinámico, no es tarjeta del panel
 
 
 def kind(t):

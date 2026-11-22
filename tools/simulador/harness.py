@@ -205,6 +205,14 @@ async def main():
         await eventos(pg, "min texto")
         await pg.close()
 
+        print("Formato dinámico")
+        dvd = dataview(json.loads(json.dumps(base)))
+        dvd["categorical"]["__grupos"][0]["values"][0]["objects"] = [{"general": {"formatString": "$#,0"}}] * 12
+        pg = await page(b, dvd)
+        ticks = await pg.evaluate("() => Array.from(document.querySelectorAll('#host .tick text')).map(t => t.textContent)")
+        check("la cadena dinámica de la fila manda en el eje", any(t.startswith("$") for t in ticks), str(ticks[:4]))
+        await pg.close()
+
         await b.close()
     print()
     print("TODO OK" if not FALLOS else f"{len(FALLOS)} FALLO(S): " + "; ".join(FALLOS))

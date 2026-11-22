@@ -1333,6 +1333,14 @@ export class Visual implements IVisual {
         let measureFormat: string | undefined;
         try { measureFormat = valueFormatter.getFormatStringByColumn(values[0].source as any) || values[0].source.format; }
         catch (_) { measureFormat = values[0].source.format; }
+        // Formato dinámico (general.formatString declarado, 1.12): Power BI deja la cadena de cada fila en los objects de la
+        // columna de la medida. Manda la de la primera barra visible, como el eje de un visual nativo.
+        {
+            const mCol: any = (values as any[]).find((v: any) => v?.source?.roles?.measure) || values[0];
+            const filas: any[] = mCol?.objects ?? [];
+            const dyn = filas.map((o: any) => o?.general?.formatString).find((f: any) => typeof f === "string" && f);
+            if (dyn) { measureFormat = dyn; }
+        }
         const fmt: IValueFormatter = valueFormatter.create({
             format: measureFormat || "#,0",
             value:  fmtUnits,
