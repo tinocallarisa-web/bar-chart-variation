@@ -1,0 +1,56 @@
+==========================================
+TUTORIAL — TITLE
+==========================================
+Bar Chart with Variation % for Power BI: complete walkthrough (plan vs actual, no DAX)
+
+==========================================
+TUTORIAL — DESCRIPTION
+==========================================
+A complete walkthrough of Bar Chart with Variation % for Power BI: from the first two fields to plan vs actual, small multiples, styles, accessibility and the Pro preview. Version 1.12.
+
+Product video (2 min): https://www.youtube.com/watch?v=tkDmc8s1zmE
+Get it on Microsoft AppSource: https://marketplace.microsoft.com/en-us/product/tino_callarisa.bar-chart-variation
+Documentation, FAQ and sample data: https://tinocallarisa-web.github.io/bar-chart-variation/support.html
+
+──────────────────────────────────────────
+CHAPTERS
+──────────────────────────────────────────
+0:00 Bar Chart with Variation %
+0:06 What you need
+0:22 Your first chart: Axis and Values
+0:38 Time order and empty months
+0:51 Plan vs actual (Pro)
+1:07 The plan as a bar beside the actual (Pro)
+1:20 Variance format and connectors
+1:30 Last year and forecast (Pro)
+1:41 Variation labels and data labels
+1:55 Analytical lines: average, trend, band (Pro)
+2:09 Small multiples
+2:30 Style templates
+2:46 Bar settings: orientation and fx
+2:58 Accessibility and size
+3:14 Click, bookmarks and keyboard
+3:27 Try Pro, then buy
+3:44 Documentation and support
+
+──────────────────────────────────────────
+LINKS
+──────────────────────────────────────────
+Documentation: https://tinocallarisa-web.github.io/bar-chart-variation/support.html
+Questions: https://github.com/tinocallarisa-web/bar-chart-variation/discussions
+All TCViz visuals: https://tcviz.com
+Support: support@tcviz.com
+
+#PowerBI #PlanVsActual #PowerBITutorial
+
+==========================================
+TUTORIAL — TAGS (under 500 characters)
+==========================================
+Power BI tutorial,plan vs actual Power BI,variance chart Power BI,budget vs actual,Power BI custom visual tutorial,Power BI bar chart,variance analysis,Power BI small multiples,IBCS style,Power BI accessibility,no DAX Power BI,TCViz,Bar Chart with Variation %
+
+==========================================
+NOTE
+==========================================
+Generated with C:\tcviz\utillaje\video\video_bar_chart_tutorial.py (1.12.0.1). Subtitles: marketing\videos\
+bar-chart-variation-tutorial.srt. Where it goes: YouTube with chapters, embedded in support.html, and a "Full tutorial"
+link under the product video on tcviz.com. Not in Partner Center (that field is for the product video).
