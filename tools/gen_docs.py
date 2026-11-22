@@ -14,8 +14,8 @@ NAME = "Bar Chart with Variation %"
 BASE = "https://tinocallarisa-web.github.io/bar-chart-variation/"
 REPO = "https://github.com/tinocallarisa-web/bar-chart-variation"
 # La versión de las páginas: la que se va a enviar (pbiviz.json se sube en la etapa de versión del pipeline).
-VERSION = "1.11.0.0"
-FECHA = "20 October 2026"
+VERSION = "1.12.0.0"
+FECHA = "22 November 2026"
 VIDEO = "https://www.youtube.com/watch?v=RljhNfnuMuM"
 SAMPLE = REPO + "/raw/main/SampleData_BarChartVariation.xlsx"
 
@@ -77,11 +77,13 @@ FREE_PRO = [
     ("Arrows and connectors on the variation labels, which never overlap: they shrink or alternate heights on narrow bars", "✓", "✓"),
     ("Sort: Auto (chronological on date and number axes), ascending, descending; hide empty categories", "✓", "✓"),
     ("Colours from the report theme, or your own: bar, negative, positive, series colours, borders, corner radius, opacity", "✓", "✓"),
-    ("6 style templates, including IBCS style; setup guide", "✓", "✓"),
+    ("Style templates Report theme, Classic and IBCS style; setup guide", "✓", "✓"),
+    ("Text that scales with the visual; accessibility card (high contrast Automatic or On, focus colour and width, minimum text size)", "✓", "✓"),
     ("Axis titles; label size, colour, bold, italic and angle; panel titles with a line or a filled header", "✓", "✓"),
     ("Cross-filtering, highlight, bookmarks, drilldown, context menu, report tooltips, keyboard, high contrast", "✓", "✓"),
     ("Number format of the measure, dynamic format strings included; format on the canvas; 12 languages", "✓", "✓"),
-    ("Previous Year, Plan / Budget and Forecast as references, with a marker on every bar", "—", "✓"),
+    ("Previous Year, Plan / Budget and Forecast as references, with a marker on every bar or as a bar beside the actual", "—", "✓"),
+    ("The six collection styles: Boardroom, Ledger, Editorial, Signal, Aurora, Terrace", "—", "✓"),
     ("Variance as an absolute difference, or difference and %", "—", "✓"),
     ("4 to 100 small multiple panels", "—", "✓"),
     ("Analytical lines: average, maximum, minimum, median, a reference value and a trend line", "—", "✓"),
@@ -91,20 +93,18 @@ FREE_PRO = [
 ]
 
 FORMAT = [
-    ("Style template", "Clean, Classic, Minimal, Contrast, Compact, IBCS style. Choosing a template applies it: the settings it defines (colours, a bar colour rule, title style, corners) are replaced and the rest stays. Clean is the default look. Setup guide: turn it back on to see the guide again."),
-    ("Bar settings", "Default bar colour, with conditional formatting (fx) rules (Pro); negative bar colour (a bar below its comparison); opacity; axis text colour; bar border colour and width (drawn inside the bar, so a zero stays on the baseline); connector colour."),
-    ("Comparison", "Compare to: Previous bar, Previous Year, Plan / Budget or Forecast (the last three Pro, with their field bound); Variance format (Pro): Relative (%), Absolute or Both; reference marker and its colour."),
+    ("Style template", "Report theme (the default: colours from the report theme), Classic, IBCS style, and the collection styles Boardroom, Ledger, Editorial, Signal, Aurora and Terrace (Pro). Choosing a template applies it: the settings it defines (colours, a bar colour rule, title style, corners) are replaced and the rest stays. Setup guide: turn it back on to see the guide again."),
+    ("Comparison", "Compare to: Previous bar, Previous Year, Plan / Budget or Forecast (the last three Pro, with their field bound); Variance format (Pro): Relative (%), Absolute or Both; reference marker and its colour; Show reference as: Marker, or Bar beside the actual (Pro); Reference bar color."),
+    ("Bar settings", "Default bar colour, with conditional formatting (fx) rules (Pro; not offered with a field in Small Multiple); negative bar colour (a bar below its comparison); opacity; axis text colour; bar border colour and width (drawn inside the bar, so a zero stays on the baseline); connector colour; orientation: vertical (columns) or horizontal (bars); bar corner radius."),
     ("Variation labels", "Show; font size; positive and negative colour; decimal places; arrows; connectors (a bracket between consecutive bars, or a line from the label to its bar through the reference marker)."),
     ("Data labels (Pro)", "Show the value on each bar; colour; font size; display units; decimal places."),
-    ("Series colors", "One colour per Small Multiple panel."),
-    ("Bar colors (Pro)", "One colour per category."),
-    ("Panel title", "Show; top or bottom; font size; separator line or filled header with its fill; series colour or your own colour. With a filled header the text switches to black or white when the contrast is too low."),
-    ("Axis", "Sort order; hide empty categories; X labels: show, angle (auto, horizontal, 45°, 90°), size, colour, bold, italic; X axis title and its text; Y labels: show, size, colour, bold, italic; Y axis title and its text. An empty title text uses the field name."),
-    ("Panel background", "Show; colour; opacity."),
-    ("Panel layout", "Orientation: vertical (columns) or horizontal (bars); columns (0 = automatic); minimum panel width and height; scroll; bar corner radius."),
     ("Analytical lines (Pro)", "Average, maximum, minimum, median; trend line and its colour; reference value and line; line colour and style; labels and their size; band: show, minimum and maximum (both 0 = the typical range, 25th to 75th percentile), colour, opacity."),
+    ("Bar colors (Pro)", "One colour per category."),
+    ("Series colors", "One colour per Small Multiple panel."),
+    ("Axis", "Sort order; hide empty categories; X labels: show, angle (auto, horizontal, 45°, 90°), size, colour, bold, italic; X axis title and its text; Y labels: show, size, colour, bold, italic; Y axis title and its text. An empty title text uses the field name."),
     ("Legend", "Show the positive and negative colours; top or bottom; text colour."),
-    ("Accessibility", "Diagonal pattern on negative bars, for readers who cannot tell the colours apart."),
+    ("Small multiples", "Layout: columns (0 = automatic), space between panels, minimum panel width and height, scroll. Title: show, top or bottom, size, separator line or filled header with its fill, series colour or your own colour, bold, alignment (left or centre); with a filled header the text switches to black or white when the contrast is too low. Background and border: panel background, colour and opacity; panel border and its colour."),
+    ("Accessibility", "High contrast: Automatic (the Windows setting) or On; patterns on negative bars, for readers who cannot tell the colours apart; focus colour and width for keyboard navigation; minimum text size."),
 ]
 
 FAQ = [
@@ -135,11 +135,21 @@ FAQ = [
      "<p>When bars are narrow — many categories, or several panels — the labels drop the arrows, shrink by up to 2 px and then alternate "
      "between two heights, so none is hidden. Widen the visual, use fewer panels per row, or switch to horizontal orientation.</p>"),
     ("Can the bars be horizontal?",
-     "<p>Yes: <strong>Panel layout → Orientation → Horizontal (bars)</strong>. Categories go on the left, the variation in a column on the "
+     "<p>Yes: <strong>Bar settings → Orientation → Horizontal (bars)</strong>. Categories go on the left, the variation in a column on the "
      "right, and the value axis at the bottom. Long category names read better this way.</p>"),
+    ("Can I show the plan as a bar instead of a marker?",
+     "<p>Yes (Pro): <strong>Comparison → Show reference as → Bar beside the actual</strong>. Each slot then holds two bars, the reference on "
+     "the left and the actual on the right, with the variation label above the pair. Change its colour under Reference bar color.</p>"),
+    ("What are the collection styles?",
+     "<p>Boardroom, Ledger, Editorial, Signal, Aurora and Terrace are the styles shared by the TCViz visuals, so a page with several of them "
+     "reads as one report (Pro). Report theme, Classic and IBCS style are free. Without a licence a collection style is drawn while you edit, "
+     "under the “Pro preview” watermark; reading view shows Report theme.</p>"),
+    ("The text got smaller when I resized the visual",
+     "<p>Below report size (760 × 420 px) all the text shrinks together, down to 60 % and never under 8 px, so a small tile keeps every label. "
+     "To keep text larger, set <strong>Accessibility → Minimum text size</strong>.</p>"),
     ("How do small multiples work?",
      "<p>Drag a field to <strong>Small Multiple</strong>: one panel per value, all on the same scale, so a taller bar is a larger value in "
-     "every panel. Set the number of columns under Panel layout, or leave 0 for automatic. With many panels, set a minimum panel size and "
+     "every panel. Set the number of columns, the space between panels, the titles and the border under the Small multiples card, or leave 0 columns for automatic. With many panels, set a minimum panel size and "
      "the visual scrolls. Free draws 3 panels; Pro up to 100.</p>"),
     ("What is the reference band?",
      "<p>A shaded range across the panels (Pro). With Band min and Band max at 0 it marks the typical range of your data — the middle half "
@@ -150,9 +160,10 @@ FAQ = [
     ("What is “IBCS style”?",
      "<p>A template with a sober look inspired by IBCS notation: dark grey bars, green and red variances, black reference markers and square "
      "corners. It is a style; the visual does not claim compliance with the IBCS standard.</p>"),
-    ("Conditional formatting (fx) does not colour the bars",
+    ("Where is the fx button of the bar colour?",
      "<p>Power BI evaluates conditional formatting rules per bar only when there is no field in <strong>Small Multiple</strong>, as it does "
-     "for native charts with a Legend field. Without Small Multiple, the rule colours each bar by its value.</p>"),
+     "for native charts with a Legend field, so with Small Multiple the fx button is not offered. Remove the field to use rules, or colour "
+     "each panel under <strong>Series colors</strong>.</p>"),
     ("I changed the bar colour and nothing happened",
      "<p>A conditional formatting rule on the bar colour takes precedence over the fixed colour, and the negative colour still marks bars "
      "below their comparison. Use <strong>Reset to default</strong> on the Bar settings card to clear an old rule.</p>"),
@@ -210,8 +221,9 @@ def support():
 
 <p class="lead">A plan vs actual bar chart for Power BI. It writes the variation % between bars by itself and, with your plan, budget,
 forecast or last year’s figure, draws a marker where each bar should have been. The free version compares against the previous bar, with
-small multiples, both orientations and style templates. <strong>Pro</strong> adds the three reference measures, absolute variance, up to
-100 panels, analytical lines with a trend line and a reference band, value labels and per-bar colours with conditional formatting (fx).</p>
+small multiples, both orientations and style templates. <strong>Pro</strong> adds the three reference measures (as a marker or as a bar
+beside the actual), absolute variance, up to 100 panels, analytical lines with a trend line and a reference band, value labels, per-bar
+colours with conditional formatting (fx) and the six collection styles.</p>
 {video}
 <h2 id="quickstart">Quick Start</h2>
 <div class="card">
@@ -278,8 +290,11 @@ Reading view shows the free result. Pro is sold per user on Microsoft AppSource.
 <ul>
 <li>Keyboard: Tab moves between bars, Enter or Space selects, Esc clears. The tooltip opens on the focused bar.</li>
 <li>Each bar has a description for screen readers with its panel, category, value and variation.</li>
-<li>High contrast: the visual uses the colours of the Windows contrast theme and marks negative bars with a diagonal pattern.</li>
-<li>The layout adapts to the size of the visual: the legend, the axis and the titles step aside in small tiles so the bars and their percentages stay legible.</li>
+<li>High contrast: the visual uses the colours of the Windows contrast theme and marks negative bars with a diagonal pattern. Set
+<strong>Accessibility → High contrast → On</strong> to get it without changing the Windows theme.</li>
+<li>Focus: the focused bar is outlined; set its colour and width under Accessibility.</li>
+<li>Text scales with the visual, never under 8 px; <strong>Minimum text size</strong> raises every text to the size you need.</li>
+<li>In very small tiles the legend and the axis titles step aside so the bars and their percentages stay legible.</li>
 </ul>
 </div>
 

@@ -1,4 +1,4 @@
-# AppSource listing copy — Bar Chart with Variation % v1.11.0.0
+# AppSource listing copy — Bar Chart with Variation % v1.12.0.0
 
 Copy ready to paste into Partner Center, English only. **The marketplace description is the
 documentation most people read** — update it on every release.
@@ -32,6 +32,7 @@ Plan vs actual bar chart: variance % between bars and a marker for plan, budget 
 ## Description
 
 Revised 17-11-2026 after App Advisor (4/5): BEST FOR, jargon explained, what you need before starting.
+Updated 22-11-2026 for 1.12: plan as a bar beside the actual, collection styles, text that scales, accessibility card.
 
 ```
 A bar chart that compares each month against the one before answers "is this month better than the last one". It does not answer the question the meeting is actually about: are we on plan.
@@ -48,36 +49,38 @@ BEST FOR
 PLAN VS ACTUAL
 
 • A reference marker on every bar: bind Plan / Budget, Forecast or Previous Year and pick it under Compare to
+• Or the reference as a bar beside each actual bar, the reading most finance teams know
 • The variance on every bar, as %, as a difference in the units of your measure, or both
 • Bars below plan take the negative colour; a connector joins each label to its bar through the marker
 • Against the previous bar: the variance % between consecutive bars, with arrows and brackets
-• Analytical lines — average, maximum, minimum, median, a reference value and a trend line — and a reference band that marks the typical range of your data
+• Analytical lines (average, max, min, median, reference, trend) and a band for the typical range
 
 SMALL MULTIPLES
 
-• One panel per region, product or team, on a shared scale so the panels are actually comparable
-• Choose the number of columns, or leave it automatic; minimum panel size with scroll
-• Vertical columns or horizontal bars
+• One panel per region, product or team, on a shared scale so the panels are comparable
+• Columns, spacing, titles and borders; vertical columns or horizontal bars
 
 LOOKS RIGHT FROM THE FIRST CLICK
 
-• Colours from your report theme; six style templates, including an IBCS style (the international standard for business charts)
+• Colours from your report theme, Classic or an IBCS-inspired style; in Pro, the six styles of the TCViz collection
 • A setup guide in the corner while you edit, listing the optional fields
 • Format on the canvas: click a bar, a label or an axis to format it
 • Labels that never overlap: on narrow bars they shrink or alternate heights instead of colliding
+• Text that scales with the visual: a small tile keeps every label, never under 8 px
 • Date and number axes in time order, and empty future months hidden on request
-• The number format of your measure, dynamic format strings included, so labels match the rest of your report; 12 languages
+• The number format of your measure, dynamic format strings included; 12 languages
 
 NATIVE INTEGRATION
 
 • Click a bar to cross-filter the report; the other bars dim; bookmarks keep the selection
 • Highlighting from other visuals, report tooltips, drilldown and the context menu
 • Conditional formatting (fx) on the bar colour: rules that colour each bar by its result
-• Keyboard navigation, screen reader labels and the Windows high contrast theme
+• Keyboard with a focus outline, screen reader labels, high contrast and a minimum text size
 
 PRO
 
-• Previous Year, Plan / Budget and Forecast as references
+• Previous Year, Plan / Budget and Forecast as references, as a marker or as a bar beside the actual
+• The six collection styles: Boardroom, Ledger, Editorial, Signal, Aurora, Terrace
 • Absolute variance, or difference and %
 • Up to 100 small multiple panels
 • Analytical lines, trend line and reference band
@@ -88,7 +91,7 @@ FREE AND PRO
 
 The free tier draws the whole chart: the bars, the automatic variance %, three panels of small multiples, both orientations, the templates, the colours, the sorting, the tooltips and the cross-filtering. It compares against the previous bar, which is a correct answer and not a cut-down one. What Pro adds is the controlling reading — actual against plan, budget or last year — and the analysis on top of it.
 
-While you edit a report without a licence, a Pro feature you turn on is drawn working, under a "Pro preview" watermark naming it, so you can see exactly what you would be buying with your own data. Reading view shows the free result with no watermark.
+Without a licence, a Pro feature you turn on while editing is drawn working under a "Pro preview" watermark, on your own data. Reading view shows the free result.
 
 PRIVACY
 

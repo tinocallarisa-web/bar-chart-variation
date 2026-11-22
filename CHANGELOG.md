@@ -4,6 +4,22 @@ All notable changes to this visual are documented here.
 
 ---
 
+## [1.12.0.0] — 2026-11-22
+
+### Added
+- **Actual and reference side by side (Pro).** Comparison → Show reference as → *Bar beside the actual*: the plan, budget, forecast or last year is drawn as a bar next to each actual bar, in the same slot, instead of a marker. Its colour is set under Reference bar color (by default a neutral grey, or the second colour of the collection style). Works in both orientations and with small multiples; the variation label stays above each pair.
+- **The six collection styles (Pro).** Boardroom, Ledger, Editorial, Signal, Aurora and Terrace under Style template, the same styles as the rest of the TCViz collection, so a page with several of our visuals reads as one report. Boardroom and Aurora paint the visual's background; Ledger and Editorial use a serif type. Without a licence, choosing one in edit mode draws it under the "Pro preview" watermark; reading view shows Report theme.
+- **Text that scales with the visual.** Below report size (760 × 420 px) every text — axes, variation labels, value labels, panel titles, analytical line labels and the legend — shrinks together, down to 60 % and never under 8 px. Text shrinks before anything steps aside; only in very small tiles do the legend and the axis titles give way to the bars.
+- **Accessibility card.** High contrast: *Automatic* (follows the Windows setting) or *On*, to get the contrast rendering without changing the system theme; focus colour and width for keyboard navigation; minimum text size. The existing switch keeps working and is now called *Patterns on negative bars*.
+- **Small multiples options, as in the rest of the collection.** Space between panels, bold title, title alignment (left or centre), panel border on or off and its colour.
+
+### Changed
+- **Style template list.** *Clean* is now called **Report theme** (same look: colours from the report theme). The list offers Report theme, Classic, IBCS style and the six collection styles. *Minimal*, *Contrast* and *Compact* are no longer offered, but reports that use them keep their look and the setting is kept.
+- **Format pane order.** Cards follow the order of the rest of the collection: Style template, Comparison, Bar settings, Variation labels, Data labels, Analytical lines, colours, Axis, Legend, Small multiples and Accessibility. Panel title, Panel background and Panel layout are now one **Small multiples** card with three groups (Layout, Title, Background and border); Orientation and Bar corner radius moved to Bar settings. Every saved setting is kept.
+- **Dynamic format strings are declared.** The measure's dynamic format string is read from the data, so the axis and labels follow it (the format of the first visible bar applies to the chart).
+- **The conditional formatting (fx) button on the bar colour is hidden when a field is in Small Multiple**, because Power BI does not deliver the rule in that case and the button did nothing. Use Series colors to colour each panel.
+- **"Pro preview" watermark.** The same watermark as the rest of the collection, centred and readable on any background.
+
 ## [1.11.0.0] — 2026-10-20
 
 ### Added
