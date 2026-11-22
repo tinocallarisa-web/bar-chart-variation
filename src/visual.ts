@@ -2853,7 +2853,10 @@ export class Visual implements IVisual {
                     case "color": {
                         // Color de barra con formato condicional (fx): la regla se evalúa por barra. Como en los gráficos
                         // nativos con Leyenda, con Small Multiple (valores agrupados por serie) Power BI no la entrega.
-                        const fx = card.obj === "barSettings" && p.name === "barColor";
+                        // 1.12: con un campo en Small Multiple el botón fx no se ofrece, porque Power BI no entregaría la regla
+                        // y parecería que no hace nada (pasó en pruebas: una regla por país con Small Multiple = país).
+                        const conSm = !!(this.dataView?.categorical?.values as any)?.grouped?.()?.some((g: any) => g?.name != null && String(g.name) !== "");
+                        const fx = card.obj === "barSettings" && p.name === "barColor" && !conSm;
                         // altConstantValueSelector null: el color FIJO se guarda a nivel general (como antes de fx) y solo
                         // las reglas se evalúan por barra. Sin él, el fijo llegaba barra a barra y pisaba el color negativo.
                         const d2: any = fx ? { ...descriptor, instanceKind: powerbi.VisualEnumerationInstanceKinds.ConstantOrRule,
