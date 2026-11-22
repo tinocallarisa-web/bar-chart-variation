@@ -6,3 +6,5 @@ webpack.statistics.*.html
 *.pbix
 _releases/
 __pycache__/
+
+tools/simulador/capturas/

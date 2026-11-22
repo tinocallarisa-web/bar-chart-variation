@@ -4,6 +4,10 @@ Orden de cada fila: es, pt (BR y PT), fr, de, it, nl, pl, ja, zh, ko.
 El español de las claves de capabilities NO sale de aquí: se conserva el de stringResources/es-ES (ya publicado)."""
 
 B = {
+"Report theme": ["Tema del informe", "Tema do relatório", "Thème du rapport", "Berichtsdesign", "Tema del report", "Rapportthema", "Motyw raportu", "レポートのテーマ", "报表主题", "보고서 테마"],
+"Boardroom (Pro)": ["Boardroom (Pro)"] * 10, "Ledger (Pro)": ["Ledger (Pro)"] * 10, "Editorial (Pro)": ["Editorial (Pro)"] * 10,
+"Signal (Pro)": ["Signal (Pro)"] * 10, "Aurora (Pro)": ["Aurora (Pro)"] * 10, "Terrace (Pro)": ["Terrace (Pro)"] * 10,
+"the {0} style": ["el estilo {0}", "o estilo {0}", "le style {0}", "den Stil {0}", "lo stile {0}", "de stijl {0}", "styl {0}", "{0} スタイル", "{0} 样式", "{0} 스타일"],
 "0 turns the border off. It is drawn inside the bar, so it never changes its size.": [
     "0 quita el borde. Se dibuja por dentro de la barra, así que nunca cambia su tamaño.",
     "0 desativa a borda. É desenhada dentro da barra, por isso nunca muda o tamanho.",

@@ -20,12 +20,47 @@ export const FORMAT_SPEC: SpecCard[] = [
                     {
                         "value": "clean",
                         "key": "Visual_Enum_TplClean",
-                        "label": "Clean"
+                        "label": "Report theme"
                     },
                     {
                         "value": "classic",
                         "key": "Visual_Enum_TplClassic",
                         "label": "Classic"
+                    },
+                    {
+                        "value": "ibcs",
+                        "key": "Visual_Enum_TplIbcs",
+                        "label": "IBCS style"
+                    },
+                    {
+                        "value": "boardroom",
+                        "key": "Visual_Enum_TplBoardroom",
+                        "label": "Boardroom (Pro)"
+                    },
+                    {
+                        "value": "ledger",
+                        "key": "Visual_Enum_TplLedger",
+                        "label": "Ledger (Pro)"
+                    },
+                    {
+                        "value": "editorial",
+                        "key": "Visual_Enum_TplEditorial",
+                        "label": "Editorial (Pro)"
+                    },
+                    {
+                        "value": "signal",
+                        "key": "Visual_Enum_TplSignal",
+                        "label": "Signal (Pro)"
+                    },
+                    {
+                        "value": "aurora",
+                        "key": "Visual_Enum_TplAurora",
+                        "label": "Aurora (Pro)"
+                    },
+                    {
+                        "value": "terrace",
+                        "key": "Visual_Enum_TplTerrace",
+                        "label": "Terrace (Pro)"
                     },
                     {
                         "value": "minimal",
@@ -41,11 +76,6 @@ export const FORMAT_SPEC: SpecCard[] = [
                         "value": "compact",
                         "key": "Visual_Enum_TplCompact",
                         "label": "Compact"
-                    },
-                    {
-                        "value": "ibcs",
-                        "key": "Visual_Enum_TplIbcs",
-                        "label": "IBCS style"
                     }
                 ]
             },

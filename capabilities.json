@@ -61,13 +61,48 @@
             "enumeration": [
               {
                 "value": "clean",
-                "displayName": "Clean",
+                "displayName": "Report theme",
                 "displayNameKey": "Visual_Enum_TplClean"
               },
               {
                 "value": "classic",
                 "displayName": "Classic",
                 "displayNameKey": "Visual_Enum_TplClassic"
+              },
+              {
+                "value": "ibcs",
+                "displayName": "IBCS style",
+                "displayNameKey": "Visual_Enum_TplIbcs"
+              },
+              {
+                "value": "boardroom",
+                "displayName": "Boardroom (Pro)",
+                "displayNameKey": "Visual_Enum_TplBoardroom"
+              },
+              {
+                "value": "ledger",
+                "displayName": "Ledger (Pro)",
+                "displayNameKey": "Visual_Enum_TplLedger"
+              },
+              {
+                "value": "editorial",
+                "displayName": "Editorial (Pro)",
+                "displayNameKey": "Visual_Enum_TplEditorial"
+              },
+              {
+                "value": "signal",
+                "displayName": "Signal (Pro)",
+                "displayNameKey": "Visual_Enum_TplSignal"
+              },
+              {
+                "value": "aurora",
+                "displayName": "Aurora (Pro)",
+                "displayNameKey": "Visual_Enum_TplAurora"
+              },
+              {
+                "value": "terrace",
+                "displayName": "Terrace (Pro)",
+                "displayNameKey": "Visual_Enum_TplTerrace"
               },
               {
                 "value": "minimal",
@@ -83,11 +118,6 @@
                 "value": "compact",
                 "displayName": "Compact",
                 "displayNameKey": "Visual_Enum_TplCompact"
-              },
-              {
-                "value": "ibcs",
-                "displayName": "IBCS style",
-                "displayNameKey": "Visual_Enum_TplIbcs"
               }
             ]
           }

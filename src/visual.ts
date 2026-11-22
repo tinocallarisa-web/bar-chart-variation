@@ -21,6 +21,7 @@ import VisualTooltipDataItem = powerbi.extensibility.VisualTooltipDataItem;
 
 import { createTooltipServiceWrapper, ITooltipServiceWrapper } from "powerbi-visuals-utils-tooltiputils";
 import { FORMAT_SPEC } from "./formatSpec";
+import { createProWatermark, renderProWatermark } from "./comun/watermark";
 import { LANDING_ICON } from "./landingIcon";
 import {
     HtmlSubSelectableClass, HtmlSubSelectionHelper, SubSelectableDisplayNameAttribute,
@@ -228,6 +229,45 @@ const TEMPLATES: Record<string, Record<string, Record<string, any>>> = {
         panelTitle: { titleStyle: "line", useSeriesColor: false, customColor: "#262626" }, legend: { textColor: "#262626" } },
 };
 
+/**
+ * Los seis estilos de la colección (Pro, con vista previa sin licencia mientras se edita). Tokens compartidos con
+ * Line Chart, KPI Card y Pareto: series[0] = la barra, plan = el marcador de referencia, up/down = las variaciones.
+ * Así una página con varios visuales de TCViz en Boardroom se lee como un solo informe.
+ */
+const PRO_STYLES = ["boardroom", "ledger", "editorial", "signal", "aurora", "terrace"];
+/** Plantillas que siguen funcionando en informes guardados pero ya no se ofrecen en el panel (1.12). */
+const OCULTAS = ["minimal", "contrast", "compact"];
+interface StyleTokens { bg: string; text: string; axis: string; grid: string; plan: string; up: string; down: string; series: string[]; font?: string; grad?: string; dark?: boolean; }
+const STYLE_TOKENS: Record<string, StyleTokens> = {
+    boardroom: { bg: "#16263D", text: "#F2F0E8", axis: "#9FB0C6", grid: "#2A3E5C", plan: "#F2F0E8", up: "#6FCF97", down: "#EB8A7B", series: ["#C9A45C", "#8FB8E8", "#EB8A7B", "#6FCF97", "#C5D3E3"], dark: true },
+    ledger: { bg: "#FBF8EF", text: "#231F16", axis: "#6E6652", grid: "#D9D2BE", plan: "#231F16", up: "#2F6B3B", down: "#A32A2A", series: ["#3A3528", "#7A1F1F", "#2F6B3B", "#946A10", "#B7AD92"], font: "Georgia, serif" },
+    editorial: { bg: "#FFFFFF", text: "#111111", axis: "#5F5F5F", grid: "#E2E2E2", plan: "#111111", up: "#111111", down: "#D7263D", series: ["#5F5F5F", "#111111", "#D7263D", "#BDBDBD", "#8C1C2B"], font: "Georgia, serif" },
+    signal: { bg: "#FFFFFF", text: "#14202B", axis: "#566472", grid: "#D9DEE4", plan: "#14202B", up: "#1F7A4D", down: "#C0392B", series: ["#2F5D8A", "#14202B", "#B7791F", "#C0392B", "#9AA5B1"] },
+    aurora: { bg: "#10395E", text: "#FFFFFF", axis: "#C5D3E3", grid: "#3A5C7E", plan: "#FFD27D", up: "#7CE7D0", down: "#FF9DB0", series: ["#9DB7FF", "#7CE7D0", "#FFD27D", "#FF9DB0", "#C5D3E3"], grad: "linear-gradient(135deg, #1B1147, #10395E 50%, #0B5A5E)", dark: true },
+    terrace: { bg: "#FBF5EC", text: "#3A2A1E", axis: "#7A6450", grid: "#E5D6C2", plan: "#3A2A1E", up: "#5E7128", down: "#B5372A", series: ["#B5782A", "#5E7128", "#B5532A", "#B5372A", "#C9A77E"] },
+};
+for (const k of PRO_STYLES) {
+    const t = STYLE_TOKENS[k];
+    TEMPLATES[k] = {
+        barSettings: { barColor: t.series[0], negativeColor: t.down, axisTextColor: t.axis, connectorColor: t.axis, borderColor: t.bg },
+        variationLabels: { positiveColor: t.up, negativeColor: t.down },
+        comparison: { markerColor: t.plan },
+        valueLabels: { color: t.text },
+        panelTitle: { titleStyle: "line", useSeriesColor: false, customColor: t.text },
+        axisSettings: { xColor: t.axis, yColor: t.axis },
+        analyticalLines: { trendColor: t.axis, lineColor: t.plan, bandColor: t.axis },
+        legend: { textColor: t.axis },
+        panelStyle: { showBackground: false },
+    };
+}
+
+/** Las plantillas que ofrecen el panel y la guía, en orden: [valor, clave de traducción, nombre en inglés]. */
+const PLANTILLAS_PANEL: [string, string, string][] = [
+    ["clean", "Visual_Enum_TplClean", "Report theme"], ["classic", "Visual_Enum_TplClassic", "Classic"], ["ibcs", "Visual_Enum_TplIbcs", "IBCS style"],
+    ["boardroom", "Visual_Enum_TplBoardroom", "Boardroom (Pro)"], ["ledger", "Visual_Enum_TplLedger", "Ledger (Pro)"],
+    ["editorial", "Visual_Enum_TplEditorial", "Editorial (Pro)"], ["signal", "Visual_Enum_TplSignal", "Signal (Pro)"],
+    ["aurora", "Visual_Enum_TplAurora", "Aurora (Pro)"], ["terrace", "Visual_Enum_TplTerrace", "Terrace (Pro)"]];
+
 // Enlaces de la pantalla de inicio: solo se abren con un clic, a través de host.launchUrl.
 const URL_GUIDE = "https://tinocallarisa-web.github.io/bar-chart-variation/support.html";
 const URL_PRODUCT = "https://tcviz.com/product/chart-variation-pro/?ref=visual-bar-chart-variation";
@@ -251,7 +291,14 @@ export class Visual implements IVisual {
     private svg: Selection<SVGElement>;
     private chartGroup: Selection<SVGGElement>;
     private legendGroup: Selection<SVGGElement>;
-    private watermarkGroup: Selection<SVGGElement>;
+    /** Marca de agua "Pro preview" común (HTML encima del gráfico). */
+    private wm: HTMLDivElement;
+    /** Estilo de la colección que se está pintando (null = Report theme, Classic, IBCS o sin licencia). */
+    private look: StyleTokens | null = null;
+    /** Estilo Pro elegido en el panel, se pinte o no (para el aviso de compra). */
+    private estiloPedido: string | null = null;
+    /** Modo edición en la actualización en curso (la vista previa Pro solo existe editando). */
+    private editandoAhora = false;
     private messageGroup: Selection<SVGGElement>;
     private licenseManager: IVisualLicenseManager;
     private colorPalette: powerbi.extensibility.IColorPalette;
@@ -398,6 +445,8 @@ export class Visual implements IVisual {
     constructor(options: VisualConstructorOptions) {
         this.host = options.host;
         this.target = options.element;
+        if (!this.target.style.position) this.target.style.position = "relative";
+        this.wm = createProWatermark(this.target);
         this.licenseManager = options.host.licenseManager;
         this.colorPalette = options.host.colorPalette;
         this.localization = options.host.createLocalizationManager();
@@ -412,7 +461,6 @@ export class Visual implements IVisual {
 
         this.legendGroup  = this.svg.append("g").classed("legend-group",   true);
         this.chartGroup   = this.svg.append("g").classed("chart-group",    true);
-        this.watermarkGroup= this.svg.append("g").classed("watermark-group",true);
         this.messageGroup = this.svg.append("g").classed("message-group",  true);
 
         this.subSelectionHelper = HtmlSubSelectionHelper.createHtmlSubselectionHelper({
@@ -472,6 +520,8 @@ export class Visual implements IVisual {
                 return;
             }
             this.hideLanding();
+            const vmA = (options as any).viewMode;
+            this.editandoAhora = typeof vmA === "number" && vmA !== 0;
             this.updateSettings(this.dataView);
             // Elegir una plantilla (en el panel o en el asistente) la aplica de verdad: se borran los ajustes que ella
             // define, porque un ajuste guardado manda sobre la plantilla. Solo al CAMBIARLA y editando; nunca al abrir.
@@ -607,7 +657,13 @@ export class Visual implements IVisual {
     private updateSettings(dataView: DataView) {
         const objects = dataView.metadata.objects;
         const tplName = String((objects as any)?.style?.template || "clean");
-        const tpl = TEMPLATES[tplName] || {};
+        // Un estilo de la colección es Pro: con licencia, o en la vista previa mientras se edita (con marca de agua).
+        // Sin ninguna de las dos se pinta Report theme, así un informe publicado nunca usa un estilo sin pagar.
+        const esPro = PRO_STYLES.indexOf(tplName) >= 0;
+        const puedePro = this.isPro || (this.editandoAhora && this.licenseResolved && !this.licenseEnvUnsupported);
+        this.estiloPedido = esPro ? tplName : null;
+        this.look = esPro && puedePro ? STYLE_TOKENS[tplName] : null;
+        const tpl = TEMPLATES[esPro && !puedePro ? "clean" : tplName] || {};
         this.template = tplName;
         this.guideOn = (objects as any)?.style?.guide !== false;
         const nombreDe = new Map<any, string>();
@@ -769,6 +825,13 @@ export class Visual implements IVisual {
      * Texto localizado. Si la clave no esta en el resjson del idioma, Power BI devuelve
      * el propio nombre de la clave, asi que se compara y se cae al ingles.
      */
+    /** Nombre visible de una plantilla, traducido (también el de las ocultas, para un informe que aún las use). */
+    private nombrePlantilla(valor: string): string {
+        const f = PLANTILLAS_PANEL.find(p => p[0] === valor);
+        if (f) return this.tr(f[1], f[2]);
+        return this.tr("Visual_Enum_Tpl" + valor.charAt(0).toUpperCase() + valor.slice(1), valor.charAt(0).toUpperCase() + valor.slice(1));
+    }
+
     private tr(key: string, fallback: string): string {
         // Primero la tabla del bundle (src/strings.ts): Power BI Desktop solo traduce con getDisplayName las claves
         // declaradas en capabilities.json, y los textos propios del visual no lo están.
@@ -927,6 +990,11 @@ export class Visual implements IVisual {
         const host        = this.host;
         const width       = options.viewport.width;
         const height      = options.viewport.height;
+
+        // Fondo y letra del estilo de la colección (el alto contraste manda sobre el estilo).
+        const look = this.hcActive() ? null : this.look;
+        this.target.style.background = look ? (look.grad || look.bg) : "";
+        this.svg.style("font-family", look?.font || null);
 
         this.svg
             .attr("width", width)
@@ -1163,6 +1231,9 @@ export class Visual implements IVisual {
         }
         if (this.settings.variationLabels.show && this.settings.comparison.varianceMode !== "relative") {
             attempted.push(this.tr("UI_FeatAbsolute", "absolute variance"));
+        }
+        if (this.estiloPedido) {
+            attempted.push(this.tr("UI_FeatStyle", "the {0} style").replace("{0}", this.nombrePlantilla(this.estiloPedido).replace(/\s*\(Pro\)\s*$/, "")));
         }
         this.attemptedPro = this.isPro ? [] : attempted;
         if (DEBUG_FX) {
@@ -1404,23 +1475,24 @@ export class Visual implements IVisual {
 
         // ── Grid container: outer border + separators ──────────────────────
         const gridG = this.chartGroup.append("g").attr("transform", `translate(${oML},${oMT})`);
+        const marco = (!this.hcActive() && this.look) ? this.look.grid : "#c9cdd4";
 
         gridG.append("rect")
             .attr("width", gridW).attr("height", gridH)
-            .attr("fill", "none").attr("stroke", "#c9cdd4")
+            .attr("fill", "none").attr("stroke", marco)
             .attr("stroke-width", 1.5).attr("rx", 4);
 
         for (let c = 1; c < ncols; c++) {
             gridG.append("line")
                 .attr("x1", c * cellW).attr("y1", 0)
                 .attr("x2", c * cellW).attr("y2", gridH)
-                .attr("stroke", "#c9cdd4").attr("stroke-width", 1);
+                .attr("stroke", marco).attr("stroke-width", 1);
         }
         for (let r = 1; r < nrows; r++) {
             gridG.append("line")
                 .attr("x1", 0).attr("y1", r * cellH)
                 .attr("x2", gridW).attr("y2", r * cellH)
-                .attr("stroke", "#c9cdd4").attr("stroke-width", 1);
+                .attr("stroke", marco).attr("stroke-width", 1);
         }
 
         // Inicio del área de barras dentro de la celda (el título solo se salta si va arriba).
@@ -2203,41 +2275,14 @@ export class Visual implements IVisual {
      * como que el visual se ha colgado.
      */
     private renderWatermark(width: number, height: number, show: boolean) {
-        this.watermarkGroup.selectAll("*").remove();
-        if (!show) return;
-        const cx = width / 2;
-        const cy = height / 2;
-        const fs = Math.round(Math.max(24, Math.min(88, width / 7.5, height / 3.5)));
-
-        const g = this.watermarkGroup.append("g")
-            .attr("transform", `rotate(-20 ${cx} ${cy})`)
-            .attr("aria-hidden", "true").attr("pointer-events", "none")
-            .attr("opacity", 0.72);
-
-        const comun = (t: any, size: number, peso: string) => t
-            .attr("x", cx).attr("text-anchor", "middle").attr("dominant-baseline", "middle")
-            .style("font-family", "'Segoe UI', sans-serif")
-            .style("font-size", `${size}px`).style("font-weight", peso)
-            .style("letter-spacing", "0.06em")
-            .style("fill", "#FFFFFF")
-            .style("stroke", "#2E3440").style("stroke-width", Math.max(2, size / 14))
-            .style("paint-order", "stroke");
-
-        // Con mas de dos funciones la lista se convierte en un parrafo que tapa el grafico.
-        const etiquetas = this.attemptedPro.length <= 2
-            ? this.attemptedPro
-            : this.attemptedPro.slice(0, 2).concat([`+${this.attemptedPro.length - 2}`]);
-        const hayDetalle = etiquetas.length > 0;
-
-        comun(g.append("text"), fs, "700")
-            .attr("y", hayDetalle ? cy - fs * 0.22 : cy)
-            .text(this.tr("Visual_ProPreview", "Pro preview"));
-
-        if (hayDetalle) {
-            comun(g.append("text"), Math.round(fs * 0.32), "600")
-                .attr("y", cy + fs * 0.45)
-                .text(etiquetas.join(" · "));
-        }
+        // Pieza común de la cartera (utillaje/comun/watermark.ts): mismo aviso, tamaño y legibilidad en todos.
+        const pal: any = this.colorPalette;
+        renderProWatermark(this.wm, show ? {
+            width, height,
+            title: this.tr("Visual_ProPreview", "Pro preview"),
+            features: this.attemptedPro,
+            highContrast: this.hcActive() ? { foreground: pal?.foreground?.value || "#000000", background: pal?.background?.value || "#FFFFFF" } : null
+        } : null);
     }
 
     /**
@@ -2457,10 +2502,7 @@ export class Visual implements IVisual {
         } else {
             titulo.textContent = this.tr("UI_GuideStyle", "Pick a style");
             const rejilla = mk("div", "bcv-g-grid");
-            const nombres: [string, string, string][] = [["clean", "Visual_Enum_TplClean", "Clean"], ["classic", "Visual_Enum_TplClassic", "Classic"],
-                ["minimal", "Visual_Enum_TplMinimal", "Minimal"], ["contrast", "Visual_Enum_TplContrast", "Contrast"],
-                ["compact", "Visual_Enum_TplCompact", "Compact"], ["ibcs", "Visual_Enum_TplIbcs", "IBCS style"]];
-            for (const [nombre, clave, def] of nombres) {
+            for (const [nombre, clave, def] of PLANTILLAS_PANEL) {
                 const chip = mk("button", "bcv-g-chip") as HTMLButtonElement;
                 chip.type = "button";
                 const actual = nombre === this.template;
@@ -2694,7 +2736,11 @@ export class Visual implements IVisual {
                     }
                     case "text": return { uid, displayName, control: { type: powerbi.visuals.FormattingComponent.TextInput, properties: { descriptor, value: v ?? "", placeholder: "" } } };
                     case "enum": {
-                        const items = (p.items || []).map(it => ({ value: it.value, displayName: this.tr(it.key, it.label) }));
+                        // Las plantillas retiradas del panel (1.12) solo aparecen si el informe aún usa una, para no dejar el
+                        // desplegable en blanco.
+                        const items = (p.items || [])
+                            .filter(it => !(card.obj === "style" && p.name === "template" && OCULTAS.indexOf(it.value) >= 0 && it.value !== v))
+                            .map(it => ({ value: it.value, displayName: this.tr(it.key, it.label) }));
                         const value = items.find(it => it.value === v) ?? items[0];
                         return { uid, displayName, control: { type: powerbi.visuals.FormattingComponent.Dropdown, properties: { descriptor, value, items } } };
                     }
