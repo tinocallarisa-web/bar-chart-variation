@@ -37,5 +37,5 @@ dim, page filters; again: clears. Resize to a small tile: text shrinks. Accessib
 > High contrast = On: contrast rendering. With a licence: no watermark, no notice.
 
 Rendering events on every update() path. allowInteractions from hostCapabilities.
-Video https://www.youtube.com/watch?v=RljhNfnuMuM
+Video https://www.youtube.com/watch?v=tkDmc8s1zmE
 Support: tinocallarisa-web.github.io/bar-chart-variation/

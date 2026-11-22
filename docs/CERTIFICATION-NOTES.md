@@ -15,7 +15,7 @@ It is reproduced below. The full list of changes is in [`CHANGELOG.md`](../CHANG
 | Support URL | https://tinocallarisa-web.github.io/bar-chart-variation/support.html |
 | Privacy URL | https://tinocallarisa-web.github.io/bar-chart-variation/privacy.html |
 | Certification branch | https://github.com/tinocallarisa-web/bar-chart-variation/tree/certification |
-| Video | https://www.youtube.com/watch?v=RljhNfnuMuM |
+| Video | https://www.youtube.com/watch?v=tkDmc8s1zmE |
 
 ## Notes as submitted
 
@@ -59,6 +59,6 @@ dim, page filters; again: clears. Resize to a small tile: text shrinks. Accessib
 > High contrast = On: contrast rendering. With a licence: no watermark, no notice.
 
 Rendering events on every update() path. allowInteractions from hostCapabilities.
-Video https://www.youtube.com/watch?v=RljhNfnuMuM
+Video https://www.youtube.com/watch?v=tkDmc8s1zmE
 Support: tinocallarisa-web.github.io/bar-chart-variation/
 ```
