@@ -136,6 +136,13 @@
   "Visual_FocusColor": "焦点颜色",
   "Visual_FocusWidth": "焦点宽度",
   "Visual_MinTextSize": "最小文本大小",
+  "Visual_SmGap": "面板间距",
+  "Visual_SmTitleBold": "标题加粗",
+  "Visual_SmTitleAlign": "标题对齐",
+  "Visual_Enum_Left": "左",
+  "Visual_Enum_Center": "居中",
+  "Visual_SmBorder": "面板边框",
+  "Visual_SmBorderColor": "面板边框颜色",
   "UI_NoticePreview": "Bar Chart with Variation %：{0} 属于 Pro 计划，以带水印的预览显示。",
   "UI_AriaChart": "Bar Chart with Variation %",
   "UI_FeatPanels": "超过 {0} 个面板",
@@ -195,5 +202,9 @@
   "UI_GuideBack": "上一步",
   "UI_GuideFinish": "完成",
   "UI_ObjXAxis": "X 轴",
-  "UI_ObjYAxis": "Y 轴"
+  "UI_ObjYAxis": "Y 轴",
+  "UI_SmallMultiples": "小型序列图",
+  "UI_SmLayout": "布局",
+  "UI_SmTitle": "标题",
+  "UI_SmBackground": "背景和边框"
 }

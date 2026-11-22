@@ -362,6 +362,30 @@ export const FORMAT_SPEC: SpecCard[] = [
                 "key": "Visual_Color",
                 "label": "Color",
                 "kind": "color"
+            },
+            {
+                "name": "titleBold",
+                "key": "Visual_SmTitleBold",
+                "label": "Bold title",
+                "kind": "bool"
+            },
+            {
+                "name": "titleAlign",
+                "key": "Visual_SmTitleAlign",
+                "label": "Title alignment",
+                "kind": "enum",
+                "items": [
+                    {
+                        "value": "left",
+                        "key": "Visual_Enum_Left",
+                        "label": "Left"
+                    },
+                    {
+                        "value": "center",
+                        "key": "Visual_Enum_Center",
+                        "label": "Center"
+                    }
+                ]
             }
         ]
     },
@@ -535,6 +559,18 @@ export const FORMAT_SPEC: SpecCard[] = [
                 "key": "Visual_Opacity",
                 "label": "Opacity (%)",
                 "kind": "num"
+            },
+            {
+                "name": "border",
+                "key": "Visual_SmBorder",
+                "label": "Panel border",
+                "kind": "bool"
+            },
+            {
+                "name": "borderColor",
+                "key": "Visual_SmBorderColor",
+                "label": "Panel border color",
+                "kind": "color"
             }
         ]
     },
@@ -589,6 +625,12 @@ export const FORMAT_SPEC: SpecCard[] = [
                 "name": "barBorderRadius",
                 "key": "Visual_BarCornerRadius",
                 "label": "Bar corner radius",
+                "kind": "num"
+            },
+            {
+                "name": "gap",
+                "key": "Visual_SmGap",
+                "label": "Space between panels",
                 "kind": "num"
             }
         ]

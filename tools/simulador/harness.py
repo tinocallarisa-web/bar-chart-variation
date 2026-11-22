@@ -213,6 +213,20 @@ async def main():
         check("la cadena dinámica de la fila manda en el eje", any(t.startswith("$") for t in ticks), str(ticks[:4]))
         await pg.close()
 
+        print("Panel común")
+        o = json.loads(json.dumps(base)); o["panelStyle"] = {"border": False}; o["panelLayout"] = {"gap": 16}
+        o["panelTitle"] = {"titleAlign": "left", "titleBold": False}
+        pg = await page(b, dataview(o, canales=True), W=760, H=420, name="sm_sin_borde_gap")
+        m = await pg.evaluate("() => __v.getFormattingModel().cards.map(c => c.uid + ':' + c.groups.map(g => g.slices.length).join('/'))")
+        orden = [x.split(":")[0] for x in m]
+        check("orden de tarjetas estándar", orden[:3] == ["style_card", "comparison_card", "barSettings_card"] and orden[-2:] == ["smallMultiples_card", "accessibility_card"], str(orden))
+        check("Small multiples con 3 grupos", any(x.startswith("smallMultiples_card:") and x.count("/") == 2 for x in m), str(m))
+        lin = await pg.evaluate("() => document.querySelectorAll('#host line[stroke]').length")
+        tt = await pg.evaluate("() => { const t = document.querySelector('#host .panel-title'); return [t.getAttribute('text-anchor'), t.style.fontWeight]; }")
+        check("título a la izquierda y sin negrita", tt == ["start", "400"], str(tt))
+        await eventos(pg, "small multiples")
+        await pg.close()
+
         await b.close()
     print()
     print("TODO OK" if not FALLOS else f"{len(FALLOS)} FALLO(S): " + "; ".join(FALLOS))

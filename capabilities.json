@@ -524,6 +524,31 @@
               }
             }
           }
+        },
+        "titleBold": {
+          "displayName": "Bold title",
+          "displayNameKey": "Visual_SmTitleBold",
+          "type": {
+            "bool": true
+          }
+        },
+        "titleAlign": {
+          "displayName": "Title alignment",
+          "displayNameKey": "Visual_SmTitleAlign",
+          "type": {
+            "enumeration": [
+              {
+                "value": "left",
+                "displayName": "Left",
+                "displayNameKey": "Visual_Enum_Left"
+              },
+              {
+                "value": "center",
+                "displayName": "Center",
+                "displayNameKey": "Visual_Enum_Center"
+              }
+            ]
+          }
         }
       }
     },
@@ -729,6 +754,24 @@
           "type": {
             "numeric": true
           }
+        },
+        "border": {
+          "displayName": "Panel border",
+          "displayNameKey": "Visual_SmBorder",
+          "type": {
+            "bool": true
+          }
+        },
+        "borderColor": {
+          "displayName": "Panel border color",
+          "displayNameKey": "Visual_SmBorderColor",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
         }
       }
     },
@@ -787,6 +830,13 @@
         "barBorderRadius": {
           "displayName": "Bar corner radius",
           "displayNameKey": "Visual_BarCornerRadius",
+          "type": {
+            "numeric": true
+          }
+        },
+        "gap": {
+          "displayName": "Space between panels",
+          "displayNameKey": "Visual_SmGap",
           "type": {
             "numeric": true
           }

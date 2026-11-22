@@ -4,6 +4,17 @@ Orden de cada fila: es, pt (BR y PT), fr, de, it, nl, pl, ja, zh, ko.
 El español de las claves de capabilities NO sale de aquí: se conserva el de stringResources/es-ES (ya publicado)."""
 
 B = {
+"Space between panels": ["Espacio entre paneles", "Espaço entre painéis", "Espace entre les panneaux", "Abstand zwischen Feldern", "Spazio tra i pannelli", "Ruimte tussen panelen", "Odstęp między panelami", "パネル間の間隔", "面板间距", "패널 간격"],
+"Bold title": ["Título en negrita", "Título em negrito", "Titre en gras", "Fetter Titel", "Titolo in grassetto", "Vette titel", "Pogrubiony tytuł", "タイトルを太字", "标题加粗", "굵은 제목"],
+"Title alignment": ["Alineación del título", "Alinhamento do título", "Alignement du titre", "Titelausrichtung", "Allineamento del titolo", "Uitlijning titel", "Wyrównanie tytułu", "タイトルの配置", "标题对齐", "제목 맞춤"],
+"Left": ["Izquierda", "Esquerda", "Gauche", "Links", "Sinistra", "Links", "Do lewej", "左", "左", "왼쪽"],
+"Center": ["Centro", "Centro", "Centre", "Mitte", "Centro", "Midden", "Do środka", "中央", "居中", "가운데"],
+"Panel border": ["Borde del panel", "Borda do painel", "Bordure du panneau", "Feldrahmen", "Bordo del pannello", "Paneelrand", "Obramowanie panelu", "パネルの枠線", "面板边框", "패널 테두리"],
+"Panel border color": ["Color del borde del panel", "Cor da borda do painel", "Couleur de bordure du panneau", "Farbe des Feldrahmens", "Colore bordo pannello", "Kleur paneelrand", "Kolor obramowania panelu", "パネルの枠線の色", "面板边框颜色", "패널 테두리 색"],
+"Small multiples": ["Múltiplos pequeños", "Múltiplos pequenos", "Multiples petits", "Kleine Vielfache", "Multipli piccoli", "Kleine veelvouden", "Małe wielokrotności", "スモール マルチプル", "小型序列图", "작은 배수"],
+"Layout": ["Diseño", "Layout", "Disposition", "Layout", "Layout", "Indeling", "Układ", "レイアウト", "布局", "레이아웃"],
+"Title": ["Título", "Título", "Titre", "Titel", "Titolo", "Titel", "Tytuł", "タイトル", "标题", "제목"],
+"Background and border": ["Fondo y borde", "Fundo e borda", "Arrière-plan et bordure", "Hintergrund und Rahmen", "Sfondo e bordo", "Achtergrond en rand", "Tło i obramowanie", "背景と枠線", "背景和边框", "배경 및 테두리"],
 "Patterns on negative bars": ["Tramas en las barras negativas", "Padrões nas barras negativas", "Motifs sur les barres négatives", "Muster auf negativen Balken", "Motivi sulle barre negative", "Patronen op negatieve balken", "Wzory na ujemnych słupkach", "負の棒にパターン", "负值条形图案", "음수 막대 패턴"],
 "High contrast": ["Alto contraste", "Alto contraste", "Contraste élevé", "Hoher Kontrast", "Contrasto elevato", "Hoog contrast", "Wysoki kontrast", "ハイ コントラスト", "高对比度", "고대비"],
 "Automatic (Windows setting)": ["Automático (ajuste de Windows)", "Automático (configuração do Windows)", "Automatique (paramètre Windows)", "Automatisch (Windows-Einstellung)", "Automatico (impostazione di Windows)", "Automatisch (Windows-instelling)", "Automatycznie (ustawienie Windows)", "自動 (Windows の設定)", "自动 (Windows 设置)", "자동(Windows 설정)"],

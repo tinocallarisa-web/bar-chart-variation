@@ -63,7 +63,11 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideBack": "Atrás",
         "UI_GuideFinish": "Terminar",
         "UI_ObjXAxis": "Eje X",
-        "UI_ObjYAxis": "Eje Y"
+        "UI_ObjYAxis": "Eje Y",
+        "UI_SmallMultiples": "Múltiplos pequeños",
+        "UI_SmLayout": "Diseño",
+        "UI_SmTitle": "Título",
+        "UI_SmBackground": "Fondo y borde"
     },
     "pt-BR": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} faz parte do plano Pro e é mostrado como prévia com marca d’água.",
@@ -124,7 +128,10 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideBack": "Voltar",
         "UI_GuideFinish": "Concluir",
         "UI_ObjXAxis": "Eixo X",
-        "UI_ObjYAxis": "Eixo Y"
+        "UI_ObjYAxis": "Eixo Y",
+        "UI_SmallMultiples": "Múltiplos pequenos",
+        "UI_SmTitle": "Título",
+        "UI_SmBackground": "Fundo e borda"
     },
     "fr-FR": {
         "UI_NoticePreview": "Bar Chart with Variation % : {0} fait partie du plan Pro et s’affiche en aperçu avec filigrane.",
@@ -181,7 +188,11 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideBack": "Retour",
         "UI_GuideFinish": "Terminer",
         "UI_ObjXAxis": "Axe X",
-        "UI_ObjYAxis": "Axe Y"
+        "UI_ObjYAxis": "Axe Y",
+        "UI_SmallMultiples": "Multiples petits",
+        "UI_SmLayout": "Disposition",
+        "UI_SmTitle": "Titre",
+        "UI_SmBackground": "Arrière-plan et bordure"
     },
     "de-DE": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} gehört zum Pro-Plan und wird als Vorschau mit Wasserzeichen gezeigt.",
@@ -238,7 +249,10 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideBack": "Zurück",
         "UI_GuideFinish": "Fertig",
         "UI_ObjXAxis": "X-Achse",
-        "UI_ObjYAxis": "Y-Achse"
+        "UI_ObjYAxis": "Y-Achse",
+        "UI_SmallMultiples": "Kleine Vielfache",
+        "UI_SmTitle": "Titel",
+        "UI_SmBackground": "Hintergrund und Rahmen"
     },
     "it-IT": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} fa parte del piano Pro ed è mostrato come anteprima con filigrana.",
@@ -296,7 +310,10 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideBack": "Indietro",
         "UI_GuideFinish": "Fine",
         "UI_ObjXAxis": "Asse X",
-        "UI_ObjYAxis": "Asse Y"
+        "UI_ObjYAxis": "Asse Y",
+        "UI_SmallMultiples": "Multipli piccoli",
+        "UI_SmTitle": "Titolo",
+        "UI_SmBackground": "Sfondo e bordo"
     },
     "nl-NL": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} hoort bij het Pro-abonnement en wordt als voorbeeld met watermerk getoond.",
@@ -353,7 +370,11 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideBack": "Terug",
         "UI_GuideFinish": "Voltooien",
         "UI_ObjXAxis": "X-as",
-        "UI_ObjYAxis": "Y-as"
+        "UI_ObjYAxis": "Y-as",
+        "UI_SmallMultiples": "Kleine veelvouden",
+        "UI_SmLayout": "Indeling",
+        "UI_SmTitle": "Titel",
+        "UI_SmBackground": "Achtergrond en rand"
     },
     "pl-PL": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} należy do planu Pro i jest pokazane jako podgląd ze znakiem wodnym.",
@@ -413,7 +434,11 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideBack": "Wstecz",
         "UI_GuideFinish": "Zakończ",
         "UI_ObjXAxis": "Oś X",
-        "UI_ObjYAxis": "Oś Y"
+        "UI_ObjYAxis": "Oś Y",
+        "UI_SmallMultiples": "Małe wielokrotności",
+        "UI_SmLayout": "Układ",
+        "UI_SmTitle": "Tytuł",
+        "UI_SmBackground": "Tło i obramowanie"
     },
     "ja-JP": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} は Pro プランの機能で、透かし付きのプレビューとして表示されます。",
@@ -474,7 +499,11 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideBack": "戻る",
         "UI_GuideFinish": "完了",
         "UI_ObjXAxis": "X 軸",
-        "UI_ObjYAxis": "Y 軸"
+        "UI_ObjYAxis": "Y 軸",
+        "UI_SmallMultiples": "スモール マルチプル",
+        "UI_SmLayout": "レイアウト",
+        "UI_SmTitle": "タイトル",
+        "UI_SmBackground": "背景と枠線"
     },
     "zh-CN": {
         "UI_NoticePreview": "Bar Chart with Variation %：{0} 属于 Pro 计划，以带水印的预览显示。",
@@ -535,7 +564,11 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideBack": "上一步",
         "UI_GuideFinish": "完成",
         "UI_ObjXAxis": "X 轴",
-        "UI_ObjYAxis": "Y 轴"
+        "UI_ObjYAxis": "Y 轴",
+        "UI_SmallMultiples": "小型序列图",
+        "UI_SmLayout": "布局",
+        "UI_SmTitle": "标题",
+        "UI_SmBackground": "背景和边框"
     },
     "ko-KR": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0}은(는) Pro 플랜 기능이며 워터마크가 있는 미리 보기로 표시됩니다.",
@@ -596,7 +629,11 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideBack": "뒤로",
         "UI_GuideFinish": "완료",
         "UI_ObjXAxis": "X축",
-        "UI_ObjYAxis": "Y축"
+        "UI_ObjYAxis": "Y축",
+        "UI_SmallMultiples": "작은 배수",
+        "UI_SmLayout": "레이아웃",
+        "UI_SmTitle": "제목",
+        "UI_SmBackground": "배경 및 테두리"
     },
     "pt-PT": {
         "UI_NoticePreview": "Bar Chart with Variation %: {0} faz parte do plano Pro e é mostrado como prévia com marca d’água.",
@@ -657,6 +694,9 @@ export const STRINGS: Record<string, Record<string, string>> = {
         "UI_GuideBack": "Voltar",
         "UI_GuideFinish": "Concluir",
         "UI_ObjXAxis": "Eixo X",
-        "UI_ObjYAxis": "Eixo Y"
+        "UI_ObjYAxis": "Eixo Y",
+        "UI_SmallMultiples": "Múltiplos pequenos",
+        "UI_SmTitle": "Título",
+        "UI_SmBackground": "Fundo e borda"
     }
 };

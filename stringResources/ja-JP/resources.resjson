@@ -136,6 +136,13 @@
   "Visual_FocusColor": "フォーカスの色",
   "Visual_FocusWidth": "フォーカスの幅",
   "Visual_MinTextSize": "最小テキスト サイズ",
+  "Visual_SmGap": "パネル間の間隔",
+  "Visual_SmTitleBold": "タイトルを太字",
+  "Visual_SmTitleAlign": "タイトルの配置",
+  "Visual_Enum_Left": "左",
+  "Visual_Enum_Center": "中央",
+  "Visual_SmBorder": "パネルの枠線",
+  "Visual_SmBorderColor": "パネルの枠線の色",
   "UI_NoticePreview": "Bar Chart with Variation %: {0} は Pro プランの機能で、透かし付きのプレビューとして表示されます。",
   "UI_AriaChart": "Bar Chart with Variation %",
   "UI_FeatPanels": "{0} を超えるパネル",
@@ -195,5 +202,9 @@
   "UI_GuideBack": "戻る",
   "UI_GuideFinish": "完了",
   "UI_ObjXAxis": "X 軸",
-  "UI_ObjYAxis": "Y 軸"
+  "UI_ObjYAxis": "Y 軸",
+  "UI_SmallMultiples": "スモール マルチプル",
+  "UI_SmLayout": "レイアウト",
+  "UI_SmTitle": "タイトル",
+  "UI_SmBackground": "背景と枠線"
 }

@@ -136,6 +136,13 @@
   "Visual_FocusColor": "Focus color",
   "Visual_FocusWidth": "Focus width",
   "Visual_MinTextSize": "Minimum text size",
+  "Visual_SmGap": "Space between panels",
+  "Visual_SmTitleBold": "Bold title",
+  "Visual_SmTitleAlign": "Title alignment",
+  "Visual_Enum_Left": "Left",
+  "Visual_Enum_Center": "Center",
+  "Visual_SmBorder": "Panel border",
+  "Visual_SmBorderColor": "Panel border color",
   "UI_NoticePreview": "Bar Chart with Variation %: {0} — part of the Pro plan, shown as a watermarked preview.",
   "UI_AriaChart": "Bar Chart with Variation %",
   "UI_FeatPanels": "more than {0} panels",
@@ -195,5 +202,9 @@
   "UI_GuideBack": "Back",
   "UI_GuideFinish": "Finish",
   "UI_ObjXAxis": "X axis",
-  "UI_ObjYAxis": "Y axis"
+  "UI_ObjYAxis": "Y axis",
+  "UI_SmallMultiples": "Small multiples",
+  "UI_SmLayout": "Layout",
+  "UI_SmTitle": "Title",
+  "UI_SmBackground": "Background and border"
 }

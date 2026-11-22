@@ -136,6 +136,13 @@
   "Visual_FocusColor": "Fokusfarbe",
   "Visual_FocusWidth": "Fokusbreite",
   "Visual_MinTextSize": "Minimale Textgröße",
+  "Visual_SmGap": "Abstand zwischen Feldern",
+  "Visual_SmTitleBold": "Fetter Titel",
+  "Visual_SmTitleAlign": "Titelausrichtung",
+  "Visual_Enum_Left": "Links",
+  "Visual_Enum_Center": "Mitte",
+  "Visual_SmBorder": "Feldrahmen",
+  "Visual_SmBorderColor": "Farbe des Feldrahmens",
   "UI_NoticePreview": "Bar Chart with Variation %: {0} gehört zum Pro-Plan und wird als Vorschau mit Wasserzeichen gezeigt.",
   "UI_AriaChart": "Bar Chart with Variation %",
   "UI_FeatPanels": "mehr als {0} Felder",
@@ -195,5 +202,9 @@
   "UI_GuideBack": "Zurück",
   "UI_GuideFinish": "Fertig",
   "UI_ObjXAxis": "X-Achse",
-  "UI_ObjYAxis": "Y-Achse"
+  "UI_ObjYAxis": "Y-Achse",
+  "UI_SmallMultiples": "Kleine Vielfache",
+  "UI_SmLayout": "Layout",
+  "UI_SmTitle": "Titel",
+  "UI_SmBackground": "Hintergrund und Rahmen"
 }

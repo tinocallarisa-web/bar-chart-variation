@@ -136,6 +136,13 @@
   "Visual_FocusColor": "Focuskleur",
   "Visual_FocusWidth": "Focusbreedte",
   "Visual_MinTextSize": "Minimale tekstgrootte",
+  "Visual_SmGap": "Ruimte tussen panelen",
+  "Visual_SmTitleBold": "Vette titel",
+  "Visual_SmTitleAlign": "Uitlijning titel",
+  "Visual_Enum_Left": "Links",
+  "Visual_Enum_Center": "Midden",
+  "Visual_SmBorder": "Paneelrand",
+  "Visual_SmBorderColor": "Kleur paneelrand",
   "UI_NoticePreview": "Bar Chart with Variation %: {0} hoort bij het Pro-abonnement en wordt als voorbeeld met watermerk getoond.",
   "UI_AriaChart": "Bar Chart with Variation %",
   "UI_FeatPanels": "meer dan {0} panelen",
@@ -195,5 +202,9 @@
   "UI_GuideBack": "Terug",
   "UI_GuideFinish": "Voltooien",
   "UI_ObjXAxis": "X-as",
-  "UI_ObjYAxis": "Y-as"
+  "UI_ObjYAxis": "Y-as",
+  "UI_SmallMultiples": "Kleine veelvouden",
+  "UI_SmLayout": "Indeling",
+  "UI_SmTitle": "Titel",
+  "UI_SmBackground": "Achtergrond en rand"
 }

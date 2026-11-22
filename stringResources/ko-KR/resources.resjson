@@ -136,6 +136,13 @@
   "Visual_FocusColor": "포커스 색",
   "Visual_FocusWidth": "포커스 두께",
   "Visual_MinTextSize": "최소 텍스트 크기",
+  "Visual_SmGap": "패널 간격",
+  "Visual_SmTitleBold": "굵은 제목",
+  "Visual_SmTitleAlign": "제목 맞춤",
+  "Visual_Enum_Left": "왼쪽",
+  "Visual_Enum_Center": "가운데",
+  "Visual_SmBorder": "패널 테두리",
+  "Visual_SmBorderColor": "패널 테두리 색",
   "UI_NoticePreview": "Bar Chart with Variation %: {0}은(는) Pro 플랜 기능이며 워터마크가 있는 미리 보기로 표시됩니다.",
   "UI_AriaChart": "Bar Chart with Variation %",
   "UI_FeatPanels": "{0}개 초과 패널",
@@ -195,5 +202,9 @@
   "UI_GuideBack": "뒤로",
   "UI_GuideFinish": "완료",
   "UI_ObjXAxis": "X축",
-  "UI_ObjYAxis": "Y축"
+  "UI_ObjYAxis": "Y축",
+  "UI_SmallMultiples": "작은 배수",
+  "UI_SmLayout": "레이아웃",
+  "UI_SmTitle": "제목",
+  "UI_SmBackground": "배경 및 테두리"
 }

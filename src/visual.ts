@@ -77,6 +77,8 @@ interface VisualSettings {
         backgroundColor: string;
         useSeriesColor: boolean;
         customColor: string;
+        titleBold: boolean;
+        titleAlign: string;     // left | center
     };
     axisSettings: {
         sortOrder: string;
@@ -101,6 +103,8 @@ interface VisualSettings {
         showBackground: boolean;
         bgColor: string;
         bgOpacity: number;
+        border: boolean;
+        borderColor: string;
     };
     panelLayout: {
         orientation: string;    // vertical | horizontal
@@ -109,6 +113,7 @@ interface VisualSettings {
         minPanelHeight: number;
         enableScroll: boolean;
         barBorderRadius: number;
+        gap: number;
     };
     analyticalLines: {
         showAverage: boolean;
@@ -385,7 +390,9 @@ export class Visual implements IVisual {
             titleStyle: "line",
             backgroundColor: "#F2F4F7",
             useSeriesColor: true,
-            customColor: "#333333"
+            customColor: "#333333",
+            titleBold: true,
+            titleAlign: "center"
         },
         axisSettings: {
             sortOrder:   "auto",
@@ -409,7 +416,9 @@ export class Visual implements IVisual {
         panelStyle: {
             showBackground: false,
             bgColor:        "#F8F8F8",
-            bgOpacity:      30
+            bgOpacity:      30,
+            border:         true,
+            borderColor:    ""
         },
         panelLayout: {
             orientation: "vertical",
@@ -417,7 +426,8 @@ export class Visual implements IVisual {
             minPanelWidth: 120,
             minPanelHeight: 120,
             enableScroll:  true,
-            barBorderRadius: 2
+            barBorderRadius: 2,
+            gap: 0
         },
         analyticalLines: {
             showAverage: false,
@@ -754,6 +764,9 @@ export class Visual implements IVisual {
         this.settings.panelTitle.backgroundColor = getValue(pT, "backgroundColor", "#F2F4F7");
         this.settings.panelTitle.useSeriesColor = getValue(pT, "useSeriesColor", true);
         this.settings.panelTitle.customColor    = getValue(pT, "customColor",    "#333333");
+        // Panel común de la cartera (1.12): negrita y alineación del título. Por defecto, como hasta ahora (negrita, centro).
+        this.settings.panelTitle.titleBold      = getValue(pT, "titleBold",      true);
+        this.settings.panelTitle.titleAlign     = getValue(pT, "titleAlign",     "center");
 
         const ax = (objects?.axisSettings ?? {}) as any;
 
@@ -783,6 +796,9 @@ export class Visual implements IVisual {
         this.settings.panelStyle.showBackground = getValue(ps, "showBackground", false);
         this.settings.panelStyle.bgColor        = getValue(ps, "bgColor",        "#F8F8F8");
         this.settings.panelStyle.bgOpacity      = getValue(ps, "bgOpacity",      30);
+        // Borde de los paneles (1.12): por defecto el de siempre (marco y separadores); vacío = gris o el del estilo.
+        this.settings.panelStyle.border         = getValue(ps, "border",         true);
+        this.settings.panelStyle.borderColor    = getValue(ps, "borderColor",    "");
 
         const pl = (objects?.panelLayout ?? {}) as any;
 
@@ -793,6 +809,7 @@ export class Visual implements IVisual {
         this.settings.panelLayout.enableScroll   = getValue(pl, "enableScroll",   true);
         this.settings.panelLayout.minPanelHeight = getValue(pl, "minPanelHeight", 120);
         this.settings.panelLayout.barBorderRadius = getValue(pl, "barBorderRadius", 2);
+        this.settings.panelLayout.gap = Math.min(40, Math.max(0, Number(getValue(pl, "gap", 0)) || 0));
 
         const al = (objects?.analyticalLines ?? {}) as any;
 
@@ -1430,7 +1447,8 @@ export class Visual implements IVisual {
         const cellW  = Math.max(gridW  / ncols, 40);
         const cellH  = Math.max(gridH  / nrows, 40);
 
-        const cellPad   = L.cellPad;
+        // Espacio entre paneles (panel común, 1.12): cada panel cede la mitad por cada lado; con uno solo no aplica.
+        const cellPad   = L.cellPad + (numPanels > 1 ? Math.round(this.settings.panelLayout.gap / 2) : 0);
         let showTitle = this.settings.panelTitle.show;
         const titlePos  = this.settings.panelTitle.position; // "top" | "bottom"
         // Las franjas fijas encogen con el texto que contienen.
@@ -1536,20 +1554,22 @@ export class Visual implements IVisual {
 
         // ── Grid container: outer border + separators ──────────────────────
         const gridG = this.chartGroup.append("g").attr("transform", `translate(${oML},${oMT})`);
-        const marco = (!this.hcActive() && this.look) ? this.look.grid : "#c9cdd4";
+        const marco = this.hcActive() ? ((this.colorPalette as any)?.foreground?.value || "#000000")
+            : (this.settings.panelStyle.borderColor || (this.look ? this.look.grid : "#c9cdd4"));
+        const conBorde = this.settings.panelStyle.border;
 
-        gridG.append("rect")
+        if (conBorde) gridG.append("rect")
             .attr("width", gridW).attr("height", gridH)
             .attr("fill", "none").attr("stroke", marco)
             .attr("stroke-width", 1.5).attr("rx", 4);
 
-        for (let c = 1; c < ncols; c++) {
+        for (let c = 1; conBorde && c < ncols; c++) {
             gridG.append("line")
                 .attr("x1", c * cellW).attr("y1", 0)
                 .attr("x2", c * cellW).attr("y2", gridH)
                 .attr("stroke", marco).attr("stroke-width", 1);
         }
-        for (let r = 1; r < nrows; r++) {
+        for (let r = 1; conBorde && r < nrows; r++) {
             gridG.append("line")
                 .attr("x1", 0).attr("y1", r * cellH)
                 .attr("x2", gridW).attr("y2", r * cellH)
@@ -1908,13 +1928,14 @@ export class Visual implements IVisual {
                         .attr("stroke-width", 1.5).attr("opacity", 0.35);
                 }
 
+                const alIzq = this.settings.panelTitle.titleAlign === "left";
                 pg.append("text").classed("panel-title", true)
-                    .attr("x", innerW / 2)
+                    .attr("x", alIzq ? (conFondo ? 6 : 0) : innerW / 2)
                     .attr("y", conFondo ? (isBottom ? titleLineY + titleH / 2 : titleH / 2) : titleTextY)
-                    .attr("text-anchor", "middle")
+                    .attr("text-anchor", alIzq ? "start" : "middle")
                     .attr("dominant-baseline", conFondo ? "central" : null)
                     .style("font-size", `${titleFontSize}px`)
-                    .style("font-weight", "700")
+                    .style("font-weight", this.settings.panelTitle.titleBold ? "700" : "400")
                     .style("fill", textoTitulo)
                     .text(series.name);
             }
@@ -2655,7 +2676,7 @@ export class Visual implements IVisual {
                     { type: powerbi.visuals.VisualShortcutType.Divider }, reset("variationLabels", ["fontSize", "positiveColor", "negativeColor", "decimalPlaces"]), nav("variationLabels")] as any;
             case "panelTitle":
                 return [picker("panelTitle", "titleStyle"), picker("panelTitle", "position"), toggle("panelTitle", "useSeriesColor"),
-                    { type: powerbi.visuals.VisualShortcutType.Divider }, reset("panelTitle", ["fontSize", "customColor", "backgroundColor"]), nav("panelTitle")] as any;
+                    { type: powerbi.visuals.VisualShortcutType.Divider }, reset("panelTitle", ["fontSize", "customColor", "backgroundColor"]), nav("smallMultiples", this.tr("UI_SmallMultiples", "Small multiples"))] as any;
             case "xAxis":
                 return [picker("axisSettings", "xLabelAngle"), toggle("axisSettings", "showXTitle"), toggle("axisSettings", "hideEmpty"),
                     { type: powerbi.visuals.VisualShortcutType.Divider }, reset("axisSettings", ["xFontSize", "xColor", "xBold", "xItalic"]), nav("axisSettings")] as any;
@@ -2842,6 +2863,50 @@ export class Visual implements IVisual {
             });
             cards.push({ uid: "colorSelector_card", displayName: this.tr("Visual_SeriesColors", "Series colors"), groups: [{ uid: "colorSelector_g", displayName: "", slices }] });
         }
-        return { cards } as any;
+        return { cards: this.ordenarPanel(cards) } as any;
+    }
+
+    /**
+     * Panel común de la cartera (1.12): Style template primero, luego las tarjetas propias, ejes, leyenda, Small multiples
+     * y Accesibilidad. Los nombres internos no cambian (los informes guardados siguen leyendo sus ajustes): solo se
+     * reparten las piezas. Orientación y radio de esquinas pasan a Bar settings; títulos, fondo, borde y rejilla de los
+     * paneles se juntan en una sola tarjeta Small multiples.
+     */
+    private ordenarPanel(cards: any[]): any[] {
+        const por: Record<string, any> = {};
+        for (const c of cards) por[c.uid] = c;
+        const slices = (uid: string) => (por[uid]?.groups?.[0]?.slices ?? []) as any[];
+        const quitar = (uid: string, nombres: string[]) => {
+            const c = por[uid]; if (!c) return [];
+            const g = c.groups[0];
+            const fuera = g.slices.filter((sl: any) => nombres.some(n => sl.uid === n));
+            g.slices = g.slices.filter((sl: any) => fuera.indexOf(sl) < 0);
+            return fuera;
+        };
+        const desc = (sl: any[]) => sl.map((x: any) => x.control.properties.descriptor);
+        // Bar settings: + orientación y radio de esquinas.
+        const deBarra = quitar("panelLayout_card", ["panelLayout_orientation", "panelLayout_barBorderRadius"]);
+        if (por["barSettings_card"]) {
+            por["barSettings_card"].groups[0].slices.push(...deBarra);
+            por["barSettings_card"].revertToDefaultDescriptors = desc(por["barSettings_card"].groups[0].slices);
+        }
+        const rejilla = slices("panelLayout_card"), titulo = slices("panelTitle_card"), fondo = slices("panelStyle_card");
+        const sm = {
+            uid: "smallMultiples_card", displayName: this.tr("UI_SmallMultiples", "Small multiples"),
+            revertToDefaultDescriptors: desc([...rejilla, ...titulo, ...fondo]),
+            groups: [
+                { uid: "panelLayout_g", displayName: this.tr("UI_SmLayout", "Layout"), slices: rejilla },
+                { uid: "panelTitle_g", displayName: this.tr("UI_SmTitle", "Title"), slices: titulo },
+                { uid: "panelStyle_g", displayName: this.tr("UI_SmBackground", "Background and border"), slices: fondo },
+            ],
+        };
+        const orden = ["style_card", "comparison_card", "barSettings_card", "variationLabels_card", "valueLabels_card", "analyticalLines_card",
+            "dataColors_card", "colorSelector_card", "axisSettings_card", "legend_card", "smallMultiples_card", "accessibility_card"];
+        por["smallMultiples_card"] = sm;
+        const usados = new Set(["panelLayout_card", "panelTitle_card", "panelStyle_card"]);
+        const out = orden.filter(u => por[u]).map(u => por[u]);
+        // Lo que no esté en la lista (una tarjeta nueva olvidada) va al final, antes que perderla.
+        for (const c of cards) if (orden.indexOf(c.uid) < 0 && !usados.has(c.uid)) out.push(c);
+        return out;
     }
 }
